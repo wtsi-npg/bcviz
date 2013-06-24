@@ -1,4 +1,4 @@
-function lineChart(fileName) {
+function lineChart(fileName, xLabel, yLabel) {
 	var w = 700;
 	var h = 500;
 	var padding = {top: 50, right: 25, bottom: 50, left: 65};
@@ -37,7 +37,7 @@ function lineChart(fileName) {
 
 	var line = d3.svg.line()
 		.interpolate("basis")
-		.x(function (d) {return xScale(d.cycle);})
+		.x(function (d) {return xScale(d.xVal);})
 		.y(function (d) {return yScale(d.numb);});
 
 	function make_x_grid() {        
@@ -73,25 +73,60 @@ function lineChart(fileName) {
 		   .attr("fill", "#F2F2F2");
 
 		//set keys on colour scale   
-		color.domain(d3.keys(csv[0]).filter(function(key) { return key !== "cycle" && key !== "lineNumb" && key !== "label" && key !== "label"; }));
+		color.domain(d3.keys(csv[0]).filter(function(key) { return key.toLowerCase() !== xLabel.toLowerCase() && key !== "dataLabel"; }));
 
-		//parse data to ints
-		csv.forEach(function(d) {
-	    	d.cycle = parseInt(d.cycle);
-	  	});
+		var points = formatData(csv[1].dataLabel);
 
-		//format data
-		var points = color.domain().map(function (name) {
-			return{
-				name: name,
-				values: csv.map(function(d) {
-					return {cycle: d.cycle, numb: +d[name]};
-				})
-			};
-		});
+		function formatData(d) {
+			switch (d){
+				case "IS":
+					//parse data to ints
+					csv.forEach(function(d) {
+	    				d.lineNumber = parseInt(d.lineNumber);
+	    				d.totalPairs = parseInt(d.totalPairs);
+    					d.inwardPairs = parseInt(d.inwardPairs);
+    					d.outwardPairs = parseInt(d.outwardPairs);
+    					d.otherPairs = parseInt(d.otherPairs);
+	  				});
 
-		//set xScale domain
-		xScale.domain(d3.extent(csv, function (d) {return d.cycle;}));
+	  				//set xScale domain
+					xScale.domain(d3.extent(csv, function (d) {return d.lineNumber;}));
+
+					//format data
+					return color.domain().map(function (name) {
+						return{
+							name: name,
+							values: csv.map(function(d) {
+								return {xVal: d.lineNumber, numb: +d[name]};
+							})
+						};
+					});
+				break;
+				case "IC":
+					//parse data to ints
+					csv.forEach(function(d) {
+	    				d.cycle = parseInt(d.cycle);
+	  				});
+
+					//set xScale domain
+					xScale.domain(d3.extent(csv, function (d) {return d.cycle;}));
+
+					//format data
+					return color.domain().map(function (name) {
+						return{
+							name: name,
+							values: csv.map(function(d) {
+								return {xVal: d.cycle, numb: +d[name]};
+							})
+						};
+					});
+				break;
+			default:
+				alert("not working");
+				break;
+			}
+
+		}
 
 		//set yScale domain
 		yScale.domain([
@@ -107,16 +142,32 @@ function lineChart(fileName) {
         		
         //draw colours in legend	
 		legend.append('rect')
-    	      .attr('x', w - (padding.right * 3 + 15))
-    	      .attr('y', function(d, i){ return i *  20;})
+    	      .attr('x', function(d, i){ if(i <= 1){
+	          								return w - (padding.right * 3 + 15);
+	      								}else{
+	      									return w - ((padding.right * 3) * 3 + 15);
+	      								}})
+    	      .attr('y', function(d, i){ if(i <= 1){
+	          								return i *  20;
+	      								}else{
+	      									return ((i - 2) * 20);
+	      								}})
     	      .attr('width', 10)
     	      .attr('height', 10)
     	      .style('fill', function(d) {return color(d.name);});
 
         //draw text in legend
 	    legend.append('text')
-	          .attr('x', w - (padding.right * 3))
-	          .attr('y', function(d, i){ return (i *  20) + 9;})
+	          .attr('x', function(d, i){ if(i <= 1){
+	          								return w - (padding.right * 3);
+	      								}else{
+	      									return w - ((padding.right * 3) * 3);
+	      								}})
+	          .attr('y', function(d, i){ if(i <= 1){
+	          								return (i * 20) + 9;
+	      								}else{
+	      									return ((i - 2) * 20) + 9;
+	      								}})
 	          .text(function(d){ return d.name });
 
 		//Create X axis
@@ -130,7 +181,7 @@ function lineChart(fileName) {
 		   .attr("text-anchor", "middle")
 		   .attr("transform", "translate(" + (w / 2 - padding.left) + "," + padding.left / 2 + ")")
 		   .attr("style", "font-size: 12; font-family: Helvetica, sans-serif")
-		   .text("Cycle");
+		   .text(xLabel);
 
 		//Create Y axis
 		svg.append("g")
@@ -143,7 +194,7 @@ function lineChart(fileName) {
 		   .attr("transform", "translate(0," + h/2 + ")rotate(-90)")
 	       .attr("style", "font-size: 12; font-family: Helvetica, sans-serif")
 	       .style("text-anchor", "end")
-		   .text("Indel");
+		   .text(yLabel);
 
 		//make x grid
 		svg.append("g")         
