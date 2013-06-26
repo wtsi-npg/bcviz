@@ -1,13 +1,85 @@
-function lineChart(fileName, xLabel, yLabel) {
-	var w = 700;
-	var h = 500;
-	var padding = {top: 50, right: 25, bottom: 50, left: 65};
-	var yZoom = {min: 0, max: 1};
-	var xZoom = {min: 0, max: 1};
-
+var keysIC = {
+	all: ["insertions(fwd)","insertions(rev)","deletions(fwd)","deletions(rev)"],
+	fwd: ["insertions(fwd)","deletions(fwd)"],
+	reverse: ["insertions(rev)","deletions(rev)"]
+};
+var files = [
+	{
+		data: "7843_2-1_IC_bc.csv",
+		xVar: "Cycle",
+		yVar: "Indel"
+	},
+	{
+		data: "7843_2-2_IC_bc.csv",
+		xVar: "Cycle",
+		yVar: "Indel"
+	},
+	{
+		data: "7843_2-3_IC_bc.csv",
+		xVar: "Cycle",
+		yVar: "Indel"
+	},
+	{
+		data: "7843_2-4_IC_bc.csv",
+		xVar: "Cycle",
+		yVar: "Indel"
+	}
+];
+var w = 700;
+var h = 500;
+var padding = {top: 50, right: 25, bottom: 50, left: 65};
+var graphCount = 0;
+var split = false;
+$(window).keydown(function (e) {
+	if(e.which == 188){
+		graphCount--
+		drawGraph();
+	}
+	if(e.which == 190){
+		graphCount++
+		drawGraph();
+	}
+	if(e.which == 13){
+		toggleSplit();
+		drawGraph();
+	}
+})
+function toggleSplit () {
+	if(split === true){
+		split = false;
+	}else{
+		split = true;
+	}
+}
+function newGraph () {
+	lineChart(files[graphCount].data, files[graphCount].xVar, files[graphCount].yVar, '#aSvg', keysIC.all);
+}
+function drawGraph () {
+	$("#aSvg").empty();
+	$("#svg2").empty();
+	if(graphCount >= files.length){
+		graphCount = 0;
+	}
+	if(graphCount < 0){
+		graphCount = files.length - 1;
+	}
+	if(split === true){
+		splitGraphs();
+	}else{
+		newGraph();
+	}
+}
+function splitGraphs () {
+	lineChart(files[graphCount].data, files[graphCount].xVar, files[graphCount].yVar, '#svg2', keysIC.fwd);
+	lineChart(files[graphCount].data, files[graphCount].xVar, files[graphCount].yVar, '#aSvg', keysIC.reverse);
+}
+var masterScale = d3.scale.linear()
+			 .nice()
+			 .range([padding.left, w - (padding.right)])
+			 .domain([0, 1]);
+function lineChart(fileName, xLabel, yLabel, divID, graphKeys) {
 	//Create SVG element
-	var svg = d3.select("body")
-		.append("svg")
+	var svg = d3.select(divID)
 		.attr("width", w)
 		.attr("height", h)
 		.call(d3.behavior.zoom().on("zoom", zoom));
@@ -73,7 +145,11 @@ function lineChart(fileName, xLabel, yLabel) {
 		   .attr("fill", "#F2F2F2");
 
 		//set keys on colour scale   
-		color.domain(d3.keys(csv[0]).filter(function(key) { return key.toLowerCase() !== xLabel.toLowerCase() && key !== "dataLabel"; }));
+		color.domain(d3.keys(csv[0]).filter(function(key) {if($.inArray(key, graphKeys) !== -1){
+																	return true;
+																}else{
+																	return false;
+																}; }));
 
 		var points = formatData(csv[1].dataLabel);
 
@@ -97,7 +173,7 @@ function lineChart(fileName, xLabel, yLabel) {
 						return{
 							name: name,
 							values: csv.map(function(d) {
-								return {xVal: d.lineNumber, numb: +d[name]};
+								return {xVal: +d.lineNumber, numb: +d[name]};
 							})
 						};
 					});
@@ -119,6 +195,7 @@ function lineChart(fileName, xLabel, yLabel) {
 								return {xVal: d.cycle, numb: +d[name]};
 							})
 						};
+
 					});
 				break;
 			default:
@@ -128,11 +205,21 @@ function lineChart(fileName, xLabel, yLabel) {
 
 		}
 
+		var yMin = d3.min(points, function(p) { return d3.min(p.values, function(v) { return v.numb; }); });
+		var yMax = d3.max(points, function(p) { return d3.max(p.values, function(v) { return v.numb; }); });
+
+		var absoluteMin = masterScale.domain()[0];
+		var absoluteMax = masterScale.domain()[1];
+
 		//set yScale domain
-		yScale.domain([
-			d3.min(points, function(p) { return d3.min(p.values, function(v) { return v.numb; }); }),
-			d3.max(points, function(p) { return d3.max(p.values, function(v) { return v.numb; }); })
-		]);
+		yScale.domain([yMin, yMax]);
+
+		//append title
+	    var title = svg.append('text')
+	    	.attr('x', padding.left * 2)
+	    	.attr('y', padding.top / 2)
+	    	.attr('font-size', '15px')
+	    	.text(fileName);
 
 		//create the legend
 		var legend = svg.selectAll('g')
@@ -229,10 +316,17 @@ function lineChart(fileName, xLabel, yLabel) {
 	      	.attr("d", function(d) { return line(d.values); })
 	      	.style("stroke", function(d) { return color(d.name); });
 
-	    svg.call(d3.behavior.zoom().x(xScale).y(yScale).on("zoom", zoom));	
+	    svg.call(d3.behavior.zoom().x(xScale).y(yScale).on("zoom", zoom));
+
+	    if(yMin > absoluteMin || yMax < absoluteMax){
+			yScale.domain([absoluteMin, absoluteMax]);
+			draw();
+		}else{
+			masterScale.domain([yMin, yMax]);
+		}	
 
 	});
-
+	
 	function draw() {
 		svg.select("#xAxis").call(xAxis);
 	  	svg.select("#yAxis").call(yAxis);

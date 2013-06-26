@@ -3,14 +3,16 @@
 		<meta charset="utf-8">
 		<title>Bamcheck ex.1 - IC</title>
 		<script src="http://d3js.org/d3.v3.js"></script>
+		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
 		<link rel="stylesheet" type="text/css" href="myStyle.css">
 		<script src="lineChart.js"></script>
 		<script src="readIC.js"></script>
 	</head>
 	<body>
+		<svg id="aSvg"></svg>
+		<svg id="svg2"></svg>
 		<script>
-			var chart1 = lineChart("7843_2-1_IS_bc.csv", "LineNumber", "Pairs");
-			var chart2 = lineChart("7843_2-1_IC_bc.csv", "Cycle", "Indel");
+			newGraph();
 		</script>
 	</body>
 </html>
