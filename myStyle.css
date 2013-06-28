@@ -9,7 +9,8 @@ body {
   font: 10px sans-serif;
 }
 .axis path,
-.axis line {
+.axis line1,
+.axis line2{
   fill: none;
   stroke: #000;
   shape-rendering: crispEdges;
@@ -17,7 +18,8 @@ body {
 .x.axis path {
   display: none;
 }
-.line {
+.line1,
+.line2 {
   fill: none;
   stroke: steelblue;
   stroke-width: 1.5px;

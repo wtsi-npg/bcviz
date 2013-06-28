@@ -1,4 +1,4 @@
-var points = [];
+var points;
 var color = d3.scale.category10();
 
 function readIC(fileName){
@@ -16,7 +16,7 @@ function readIC(fileName){
 	  	});
 
 		//format data
-		points = color.domain().map(function (name) {
+		this.points = color.domain().map(function (name) {
 			return{
 				name: name,
 				values: csv.map(function(d) {
@@ -25,5 +25,6 @@ function readIC(fileName){
 			};
 		});
 	})
+	alert(points);
 	return points;
 }
