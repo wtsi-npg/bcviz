@@ -122,16 +122,13 @@
 				fwd: ["insertions_fwd","deletions_fwd"],
 				reverse: ["insertions_rev","deletions_rev"]
 			};
-			newGraph();
+			lineChart(points[graphCount][0], '#svg1', keysIC.all);
 			function toggleSplit () {
 				if(split === true){
 					split = false;
 				}else{
 					split = true;
 				}
-			}
-			function newGraph () {
-				lineChart(points[graphCount][0], '#svg1', keysIC.all);
 			}
 			function drawGraph () {
 				$("#svg1").empty();
@@ -145,13 +142,9 @@
 				if(split === true){
 					splitGraphs(points[graphCount][0], '#svg1', keysIC.fwd, keysIC.reverse);
 				}else{
-					newGraph();
+					lineChart(points[graphCount][0], '#svg1', keysIC.all);
 				}
 			}
-			//function splitGraphs () {
-			//	lineChart(points[graphCount][0], '#svg1', keysIC.reverse);
-			//	lineChart(points[graphCount][0], '#svg2', keysIC.fwd);
-			//}
 			$(window).keydown(function (e) {
 				if(e.which == 188){
 					graphCount--
