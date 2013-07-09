@@ -1,10 +1,12 @@
 function indelDist (data, divID) {
     var w = 700;
     var h = 500;
-    var padding = {top: 50, right: 65, bottom: 50, left: 65};
+    var padding = {top: 50, right: 25, bottom: 50, left: 65};
     var xLabel = data[0].xLabel;
     var yLabelLeft = data[0].yLabelLeft;
     var yLabelRight = data[0].yLabelRight;
+
+    var graphKeys = ["insertions", "deletions"];
 
     //Create SVG element
     var svg = d3.select(divID)
@@ -15,14 +17,19 @@ function indelDist (data, divID) {
     var xScale = d3.scale.linear()
              .nice()
              .range([padding.left, w - (padding.right)]);
-    
-    yScaleLeft = d3.scale.log()
+
+    var yScaleLeft = d3.scale.log()
+             .clamp(true)
              .nice()
              .range([h - padding.bottom, padding.top]);
 
-    var yScaleRight = d3.scale.log()
+    /*var yScaleRight = d3.scale.log()
+             .clamp(true)
              .nice()
-             .range([h - padding.bottom, padding.top]);
+             .range([h - padding.bottom, padding.top]);*/
+
+    var color = d3.scale.category10()
+            .domain(graphKeys);
 
     //Define X axis
     var xAxis = d3.svg.axis()
@@ -34,25 +41,23 @@ function indelDist (data, divID) {
     var yAxisLeft = d3.svg.axis()
           .scale(yScaleLeft)
           .orient("left")
-          .ticks(10, function (d) {
-          		return d;
-          });
+          .ticks(10, function (d) {return d;});
 
-    var yAxisRight = d3.svg.axis()
+    /*var yAxisRight = d3.svg.axis()
           .scale(yScaleRight)
           .orient("right")
           .ticks(10, function (d) {
-          	return d;
-          });
+            return (d).toFixed(1);
+          });*/
 
-    function make_x_grid() {        
+    function make_x_grid() {
         return d3.svg.axis()
                 .scale(xScale)
                 .orient("bottom")
                 .ticks(10);
     }
 
-    function make_y_grid() {        
+    function make_y_grid() {
         return d3.svg.axis()
                 .scale(yScaleLeft)
                 .orient("left")
@@ -75,16 +80,72 @@ function indelDist (data, divID) {
        .attr("height", h)
        .attr("fill", "#F2F2F2");
 
-    var xMin = 0;
-    var xMax = data[2].values.length;
+    var points = [];
+
+    for(var i in data){
+        if ($.inArray(data[i].name, graphKeys) !== -1){
+            points.push(data[i]);
+        }
+
+    }
+    /*
+    var ratioData = [{name: "ratio", values: []}];
+
+    for (var i = 0; i < data[1].values.length; i++) {
+        ratioData[0].values.push({xVar: data[1].values[i].xVar, yVar: (data[1].values[i].yVar / data[2].values[i].yVar)})
+    };
+
+    var rMin = .1;
+    var rMax = 10;
+    */
+
+    var xMin = 1;
+    var xMax = d3.max(points, function (d) { return d3.max(d.values, function (v) { return v.xVar; });});
 
     var yMin = 0.1;
-    var yMax = 1000000;
+    var yMax = d3.max(points, function (d) { return d3.max(d.values, function (v) { return v.yVar; });});
 
     xScale.domain([xMin, xMax]);
 
     //set yScale domain
     yScaleLeft.domain([yMin,yMax]);
+
+    //yScaleRight.domain([rMin, rMax]);
+
+    var legend = svg.selectAll('g')
+        .data(graphKeys).enter()
+        .append('g')
+        .attr('class', 'legend');
+
+    //draw colours in legend    
+    legend.append('rect')
+            .attr('x', function(d, i){ if(i <= 1){
+                                         return w - (padding.right * 3 + 15);
+                                      }else{
+                                          return w - (padding.right * 3 * 3 + 15);
+                                      }})
+             .attr('y', function(d, i){ if(i <= 1){
+                                          return i *  20;
+                                      }else{
+                                          return ((i - 2) * 20);
+                                      }})
+             .attr('width', 10)
+             .attr('height', 10)
+             .style('fill', function(d) {return color(d);});
+
+    //draw text in legend
+    legend.append('text')
+          .attr('x', function(d, i){ if(i <= 1){
+                                          return w - padding.right * 3;
+                                      }else{
+                                          return w - (padding.right * 3) * 3;
+                                      }})
+          .attr('y', function(d, i){ if(i <= 1){
+                                          return (i * 20) + 9;
+                                      }else{
+                                          return ((i - 2) * 20) + 9;
+                                      }})
+          .text(function(d){ return d;});
 
     //Create X axis
     svg.append("g")
@@ -112,6 +173,7 @@ function indelDist (data, divID) {
        .style("text-anchor", "end")
        .text(yLabelLeft);
 
+    /*
     //Create Y axis
     svg.append("g")
        .attr("class", "axis")
@@ -124,9 +186,10 @@ function indelDist (data, divID) {
        .attr("style", "font-size: 12; font-family: Helvetica, sans-serif")
        .style("text-anchor", "end")
        .text(yLabelRight);
+    */
 
     //make x grid
-    svg.append("g")         
+    svg.append("g")
        .attr("class", "grid")
        .attr("id", "xGrid")
        .attr("transform", "translate(0," + (h - padding.bottom) + ")")
@@ -136,7 +199,7 @@ function indelDist (data, divID) {
        );
 
     //make y grid
-    svg.append("g")         
+    svg.append("g")
        .attr("class", "grid")
        .attr("id", "yGrid")
        .attr("transform", "translate(" + padding.left + ",0)")
@@ -144,5 +207,47 @@ function indelDist (data, divID) {
             .tickSize(-w+(padding.left + padding.right), 0,0)
             .tickFormat("")
        );
+
+    var line = d3.svg.line()
+        .interpolate("basis")
+        .x(function (d) {return xScale(d.xVar);})
+        .y(function (d) {return yScaleLeft(d.yVar);});
+
+    /*
+    var ratioLine = d3.svg.line()
+        .interpolate("basis")
+        .x(function (d) {return xScale(d.xVar);})
+        .y(function (d) {return yScaleRight(d.yVar);});
+        */
+
+    //create graphs for the different data
+    var aValue = svg.selectAll(".points")
+        .data(points)
+        .enter().append("g")
+        .attr("id", "graphs")
+        .attr("clip-path", "url(#chart-area)");
+
+    //draw lines in graphs
+    aValue.append("path")
+          .attr("class", "line1")
+          .attr("d", function(d) { return line(d.values); })
+          .style("stroke", function(d) { return color(d.name); });
+
+    /****
+
+    //create graphs for the different data
+    var ratio = svg.selectAll("g.ratioData")
+        .data(ratioData)
+        .enter().append("g")
+        .attr("id", "graphs")
+        .attr("clip-path", "url(#chart-area)");
+
+    //draw lines in graphs
+    ratio.append("path")
+          .attr("class", "line2")
+          .attr("d", function(d) { return ratioLine(d.values); })
+          .style("stroke", function(d) { return color(d.name); });
+
+    */
 
 }

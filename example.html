@@ -6,110 +6,43 @@
 		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
 		<link rel="stylesheet" type="text/css" href="myStyle.css">
 		<script src="lineChart.js"></script>
-		<script src="readIC.js"></script>
+		<script src="qualityChart.js"></script>
+		<script src="rainbowvis.js"></script>
+		<script src="indelDist.js"></script>
+		<script src="coverage.js"></script>
+		<script src="GCDepth.js"></script>
+		<script src="readBCfile.js"></script>
 	</head>
 	<body>
 		<svg id="svg1"></svg>
 		<svg id="svg2"></svg>
 		<script>
-			function readFile(fileName)
-			{
-				var contentsOfFileAsString = FileHelper.readStringFromFileAtPath(fileName);
-				return d3.tsv.parseRows(contentsOfFileAsString);
-			}
-
-			function FileHelper()
-			{}
-			{
-				FileHelper.readStringFromFileAtPath = function(fileName)
-				{
-					var request = new XMLHttpRequest();
-					request.open("GET", fileName, false);
-					request.send(null);
-					var returnValue = request.responseText;
-
-					return returnValue;
+			/*var mousewheelevt=(/Firefox/i.test(navigator.userAgent))? "DOMMouseScroll" : "mousewheel"
+			svg1.addEventListener(mousewheelevt, zoom, false)
+			var xMin = 0, xMax = 74;
+			var yMin = 22.5, yMax = 27.5;
+			function zoom (e) {
+				if (e.preventDefault){
+					e.preventDefault()
 				}
-			}
-			function formatData (fileString) {
-				var formattedData = [
-					[
-						{xLabel: "Cycle",
-						yLabel: "Indel"},
-						{
-							name: "insertions_fwd",
-							values: [
-								
-							]
-						},
-						{
-							name: "deletions_fwd",
-							values: [
-								
-							]
-						},
-						{
-							name: "insertions_rev",
-							values: [
-								
-							]
-						},
-						{
-							name: "deletions_rev",
-							values: [
-								
-							]
-						}
-					],
-					[
-						{xLabel: "Line Number",
-						yLabel: "Pairs"},
-						{
-							name: "totalPairs",
-							values: [
-								
-							]
-						},
-						{
-							name: "inwardPairs",
-							values: [
-								
-							]
-						},
-						{
-							name: "outwardPairs",
-							values: [
-								
-							]
-						},
-						{
-							name: "otherPairs",
-							values: [
-								
-							]
-						}
-					]
-				]
-				for (var i = 0; i < fileString.length; i++) {
-					switch (fileString[i][0]){
-						case "IC":
-							formattedData[0][1].values.push({xVar: +fileString[i][1],yVar:+fileString[i][2]});
-							formattedData[0][3].values.push({xVar: +fileString[i][1],yVar:+fileString[i][3]});
-							formattedData[0][2].values.push({xVar: +fileString[i][1],yVar:+fileString[i][4]});
-							formattedData[0][4].values.push({xVar: +fileString[i][1],yVar:+fileString[i][5]});
-							break;
-						case "IS":
-							formattedData[1][1].values.push({xVar: +fileString[i][1],yVar:+fileString[i][2]});
-							formattedData[1][2].values.push({xVar: +fileString[i][1],yVar:+fileString[i][3]});
-							formattedData[1][3].values.push({xVar: +fileString[i][1],yVar:+fileString[i][4]});
-							formattedData[1][4].values.push({xVar: +fileString[i][1],yVar:+fileString[i][5]});
-							break;
-					}
-
-
-				};
-				return formattedData;
-			}
+				if (e.wheelDelta > 0){
+					xMin += 5;
+					xMax -= 5;
+					yMin += 0.5;
+					yMax -= 0.5;
+					aChart.x.domain([xMin, xMax]);
+					aChart.y.domain([yMin, yMax]);
+					aChart.draw();
+				}else{
+					xMin -= 5;
+					xMax += 5;
+					yMin -= 0.5;
+					yMax += 0.5;
+					aChart.x.domain([xMin, xMax]);
+					aChart.y.domain([yMin, yMax]);
+					aChart.draw();
+				}
+			}*/
 			var graphCount = 0;
 			var split = false;
 			var points = [];
@@ -122,7 +55,13 @@
 				fwd: ["insertions_fwd","deletions_fwd"],
 				reverse: ["insertions_rev","deletions_rev"]
 			};
-			lineChart(points[graphCount][0], '#svg1', keysIC.all);
+			var keysGC = ["First_Fragments", "Last_Fragments"];
+			var keysGCC = ["A", "C", "G", "T"];
+			//qualityChart(points[graphCount][2],'#svg2');
+			//qualityChart(points[graphCount][3], '#svg1');
+			var aChart = new lineChart(points[graphCount][5], '#svg1', keysGCC);
+			//indelDist(points[graphCount][6], '#svg1');
+			//gcDepth(points[graphCount][8], '#svg1');
 			function toggleSplit () {
 				if(split === true){
 					split = false;
@@ -142,23 +81,27 @@
 				if(split === true){
 					splitGraphs(points[graphCount][0], '#svg1', keysIC.fwd, keysIC.reverse);
 				}else{
-					lineChart(points[graphCount][0], '#svg1', keysIC.all);
+					coverage(points[graphCount][7], '#svg1');
 				}
 			}
 			$(window).keydown(function (e) {
-				if(e.which == 188){
-					graphCount--
+				if(e.which === 188){
+					graphCount--;
 					drawGraph();
 				}
-				if(e.which == 190){
-					graphCount++
+				if(e.which === 190){
+					graphCount++;
 					drawGraph();
 				}
-				if(e.which == 13){
+				if(e.which === 13){
 					toggleSplit();
 					drawGraph();
 				}
 			})
+			function changeAxis () {
+				aChart.x.domain([4, 14]);
+				aChart.draw();
+			}
 		</script>
 	</body>
 </html>
