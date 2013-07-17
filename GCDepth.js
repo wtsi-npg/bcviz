@@ -1,7 +1,14 @@
-
-function gcDepth (data, divID) {
-  var w = 700;
-  var h = 500;
+function gcDepth (data, divID, title) {
+    if(data && data[8][1].values.length !== 0){
+      return new gcDepthGraph(data[8], divID, title, keysIC.all);
+    }else{
+      window.console.log('data does not exist; chart not created.');
+      return null;
+    }
+}
+function gcDepthGraph (data, divID, title) {
+  var w = 350;
+  var h = 250;
   var padding = {top: 75, right: 25, bottom: 50, left: 65};
   var xLabel = data[0].xLabel;
   var yLabel = data[0].yLabel;
@@ -15,7 +22,7 @@ function gcDepth (data, divID) {
   }
 
   //Create SVG element
-  var svg = d3.select(divID)
+  var svg = d3.select('body').append('svg')
     .attr("width", w)
     .attr("height", h);
 
@@ -186,6 +193,13 @@ function gcDepth (data, divID) {
                    }})
      .text(function(d){ return d.name;});
 
+  //append title
+  svg.append('text')
+    .attr('x', padding.left)
+    .attr('y', padding.top / 2)
+    .attr('font-size', h/25 + 'px')
+    .text(title);
+
   //Create X axis
   svg.append("g")
     .attr("class", "axis")
@@ -245,24 +259,27 @@ function gcDepth (data, divID) {
     .y0(function(d,i) { return yScale(d.yVar0); })
     .y1(function(d,i) { return yScale(d.yVar); });
 
+  //draw the first area
   svg.selectAll(".layers0")
     .data(layers0)
     .enter().append("path")
     .attr("d",function (d) { return area(d.values); })
     .style("fill", function(d) { return color(d.name); });
 
+  //draw the second area
   svg.selectAll(".layers1")
     .data(layers1)
     .enter().append("path")
     .attr("d",function (d) { return area(d.values); })
     .style("fill", function(d) { return color(d.name); });
 
+  //line generator
   var line = d3.svg.line()
-    .interpolate("basis")
+    .interpolate("linear")
     .x(function (d) {return xScale(d.xVar);})
     .y(function (d) {return yScale(d.yVar);});
 
-  //create graphs for the different data
+  //create graphs for the median data
   var aValue = svg.selectAll(".median")
     .data(median)
     .enter().append("g")

@@ -6,7 +6,7 @@ function qualityChart (data, divID) {
     var yLabel = data[0].yLabel;
 
     //Create SVG element
-    var svg = d3.select(divID)
+    var svg = d3.select('body').append('svg')
         .attr("width", w)
         .attr("height", h);
 
@@ -21,8 +21,6 @@ function qualityChart (data, divID) {
     rainbow.setNumberRange(1, 100);
     rainbow.setSpectrum('lime', 'blue', 'yellow', 'red', 'black');
 
-
-
     //create scale functions
     var xScale = d3.scale.linear()
              .nice()
@@ -30,7 +28,7 @@ function qualityChart (data, divID) {
              .domain([xMin,xMax - 1]);
 
     var yScale = d3.scale.linear()
-               .nice()
+             .nice()
              .range([h - padding.bottom, padding.top])
              .domain([0, 50]);
 

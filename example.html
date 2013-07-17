@@ -5,7 +5,7 @@
 		<script src="http://d3js.org/d3.v3.js"></script>
 		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
 		<link rel="stylesheet" type="text/css" href="myStyle.css">
-		<script src="lineChart.js"></script>
+		<script src="dotPlot.js"></script>
 		<script src="qualityChart.js"></script>
 		<script src="rainbowvis.js"></script>
 		<script src="indelDist.js"></script>
@@ -14,8 +14,7 @@
 		<script src="readBCfile.js"></script>
 	</head>
 	<body>
-		<svg id="svg1"></svg>
-		<svg id="svg2"></svg>
+
 		<script>
 			/*var mousewheelevt=(/Firefox/i.test(navigator.userAgent))? "DOMMouseScroll" : "mousewheel"
 			svg1.addEventListener(mousewheelevt, zoom, false)
@@ -46,22 +45,30 @@
 			var graphCount = 0;
 			var split = false;
 			var points = [];
-			points.push(formatData(readFile("7843_2-1.bc")));
+			var x = (formatData(readFile("7843_2-1.bc")));
 			points.push(formatData(readFile("7843_2-2.bc")));
 			points.push(formatData(readFile("7843_2-3.bc")));
 			points.push(formatData(readFile("7843_2-4.bc")));
-			var keysIC = {
-				all: ["insertions_fwd","deletions_fwd","insertions_rev","deletions_rev"],
-				fwd: ["insertions_fwd","deletions_fwd"],
-				reverse: ["insertions_rev","deletions_rev"]
-			};
-			var keysGC = ["First_Fragments", "Last_Fragments"];
-			var keysGCC = ["A", "C", "G", "T"];
-			//qualityChart(points[graphCount][2],'#svg2');
-			//qualityChart(points[graphCount][3], '#svg1');
-			var aChart = new lineChart(points[graphCount][5], '#svg1', keysGCC);
-			//indelDist(points[graphCount][6], '#svg1');
-			//gcDepth(points[graphCount][8], '#svg1');
+			/*
+			qualityChart(points[graphCount][2],'#svg1');
+			qualityChart(points[graphCount][3], '#svg2');
+			var aChart1 = icChart(points[graphCount], '#svg3');
+			var aChart2 = isChart(points[graphCount], '#svg4');
+			var aChart3 = gcChart(points[graphCount], '#svg5');
+			var aChart4 = gccChart(points[graphCount], '#svg6');
+			indelDist(points[graphCount][6], '#svg7');
+			gcDepth(points[graphCount][8], '#svg8');
+			coverage(points[graphCount][7], '#svg9');*/
+			for (var i = 0; i <= 0; i++) {
+				//qualityChart(points[graphCount][2],'#svg1');
+				splitICchart(x, '#svg3');
+				//isChart(x, '#svg4');
+				//gcChart(x, '#svg5');
+				//gccChart(x, '#svg6');
+				//indelDist(x[6], '#svg7');
+				//gcDepth(x[8], '#svg8');
+				//coverage(x[7], '#svg9');
+			}
 			function toggleSplit () {
 				if(split === true){
 					split = false;

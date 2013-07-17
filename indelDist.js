@@ -1,6 +1,14 @@
-function indelDist (data, divID) {
-    var w = 700;
-    var h = 500;
+function indelDist (data, divID, title) {
+    if(data && data[6][1].values.length !== 0){
+      return new indelDistGraph(data[6], divID, title);
+    }else{
+      window.console.log('data does not exist; chart not created.');
+      return null;
+    }
+}
+function indelDistGraph (data, divID, title) {
+    var w = 350;
+    var h = 250;
     var padding = {top: 50, right: 25, bottom: 50, left: 65};
     var xLabel = data[0].xLabel;
     var yLabelLeft = data[0].yLabelLeft;
@@ -9,7 +17,7 @@ function indelDist (data, divID) {
     var graphKeys = ["insertions", "deletions"];
 
     //Create SVG element
-    var svg = d3.select(divID)
+    var svg = d3.select('body').append('svg')
         .attr("width", w)
         .attr("height", h);
 
@@ -112,6 +120,13 @@ function indelDist (data, divID) {
 
     //yScaleRight.domain([rMin, rMax]);
 
+    //append title
+    svg.append('text')
+        .attr('x', padding.left)
+        .attr('y', padding.top / 2)
+        .attr('font-size', h/25 + 'px')
+        .text(title);
+
     var legend = svg.selectAll('g')
         .data(graphKeys).enter()
         .append('g')
@@ -209,7 +224,7 @@ function indelDist (data, divID) {
        );
 
     var line = d3.svg.line()
-        .interpolate("basis")
+        .interpolate("linear")
         .x(function (d) {return xScale(d.xVar);})
         .y(function (d) {return yScaleLeft(d.yVar);});
 
@@ -232,6 +247,23 @@ function indelDist (data, divID) {
           .attr("class", "line1")
           .attr("d", function(d) { return line(d.values); })
           .style("stroke", function(d) { return color(d.name); });
+
+    //draw lines in graphs
+    aValue.selectAll("circle")
+          .data(function (d) { return d.values; }).enter()
+          .append("circle")
+          .attr("class", "circles")
+          .attr("cx", function(d) { return xScale(d.xVar); })
+          .attr("cy", function(d) { return yScaleLeft(d.yVar); })
+          .attr("r", 2 )
+          .attr("fill", function(d) { return color(d.name); });
+
+    function cx (d) {
+      return xScale(d);
+    }
+    function cy (d) {
+      return yScaleLeft(d);
+    }
 
     /****
 

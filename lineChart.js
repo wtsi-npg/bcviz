@@ -1,12 +1,40 @@
-function lineChart(data, divID, graphKeys) {
-    var w = 700;
-    var h = 500;
+var keysIC = {
+        all: ["insertions_fwd","deletions_fwd","insertions_rev","deletions_rev"],
+        fwd: ["insertions_fwd","deletions_fwd"],
+        reverse: ["insertions_rev","deletions_rev"]
+      };
+var keysIS = ["totalPairs", "inwardPairs", "outwardPairs", "otherPairs"];
+var keysGC = ["First_Fragments", "Last_Fragments"];
+var keysGCC = ["A", "C", "G", "T"];
+function icChart (data, divID, title) {
+    if(data[0][1].values.length !== 0){
+      return new lineChart(data[0], divID, title, keysIC.all);
+    }
+}
+function isChart (data, divID, title) {
+    if(data[1][1].values.length !== 0){
+      return new lineChart(data[1], divID, title, keysIS);
+    }
+}
+function gcChart (data, divID, title) {
+    if(data[4][1].values.length !== 0){
+      return new lineChart(data[4], divID, title, keysGC);
+    }
+}
+function gccChart (data, divID, title) {
+    if(data[5][1].values.length !== 0){
+      return new lineChart(data[5], divID, title, keysGCC);
+    }
+}
+function lineChart(data, divID, title, graphKeys) {
+    var w = 350;
+    var h = 250;
     var padding = {top: 50, right: 25, bottom: 50, left: 65};
     var xLabel = data[0].xLabel;
     var yLabel = data[0].yLabel;
 
     //Create SVG element
-    var svg = d3.select(divID)
+    var svg = d3.select('body').append('svg')
         .attr("width", w)
         .attr("height", h);
 
@@ -21,24 +49,24 @@ function lineChart(data, divID, graphKeys) {
                .nice()
              .range([h - padding.bottom, padding.top]);
 
-    yScale = this.y;
+    var yScale = this.y;
 
     //Define X axis
     var xAxis = d3.svg.axis()
           .scale(xScale)
           .orient("bottom")
-          .ticks(10);
+          .ticks(5);
 
     //define Y axis
     var yAxis = d3.svg.axis()
           .scale(yScale)
           .orient("left")
-          .ticks(10);
+          .ticks(5);
 
     var color = d3.scale.category10();
 
     var line = d3.svg.line()
-        .interpolate("basis")
+        .interpolate("linear")
         .x(function (d) {return xScale(d.xVar);})
         .y(function (d) {return yScale(d.yVar);});
 
@@ -46,14 +74,14 @@ function lineChart(data, divID, graphKeys) {
         return d3.svg.axis()
                 .scale(xScale)
                 .orient("bottom")
-                .ticks(10);
+                .ticks(5);
     }
 
     function make_y_grid() {
         return d3.svg.axis()
                 .scale(yScale)
                 .orient("left")
-                .ticks(10);
+                .ticks(5);
     }
 
     svg.append("clipPath")
@@ -96,17 +124,10 @@ function lineChart(data, divID, graphKeys) {
     //set yScale domain
     yScale.domain([yMin,yMax]);
 
-    //append title
-    //var title = svg.append('text')
-    //    .attr('x', padding.left * 2)
-    //    .attr('y', padding.top / 2)
-    //    .attr('font-size', '15px')
-    //    .text(fileName);
-
     //create the legend
     var legend = svg.selectAll('g')
         .data(points).enter()
-          .append('g')
+        .append('g')
         .attr('class', 'legend');
 
     //draw colours in legend    
@@ -139,10 +160,17 @@ function lineChart(data, divID, graphKeys) {
                                       }})
           .text(function(d){ return d.name; });
 
+    //append title
+    svg.append('text')
+        .attr('x', padding.left)
+        .attr('y', padding.top / 2)
+        .attr('font-size', h/25 + 'px')
+        .text(title);
+
     //Create X axis
     svg.append("g")
        .attr("class", "axis")
-       .attr("id", "xAxis")
+       .attr("id","xAxis")
        .attr("transform", "translate(0," + (h-padding.bottom) + ")")
        .call(xAxis)
       .append("text")
@@ -155,7 +183,7 @@ function lineChart(data, divID, graphKeys) {
     //Create Y axis
     svg.append("g")
        .attr("class", "axis")
-       .attr("id", "yAxis")
+       .attr("id","yAxis")
        .attr("transform", "translate(" + padding.left + ", 0)")
        .call(yAxis)
       .append("text")
@@ -168,7 +196,7 @@ function lineChart(data, divID, graphKeys) {
     //make x grid
     svg.append("g")
        .attr("class", "grid")
-       .attr("id", "xGrid")
+       .attr("id","xGrid")
        .attr("transform", "translate(0," + (h - padding.bottom) + ")")
        .call(make_x_grid()
                .tickSize(-h+(padding.top + padding.bottom), 0, 0)
@@ -178,7 +206,7 @@ function lineChart(data, divID, graphKeys) {
     //make y grid
     svg.append("g")
        .attr("class", "grid")
-       .attr("id", "yGrid")
+       .attr("id","yGrid")
        .attr("transform", "translate(" + padding.left + ",0)")
        .call(make_y_grid()
             .tickSize(-w+(padding.left + padding.right), 0,0)
@@ -202,10 +230,10 @@ function lineChart(data, divID, graphKeys) {
 
     function zoom() {
         svg.select("#xAxis").call(xAxis);
-          svg.select("#yAxis").call(yAxis);
-          svg.select("#xGrid").call(make_x_grid().tickSize(-h+(padding.top + padding.bottom), 0, 0).tickFormat(""));
-          svg.select("#yGrid").call(make_y_grid().tickSize(-w+(padding.left + padding.right), 0,0).tickFormat(""));
-        svg.selectAll("path.line1").attr("d", function (d) {
+        svg.select("#yAxis").call(yAxis);
+        svg.select("#xGrid").call(make_x_grid().tickSize(-h+(padding.top + padding.bottom), 0, 0).tickFormat(""));
+        svg.select("#yGrid").call(make_y_grid().tickSize(-w+(padding.left + padding.right), 0,0).tickFormat(""));
+        svg.selectAll(".line1").attr("d", function (d) {
             return line(d.values);
         });
     }
