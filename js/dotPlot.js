@@ -6,9 +6,13 @@ var keysIC = {
 var keysIS = ["totalPairs", "inwardPairs", "outwardPairs", "otherPairs"];
 var keysGC = ["First_Fragments", "Last_Fragments"];
 var keysGCC = ["A", "C", "G", "T"];
-function icChart (data, divID, title) {
+function icChart (data, divID, title, width, height) {
     if(data && data[0] && data[0][1] && data[0][1].values && data[0][1].values.length !== 0){
-      return new lineChart(data[0], divID, title, keysIC.all);
+      if(width && height){
+        return new lineChart(data[0], divID, title, keysIC.all, width, height);
+      }else{
+        return new lineChart(data[0], divID, title, keysIC.all);
+      }
     }else{
       window.console.log('data does not exist; chart not created.');
       return null;
@@ -54,9 +58,13 @@ function gccChart (data, divID, title) {
       return null;
     }
 }
-function lineChart(data, divID, title, graphKeys) {
+function lineChart(data, divID, title, graphKeys, width, height) {
     var w = 350;
     var h = 250;
+    if(width && height){
+      w = width;
+      h = height;
+    }
     var padding = {top: 50, right: 25, bottom: 50, left: 65};
     var xLabel = data[0].xLabel;
     var yLabel = data[0].yLabel;
@@ -118,8 +126,8 @@ function lineChart(data, divID, title, graphKeys) {
        .append("rect")
        .attr("x", padding.left)
        .attr("y", padding.top)
-       .attr("width", w - (padding.right + padding.left))
-       .attr("height", h - (padding.top + padding.bottom));
+       .attr("width", (w - padding.right))
+       .attr("height", (h - padding.bottom));
 
     //background colour
     svg.append("rect")
