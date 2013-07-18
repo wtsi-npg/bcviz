@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Bamcheck demo</title>
+        <script type="text/javascript" src="http://d3js.org/d3.v3.js"></script>
+        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+        <link rel="stylesheet" type="text/css" href="/css/myStyle.css">
+        <script type="text/javascript" src="/js/dotPlot.js"></script>
+        <script type="text/javascript" src="/js/qualityChart.js"></script>
+        <script type="text/javascript" src="/js/rainbowvis.js"></script>
+        <script type="text/javascript" src="/js/indelDist.js"></script>
+        <script type="text/javascript" src="/js/coverage.js"></script>
+        <script type="text/javascript" src="/js/GCDepth.js"></script>
+        <script type="text/javascript" src="/js/readBCfile.js"></script>
+    </head>
+	<body>
+
+		<script>
+			/*var mousewheelevt=(/Firefox/i.test(navigator.userAgent))? "DOMMouseScroll" : "mousewheel"
+			svg1.addEventListener(mousewheelevt, zoom, false)
+			var xMin = 0, xMax = 74;
+			var yMin = 22.5, yMax = 27.5;
+			function zoom (e) {
+				if (e.preventDefault){
+					e.preventDefault()
+				}
+				if (e.wheelDelta > 0){
+					xMin += 5;
+					xMax -= 5;
+					yMin += 0.5;
+					yMax -= 0.5;
+					aChart.x.domain([xMin, xMax]);
+					aChart.y.domain([yMin, yMax]);
+					aChart.draw();
+				}else{
+					xMin -= 5;
+					xMax += 5;
+					yMin -= 0.5;
+					yMax += 0.5;
+					aChart.x.domain([xMin, xMax]);
+					aChart.y.domain([yMin, yMax]);
+					aChart.draw();
+				}
+			}*/
+			var graphCount = 0;
+			var split = false;
+			var points = [];
+			points.push(formatData(readFile("sample_1.bc")));
+			points.push(formatData(readFile("sample_2.bc")));
+			points.push(formatData(readFile("sample_3.bc")));
+			points.push(formatData(readFile("sample_4.bc")));
+			/*
+			qualityChart(points[graphCount][2],'#svg1');
+			qualityChart(points[graphCount][3], '#svg2');
+			var aChart1 = icChart(points[graphCount], '#svg3');
+			var aChart2 = isChart(points[graphCount], '#svg4');
+			var aChart3 = gcChart(points[graphCount], '#svg5');
+			var aChart4 = gccChart(points[graphCount], '#svg6');
+			indelDist(points[graphCount][6], '#svg7');
+			gcDepth(points[graphCount][8], '#svg8');
+			coverage(points[graphCount][7], '#svg9');*/
+			for (var i = 0; i <= points.length - 1; i++) {
+				//qualityChart(points[graphCount][2],'#svg1');
+				splitICchart(points[i], '#svg3');
+				//isChart(points[i], '#svg4');
+				//gcChart(points[i], '#svg5');
+				//gccChart(points[i], '#svg6');
+				//indelDist(points[i], '#svg7');
+				//gcDepth(points[i], '#svg8');
+				//coverage(points[i], '#svg9');
+			}
+			function toggleSplit () {
+				if(split === true){
+					split = false;
+				}else{
+					split = true;
+				}
+			}
+			function drawGraph () {
+				$("#svg1").empty();
+				$("#svg2").empty();
+				if(graphCount >= points.length){
+					graphCount = 0;
+				}
+				if(graphCount < 0){
+					graphCount = points.length - 1;
+				}
+				if(split === true){
+					splitGraphs(points[graphCount][0], '#svg1', keysIC.fwd, keysIC.reverse);
+				}else{
+					coverage(points[graphCount][7], '#svg1');
+				}
+			}
+			$(window).keydown(function (e) {
+				if(e.which === 188){
+					graphCount--;
+					drawGraph();
+				}
+				if(e.which === 190){
+					graphCount++;
+					drawGraph();
+				}
+				if(e.which === 13){
+					toggleSplit();
+					drawGraph();
+				}
+			})
+			function changeAxis () {
+				aChart.x.domain([4, 14]);
+				aChart.draw();
+			}
+		</script>
+	</body>
+</html>
