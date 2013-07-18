@@ -19,12 +19,10 @@ function splitICchart (data, divID, title) {
       var returnValue = [new lineChart(data[0], divID, title, keysIC.fwd), new lineChart(data[0], divID, title, keysIC.reverse)];
       if(returnValue[0].y.domain()[1] < returnValue[1].y.domain()[1]){
         returnValue[0].y.domain(returnValue[1].y.domain());
-        returnValue[0].draw();
-        returnValue[1].draw();
+        returnValue[0].resetDomain();
       }else if(returnValue[0].y.domain()[1] > returnValue[1].y.domain()[1]){
         returnValue[1].y.domain(returnValue[0].y.domain());
-        returnValue[0].draw();
-        returnValue[1].draw();
+        returnValue[1].resetDomain();
       }
       return returnValue;
     }else{
@@ -283,6 +281,7 @@ function lineChart(data, divID, title, graphKeys) {
       return yScale(d);
     }
 
+    //create a new zoom behavior
     var zoomer = d3.behavior.zoom().x(xScale).y(yScale).scaleExtent([1,50]).on("zoom", zoom);
 
     svg.call(zoomer);
@@ -306,12 +305,17 @@ function lineChart(data, divID, title, graphKeys) {
         });
     }
 
-    this.draw = function () {
+    this.resetDomain = function () {
+      //set min and max values for the new scales
+      yMin = yScale.domain()[0];
       yMax = yScale.domain()[1];
+      //set zoomer to the new scales
       zoomer = d3.behavior.zoom().x(xScale).y(yScale).scaleExtent([1,10]).on("zoom", zoom);
       svg.call(zoomer);
       zoom();
     };
+
+    this.draw = zoom();
 
 
 }

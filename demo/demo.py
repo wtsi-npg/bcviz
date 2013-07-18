@@ -30,13 +30,13 @@ htmlFile.write("""<!DOCTYPE html>
         <script type="text/javascript" src="http://d3js.org/d3.v3.js"></script>
         <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
         <link rel="stylesheet" type="text/css" href="/css/myStyle.css">
-        <script type="text/javascript" src="/js/dotPlot.js"></script>
-        <script type="text/javascript" src="/js/qualityChart.js"></script>
-        <script type="text/javascript" src="/js/rainbowvis.js"></script>
-        <script type="text/javascript" src="/js/indelDist.js"></script>
-        <script type="text/javascript" src="/js/coverage.js"></script>
-        <script type="text/javascript" src="/js/GCDepth.js"></script>
-        <script type="text/javascript" src="/js/readBCfile.js"></script>
+        <script type="text/javascript" src="js/dotPlot.js"></script>
+        <script type="text/javascript" src="js/qualityChart.js"></script>
+        <script type="text/javascript" src="js/rainbowvis.js"></script>
+        <script type="text/javascript" src="js/indelDist.js"></script>
+        <script type="text/javascript" src="js/coverage.js"></script>
+        <script type="text/javascript" src="js/GCDepth.js"></script>
+        <script type="text/javascript" src="js/readBCfile.js"></script>
     </head>
     <body>
         <script>
