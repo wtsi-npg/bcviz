@@ -46,10 +46,10 @@
 			var graphCount = 0;
 			var split = false;
 			var points = [];
-			var x = (formatData(readFile("7843_2-1.bc")));
-			points.push(formatData(readFile("7843_2-2.bc")));
-			points.push(formatData(readFile("7843_2-3.bc")));
-			points.push(formatData(readFile("7843_2-4.bc")));
+			points.push(formatData(readFile("sample_1.bc")));
+			points.push(formatData(readFile("sample_2.bc")));
+			points.push(formatData(readFile("sample_3.bc")));
+			points.push(formatData(readFile("sample_4.bc")));
 			/*
 			qualityChart(points[graphCount][2],'#svg1');
 			qualityChart(points[graphCount][3], '#svg2');
@@ -60,15 +60,15 @@
 			indelDist(points[graphCount][6], '#svg7');
 			gcDepth(points[graphCount][8], '#svg8');
 			coverage(points[graphCount][7], '#svg9');*/
-			for (var i = 0; i <= 0; i++) {
+			for (var i = 0; i <= points.length - 1; i++) {
 				//qualityChart(points[graphCount][2],'#svg1');
-				splitICchart(x, '#svg3');
-				//isChart(x, '#svg4');
-				//gcChart(x, '#svg5');
-				//gccChart(x, '#svg6');
-				//indelDist(x[6], '#svg7');
-				//gcDepth(x[8], '#svg8');
-				//coverage(x[7], '#svg9');
+				splitICchart(points[i], '#svg3');
+				//isChart(points[i], '#svg4');
+				//gcChart(points[i], '#svg5');
+				//gccChart(points[i], '#svg6');
+				//indelDist(points[i], '#svg7');
+				//gcDepth(points[i], '#svg8');
+				//coverage(points[i], '#svg9');
 			}
 			function toggleSplit () {
 				if(split === true){

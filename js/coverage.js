@@ -1,5 +1,5 @@
 function coverage (data, divID, title) {
-    if(data && data[7][1].values.length !== 0){
+    if(data && data[7] && data[7][1] && data[7][1].values && data[7][1].values.length !== 0){
       return new coverageGraph(data[7], divID, title);
     }else{
       window.console.log('data does not exist; chart not created.');
@@ -109,7 +109,7 @@ function coverageGraph (data, divID, title) {
       .append("text")
        .attr("dy", ".71em")
        .attr("text-anchor", "middle")
-       .attr("transform", "translate(" + (w / 2 - padding.left) + "," + padding.bottom / 2 + ")")
+       .attr("transform", "translate(" + (w / 2) + "," + padding.bottom / 2 + ")")
        .attr("style", "font-size: 12; font-family: Helvetica, sans-serif")
        .text(xLabel);
 
@@ -123,7 +123,7 @@ function coverageGraph (data, divID, title) {
        .attr("dy", -padding.left/1.5)
        .attr("transform", "translate(0," + h/2 + ")rotate(-90)")
        .attr("style", "font-size: 12; font-family: Helvetica, sans-serif")
-       .style("text-anchor", "end")
+       .style("text-anchor", "middle")
        .text(yLabel);
 
     //make x grid

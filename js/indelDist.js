@@ -1,5 +1,5 @@
 function indelDist (data, divID, title) {
-    if(data && data[6][1].values.length !== 0){
+    if(data && data[6] && data[6][1] && data[6][1].values && data[6][1].values.length !== 0){
       return new indelDistGraph(data[6], divID, title);
     }else{
       window.console.log('data does not exist; chart not created.');
@@ -171,7 +171,7 @@ function indelDistGraph (data, divID, title) {
       .append("text")
        .attr("dy", ".71em")
        .attr("text-anchor", "middle")
-       .attr("transform", "translate(" + (w / 2 - padding.left) + "," + padding.bottom / 2 + ")")
+       .attr("transform", "translate(" + (w / 2) + "," + padding.bottom / 2 + ")")
        .attr("style", "font-size: 12; font-family: Helvetica, sans-serif")
        .text(xLabel);
 
@@ -185,7 +185,7 @@ function indelDistGraph (data, divID, title) {
        .attr("dy", -padding.left/1.5)
        .attr("transform", "translate(0," + h/2 + ")rotate(-90)")
        .attr("style", "font-size: 12; font-family: Helvetica, sans-serif")
-       .style("text-anchor", "end")
+       .attr("text-anchor", "middle")
        .text(yLabelLeft);
 
     /*

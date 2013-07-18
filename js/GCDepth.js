@@ -1,5 +1,5 @@
 function gcDepth (data, divID, title) {
-    if(data && data[8][1].values.length !== 0){
+    if(data && data[8] && data[8][1] && data[8][1].values && data[8][1].values.length !== 0){
       return new gcDepthGraph(data[8], divID, title, keysIC.all);
     }else{
       window.console.log('data does not exist; chart not created.');
@@ -209,7 +209,7 @@ function gcDepthGraph (data, divID, title) {
    .append("text")
     .attr("dy", ".71em")
     .attr("text-anchor", "middle")
-    .attr("transform", "translate(" + (w / 2 - padding.left) + "," + padding.bottom / 2 + ")")
+    .attr("transform", "translate(" + (w / 2) + "," + padding.bottom / 2 + ")")
     .attr("style", "font-size: 12; font-family: Helvetica, sans-serif")
     .text(xLabel);
 
@@ -223,7 +223,7 @@ function gcDepthGraph (data, divID, title) {
     .attr("dy", -padding.left/1.5)
     .attr("transform", "translate(0," + h/2 + ")rotate(-90)")
     .attr("style", "font-size: 12; font-family: Helvetica, sans-serif")
-    .style("text-anchor", "end")
+    .attr("text-anchor", "middle")
     .text(yLabel);
 
   //make x grid

@@ -7,7 +7,7 @@ var keysIS = ["totalPairs", "inwardPairs", "outwardPairs", "otherPairs"];
 var keysGC = ["First_Fragments", "Last_Fragments"];
 var keysGCC = ["A", "C", "G", "T"];
 function icChart (data, divID, title) {
-    if(data && data[0][1].values.length !== 0){
+    if(data && data[0] && data[0][1] && data[0][1].values && data[0][1].values.length !== 0){
       return new lineChart(data[0], divID, title, keysIC.all);
     }else{
       window.console.log('data does not exist; chart not created.');
@@ -15,7 +15,7 @@ function icChart (data, divID, title) {
     }
 }
 function splitICchart (data, divID, title) {
-  if(data && data[0][1].values.length !== 0){
+  if(data && data[0] && data[0][1] && data[0][1].values && data[0][1].values.length !== 0){
       var returnValue = [new lineChart(data[0], divID, title, keysIC.fwd), new lineChart(data[0], divID, title, keysIC.reverse)];
       if(returnValue[0].y.domain()[1] < returnValue[1].y.domain()[1]){
         returnValue[0].y.domain(returnValue[1].y.domain());
@@ -33,7 +33,7 @@ function splitICchart (data, divID, title) {
     }
 }
 function isChart (data, divID, title) {
-    if(data && data[1][1].values.length !== 0){
+    if(data && data[1] && data[1][1] && data[1][1].values && data[1][1].values.length !== 0){
       return new lineChart(data[1], divID, title, keysIS);
     }else{
       window.console.log('data does not exist; chart not created.');
@@ -41,7 +41,7 @@ function isChart (data, divID, title) {
     }
 }
 function gcChart (data, divID, title) {
-    if(data && data[4][1].values.length !== 0){
+    if(data && data[4] && data[4][1] && data[4][1].values && data[4][1].values.length !== 0){
       return new lineChart(data[4], divID, title, keysGC);
     }else{
       window.console.log('data does not exist; chart not created.');
@@ -49,7 +49,7 @@ function gcChart (data, divID, title) {
     }
 }
 function gccChart (data, divID, title) {
-    if(data && data[5][1].values.length !== 0){
+    if(data && data[5] && data[5][1] && data[5][1].values && data[5][1].values.length !== 0){
       return new lineChart(data[5], divID, title, keysGCC);
     }else{
       window.console.log('data does not exist; chart not created.');
@@ -216,7 +216,7 @@ function lineChart(data, divID, title, graphKeys) {
       .append("text")
        .attr("dy", ".71em")
        .attr("text-anchor", "middle")
-       .attr("transform", "translate(" + (w / 2 - padding.left) + "," + padding.bottom / 2 + ")")
+       .attr("transform", "translate(" + (w / 2) + "," + padding.bottom / 2 + ")")
        .attr("style", "font-size: 12; font-family: Helvetica, sans-serif")
        .text(xLabel);
 
@@ -230,7 +230,7 @@ function lineChart(data, divID, title, graphKeys) {
        .attr("dy", -padding.left/1.5)
        .attr("transform", "translate(0," + h/2 + ")rotate(-90)")
        .attr("style", "font-size: 12; font-family: Helvetica, sans-serif")
-       .style("text-anchor", "end")
+       .attr("text-anchor", "middle")
        .text(yLabel);
 
     //make x grid

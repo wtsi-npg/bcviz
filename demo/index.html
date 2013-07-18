@@ -1,28 +1,4 @@
-import glob
-from urllib import quote
-import os
-import sys
-
-inputDir = raw_input('Enter Directory Containing Files: ')
-print
-filetypes = ('*.bc', '*.bamcheck')
-files = []
-for filetype in filetypes:
-    files.extend(glob.glob(os.path.relpath(os.path.join(inputDir, filetype))))
-if not files:
-    print 'No files found in Directory'
-    sys.exit()
-i = 0
-for aFile in files:
-    files[i] = quote(aFile)
-    i = i + 1
-fileString = ""
-for aFile in files:
-    fileString = fileString + "\",\"" + aFile
-fileString = fileString[2:]
-fileString = fileString + "\""
-htmlFile = open('index.html', 'w')
-htmlFile.write("""<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
     <head>
         <meta charset="utf-8">
@@ -40,9 +16,7 @@ htmlFile.write("""<!DOCTYPE html>
     </head>
     <body>
         <script>
-            var files = [""" + fileString)
-
-htmlFile.write("""];
+            var files = ["sample_1.bc","sample_2.bc","sample_3.bc","sample_4.bc"];
             var points = [];
             for (var i = files.length - 1; i >= 0; i--) {
                 points.push(formatData(readFile(files[i])));
@@ -61,5 +35,3 @@ htmlFile.write("""];
         </script>
     </body>
 </html>
-""")
-htmlFile.close()
