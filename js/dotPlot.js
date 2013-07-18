@@ -66,7 +66,8 @@ function lineChart(data, divID, title, graphKeys) {
     //Create SVG element
     var svg = d3.select('body').append('svg')
         .attr("width", w)
-        .attr("height", h);
+        .attr("height", h)
+        .call(d3.behavior.zoom().on('zoom', zoomer));
 
     //create scale functions
     this.x = d3.scale.linear()
@@ -120,8 +121,7 @@ function lineChart(data, divID, title, graphKeys) {
        .attr("x", padding.left)
        .attr("y", padding.top)
        .attr("width", w - (padding.right + padding.left))
-       .attr("height", h - (padding.top + padding.bottom))
-       .call(d3.behavior.zoom().on('zoom', zoom));
+       .attr("height", h - (padding.top + padding.bottom));
 
     //background colour
     svg.append("rect")
@@ -283,9 +283,15 @@ function lineChart(data, divID, title, graphKeys) {
       return yScale(d);
     }
 
-    svg.call(d3.behavior.zoom().x(xScale).y(yScale).on("zoom", zoom));
+    var zoomer = d3.behavior.zoom().x(xScale).y(yScale).scaleExtent([1,50]).on("zoom", zoom);
+
+    svg.call(zoomer);
 
     function zoom() {
+        if(zoomer.scale() === 1){
+          yScale.domain([yMin, yMax]);
+          xScale.domain([xMin, xMax]);
+        }
         svg.select("#xAxis").call(xAxis);
         svg.select("#yAxis").call(yAxis);
         svg.select("#xGrid").call(make_x_grid().tickSize(-h+(padding.top + padding.bottom), 0, 0).tickFormat(""));
@@ -301,6 +307,9 @@ function lineChart(data, divID, title, graphKeys) {
     }
 
     this.draw = function () {
+      yMax = yScale.domain()[1];
+      zoomer = d3.behavior.zoom().x(xScale).y(yScale).scaleExtent([1,10]).on("zoom", zoom);
+      svg.call(zoomer);
       zoom();
     };
 

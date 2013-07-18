@@ -6,7 +6,6 @@ describe('readFile() returns correct data types',function () {
 		expect(readFile("fgaddfagafhdhjtjt")).to.not.exist;
 	});
 });
-
 describe('formatData() returns correct data types',function () {
 	it('should return an array',function () {
 		formatData(readFile("/demo/sample_1.bc")).length.should.equal(9);
