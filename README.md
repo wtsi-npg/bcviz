@@ -11,6 +11,8 @@ Steps to Use:
 
 	python demo/demo.py
 
+	when prompted for directory name enter demo
+
 3. Start a localhost server in the directory using python:
 
 	python -m SimpleHTTPServer 8888 &
