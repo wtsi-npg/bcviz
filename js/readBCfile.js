@@ -226,7 +226,14 @@ function formatData (fileString) {
 					break;
 			}
 		}
-		var maxGC = d3.max(formattedData[4][1].values, function (d) {return d.yVar;});
+		var maxGCF = d3.max(formattedData[4][1].values, function (d) {return d.yVar;});
+		var maxGCL = d3.max(formattedData[4][2].values, function (d) {return d.yVar;});
+		var maxGC;
+		if(maxGCL > maxGCF){
+			maxGC = maxGCL;
+		}else{
+			maxGC = maxGCF;
+		}
 		for (i = 0; i < formattedData[4][1].values.length; i++) {
 			formattedData[4][1].values[i].yVar = formattedData[4][1].values[i].yVar / maxGC;
 		}

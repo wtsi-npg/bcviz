@@ -1,6 +1,6 @@
 var chartIndex = 0;
 function gcDepth (data, divID, title, width, height) {
-    if(data && data[8] && data[8][1] && data[8][1].values && data[8][1].values.length !== 0){
+    if(data && data[8] && data[8][1] && data[8][1].values && data[8][1].values.length > 1){
       if(width && height){
         return new gcDepthGraph(data[8], divID, title, width, height);
       }else{
