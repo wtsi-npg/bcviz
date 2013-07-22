@@ -1,20 +1,32 @@
-function gcDepth (data, divID, title) {
+var chartIndex = 0;
+function gcDepth (data, divID, title, width, height) {
     if(data && data[8] && data[8][1] && data[8][1].values && data[8][1].values.length !== 0){
-      return new gcDepthGraph(data[8], divID, title, keysIC.all);
+      if(width && height){
+        return new gcDepthGraph(data[8], divID, title, width, height);
+      }else{
+        return new gcDepthGraph(data[8], divID, title);
+      }
     }else{
       window.console.log('data does not exist; chart not created.');
       return null;
     }
 }
-function gcDepthGraph (data, divID, title) {
+function gcDepthGraph (data, divID, title, width, height) {
   var w = 350;
   var h = 250;
   var padding = {top: 75, right: 25, bottom: 50, left: 65};
   var xLabel = data[0].xLabel;
   var yLabel = data[0].yLabel;
 
+  if(width && height){
+    w = width;
+    h = height;
+  }
+
   var gcContent = [0];
   var percentile = [];
+
+  chartIndex++;
 
   for(var i in data[4].values){
       gcContent.push(data[4].values[i].yVar);
@@ -68,7 +80,7 @@ function gcDepthGraph (data, divID, title) {
   }
 
   svg.append("clipPath")
-    .attr("id", "chart-area")
+    .attr("id", "chart-area" + chartIndex)
     .append("rect")
     .attr("x", padding.left)
     .attr("y", padding.top)
@@ -284,7 +296,7 @@ function gcDepthGraph (data, divID, title) {
     .data(median)
     .enter().append("g")
     .attr("id", "graphs")
-    .attr("clip-path", "url(#chart-area)");
+    .attr("clip-path", "url(#chart-area" + chartIndex + ")");
 
   //draw lines in graphs
   aValue.append("path")

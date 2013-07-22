@@ -1,12 +1,17 @@
-function indelDist (data, divID, title) {
+var chartIndex = 0;
+function indelDist (data, divID, title, width, height) {
     if(data && data[6] && data[6][1] && data[6][1].values && data[6][1].values.length !== 0){
-      return new indelDistGraph(data[6], divID, title);
+      if(width && height){
+        return new indelDistGraph(data[6], divID, title, width, height);
+      }else{
+        return new indelDistGraph(data[6], divID, title);
+      }
     }else{
       window.console.log('data does not exist; chart not created.');
       return null;
     }
 }
-function indelDistGraph (data, divID, title) {
+function indelDistGraph (data, divID, title, width, height) {
     var w = 350;
     var h = 250;
     var padding = {top: 50, right: 25, bottom: 50, left: 65};
@@ -14,7 +19,14 @@ function indelDistGraph (data, divID, title) {
     var yLabelLeft = data[0].yLabelLeft;
     var yLabelRight = data[0].yLabelRight;
 
+    if(width && height){
+      w = width;
+      h = height;
+    }
+
     var graphKeys = ["insertions", "deletions"];
+
+    chartIndex++;
 
     //Create SVG element
     var svg = d3.select('body').append('svg')
@@ -73,7 +85,7 @@ function indelDistGraph (data, divID, title) {
     }
 
     svg.append("clipPath")
-       .attr("id", "chart-area")
+       .attr("id", "chart-area" + chartIndex)
        .append("rect")
        .attr("x", padding.left)
        .attr("y", padding.top)
@@ -240,7 +252,7 @@ function indelDistGraph (data, divID, title) {
         .data(points)
         .enter().append("g")
         .attr("id", "graphs")
-        .attr("clip-path", "url(#chart-area)");
+        .attr("clip-path", "url(#chart-area" + chartIndex + ")");
 
     //draw lines in graphs
     aValue.append("path")

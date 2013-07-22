@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8">
         <title>Bamcheck demo</title>
-        <script type="text/javascript" src="http://d3js.org/d3.v3.js"></script>
+        <script type="text/javascript" src="http://d3js.org/d3.v3.min.js"></script>
         <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
         <link rel="stylesheet" type="text/css" href="/css/myStyle.css">
         <script type="text/javascript" src="/js/dotPlot.js"></script>
@@ -17,32 +17,6 @@
 	<body>
 
 		<script>
-			/*var mousewheelevt=(/Firefox/i.test(navigator.userAgent))? "DOMMouseScroll" : "mousewheel"
-			svg1.addEventListener(mousewheelevt, zoom, false)
-			var xMin = 0, xMax = 74;
-			var yMin = 22.5, yMax = 27.5;
-			function zoom (e) {
-				if (e.preventDefault){
-					e.preventDefault()
-				}
-				if (e.wheelDelta > 0){
-					xMin += 5;
-					xMax -= 5;
-					yMin += 0.5;
-					yMax -= 0.5;
-					aChart.x.domain([xMin, xMax]);
-					aChart.y.domain([yMin, yMax]);
-					aChart.draw();
-				}else{
-					xMin -= 5;
-					xMax += 5;
-					yMin -= 0.5;
-					yMax += 0.5;
-					aChart.x.domain([xMin, xMax]);
-					aChart.y.domain([yMin, yMax]);
-					aChart.draw();
-				}
-			}*/
 			var graphCount = 0;
 			var split = false;
 			var points = [];
