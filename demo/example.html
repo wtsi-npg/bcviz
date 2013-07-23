@@ -42,13 +42,14 @@
 				if(i < 0){
 					i = points.length - 1;
 				}
-				splitICchart(points[i], '#svg3');
-				isChart(points[i], '#svg4');
-				gcChart(points[i], '#svg5');
-				gccChart(points[i], '#svg6');
-				indelDist(points[i], '#svg7');
-				gcDepth(points[i], '#svg8');
-				coverage(points[i], '#svg9');
+				icChart(points[i])
+				splitICchart(points[i]);
+				isChart(points[i]);
+				gcChart(points[i]);
+				gccChart(points[i]);
+				indelDist(points[i]);
+				gcDepth(points[i]);
+				coverage(points[i]);
 			}
 			$(window).keydown(function (e) {
 				if(e.which === 188){

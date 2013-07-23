@@ -7,25 +7,25 @@ var keysIS = ["totalPairs", "inwardPairs", "outwardPairs", "otherPairs"];
 var keysGC = ["First_Fragments", "Last_Fragments"];
 var keysGCC = ["A", "C", "G", "T"];
 var chartIndex = 0;
-function icChart (data, divID, title, width, height) {
+function icChart (data, width, height) {
     if(data && data[0] && data[0][1] && data[0][1].values && data[0][1].values.length !== 0){
       if(width && height){
-        return new lineChart(data[0], divID, title, keysIC.all, width, height);
+        return new lineChart(data[0], data[9].title, keysIC.all, width, height);
       }else{
-        return new lineChart(data[0], divID, title, keysIC.all);
+        return new lineChart(data[0], data[9].title, keysIC.all);
       }
     }else{
       window.console.log('data does not exist; chart not created.');
       return null;
     }
 }
-function splitICchart (data, divID, title, width, height) {
+function splitICchart (data, width, height) {
   if(data && data[0] && data[0][1] && data[0][1].values && data[0][1].values.length !== 0){
       var returnValue;
       if(width && height){
-        returnValue = [new lineChart(data[0], divID, title, keysIC.fwd, width, height), new lineChart(data[0], divID, title, keysIC.reverse, width, height)];
+        returnValue = [new lineChart(data[0], data[9].title, keysIC.fwd, width, height), new lineChart(data[0], data[9].title, keysIC.reverse, width, height)];
       }else{
-        returnValue = [new lineChart(data[0], divID, title, keysIC.fwd), new lineChart(data[0], divID, title, keysIC.reverse)];
+        returnValue = [new lineChart(data[0], data[9].title, keysIC.fwd), new lineChart(data[0], data[9].title, keysIC.reverse)];
       }
       if(returnValue[0].y.domain()[1] < returnValue[1].y.domain()[1]){
         returnValue[0].y.domain(returnValue[1].y.domain());
@@ -40,43 +40,43 @@ function splitICchart (data, divID, title, width, height) {
       return null;
     }
 }
-function isChart (data, divID, title, width, height) {
+function isChart (data, width, height) {
     if(data && data[1] && data[1][1] && data[1][1].values && data[1][1].values.length !== 0){
       if(width && height){
-        return new lineChart(data[1], divID, title, keysIS, width, height);
+        return new lineChart(data[1], data[9].title, keysIS, width, height);
       }else{
-        return new lineChart(data[1], divID, title, keysIS);
+        return new lineChart(data[1], data[9].title, keysIS);
       }
     }else{
       window.console.log('data does not exist; chart not created.');
       return null;
     }
 }
-function gcChart (data, divID, title, width, height) {
+function gcChart (data, width, height) {
     if(data && data[4] && data[4][1] && data[4][1].values && data[4][1].values.length !== 0){
       if(width && height){
-        return new lineChart(data[4], divID, title, keysGC, width, height);
+        return new lineChart(data[4], data[9].title, keysGC, width, height);
       }else{
-        return new lineChart(data[4], divID, title, keysGC);
+        return new lineChart(data[4], data[9].title, keysGC);
       }
     }else{
       window.console.log('data does not exist; chart not created.');
       return null;
     }
 }
-function gccChart (data, divID, title, width, height) {
+function gccChart (data, width, height) {
     if(data && data[5] && data[5][1] && data[5][1].values && data[5][1].values.length !== 0){
       if(width && height){
-        return new lineChart(data[5], divID, title, keysGCC, width, height);
+        return new lineChart(data[5], data[9].title, keysGCC, width, height);
       }else{
-        return new lineChart(data[5], divID, title, keysGCC);
+        return new lineChart(data[5], data[9].title, keysGCC);
       }
     }else{
       window.console.log('data does not exist; chart not created.');
       return null;
     }
 }
-function lineChart(data, divID, title, graphKeys, width, height) {
+function lineChart(data, title, graphKeys, width, height) {
     var w = 350;
     var h = 250;
     if(width && height){
@@ -170,7 +170,6 @@ function lineChart(data, divID, title, graphKeys, width, height) {
 
     var xMin = d3.min(points, function(p) { return d3.min(p.values, function(v) { return v.xVar; }); });
     var xMax = d3.max(points, function(p) { return d3.max(p.values, function(v) { return v.xVar; }); });
-
     var yMin = d3.min(points, function(p) { return d3.min(p.values, function(v) { return v.yVar; }); });
     var yMax = d3.max(points, function(p) { return d3.max(p.values, function(v) { return v.yVar; }); });
 
@@ -335,6 +334,9 @@ function lineChart(data, divID, title, graphKeys, width, height) {
 
     this.resetDomain = function () {
       //set min and max values for the new scales
+      //set min and max values for the new scales
+      xMin = xScale.domain()[0];
+      xMax = xScale.domain()[1];
       yMin = yScale.domain()[0];
       yMax = yScale.domain()[1];
       //set zoomer to the new scales
@@ -343,7 +345,8 @@ function lineChart(data, divID, title, graphKeys, width, height) {
       zoom();
     };
 
-    this.draw = zoom();
-
+    this.draw = function(){
+      zoom();
+    };
 
 }

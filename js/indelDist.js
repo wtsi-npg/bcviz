@@ -1,17 +1,17 @@
 var chartIndex = 0;
-function indelDist (data, divID, title, width, height) {
+function indelDist (data, width, height) {
     if(data && data[6] && data[6][1] && data[6][1].values && data[6][1].values.length !== 0){
       if(width && height){
-        return new indelDistGraph(data[6], divID, title, width, height);
+        return new indelDistGraph(data[6], data[9].title, width, height);
       }else{
-        return new indelDistGraph(data[6], divID, title);
+        return new indelDistGraph(data[6], data[9].title);
       }
     }else{
       window.console.log('data does not exist; chart not created.');
       return null;
     }
 }
-function indelDistGraph (data, divID, title, width, height) {
+function indelDistGraph (data, title, width, height) {
     var w = 350;
     var h = 250;
     var padding = {top: 50, right: 25, bottom: 50, left: 65};

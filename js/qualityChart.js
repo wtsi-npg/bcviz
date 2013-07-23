@@ -1,6 +1,6 @@
-function qualityChart (data, divID) {
-    var w = 700;
-    var h = 500;
+function qualityChart (data, divID, title) {
+    var w = 350;
+    var h = 250;
     var padding = {top: 50, right: 25, bottom: 50, left: 65};
     var xLabel = data[0].xLabel;
     var yLabel = data[0].yLabel;
@@ -60,6 +60,13 @@ function qualityChart (data, divID) {
        .attr("height", h)
        .attr("fill", "#F2F2F2");
 
+    //append title
+    svg.append('text')
+        .attr('x', padding.left)
+        .attr('y', padding.top / 2)
+        .attr('font-size', h/25 + 'px')
+        .text(title);
+
     //Create X axis
     svg.append("g")
        .attr("class", "axis")
@@ -69,7 +76,7 @@ function qualityChart (data, divID) {
       .append("text")
        .attr("dy", ".71em")
        .attr("text-anchor", "middle")
-       .attr("transform", "translate(" + (w / 2 - padding.left) + "," + padding.bottom / 2 + ")")
+       .attr("transform", "translate(" + (w / 2) + "," + padding.bottom / 2 + ")")
        .attr("style", "font-size: 12; font-family: Helvetica, sans-serif")
        .text(xLabel);
 

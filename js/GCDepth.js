@@ -1,17 +1,17 @@
 var chartIndex = 0;
-function gcDepth (data, divID, title, width, height) {
+function gcDepth (data, width, height) {
     if(data && data[8] && data[8][1] && data[8][1].values && data[8][1].values.length > 1){
       if(width && height){
-        return new gcDepthGraph(data[8], divID, title, width, height);
+        return new gcDepthGraph(data[8], data[9].title, width, height);
       }else{
-        return new gcDepthGraph(data[8], divID, title);
+        return new gcDepthGraph(data[8], data[9].title);
       }
     }else{
       window.console.log('data does not exist; chart not created.');
       return null;
     }
 }
-function gcDepthGraph (data, divID, title, width, height) {
+function gcDepthGraph (data, title, width, height) {
   var w = 350;
   var h = 250;
   var padding = {top: 75, right: 25, bottom: 50, left: 65};
@@ -142,31 +142,37 @@ function gcDepthGraph (data, divID, title, width, height) {
   svg.append("text")
     .attr("x", w / 2)
     .attr("y", padding.top * 0.75)
+    .attr("text-anchor", "middle")
     .text("GC Content (%)");
 
   svg.append("text")
     .attr("x", xScale(1))
     .attr("y", padding.top - 5)
+    .attr("text-anchor", "middle")
     .text(gcContentScale(1));
 
   svg.append("text")
     .attr("x", xScale(25))
     .attr("y", padding.top - 5)
+    .attr("text-anchor", "middle")
     .text(gcContentScale(25));
 
   svg.append("text")
     .attr("x", xScale(50))
     .attr("y", padding.top - 5)
+    .attr("text-anchor", "middle")
     .text(gcContentScale(50));
 
   svg.append("text")
     .attr("x", xScale(75))
     .attr("y", padding.top - 5)
+    .attr("text-anchor", "middle")
     .text(gcContentScale(75));
 
   svg.append("text")
     .attr("x", xScale(100))
     .attr("y", padding.top - 5)
+    .attr("text-anchor", "middle")
     .text(gcContentScale(100));
 
   //create the legend

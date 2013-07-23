@@ -1,17 +1,17 @@
 var chartIndex = 0;
-function coverage (data, divID, title, width, height) {
+function coverage (data, width, height) {
     if(data && data[7] && data[7][1] && data[7][1].values && data[7][1].values.length !== 0){
       if(width && height){
-        return new coverageGraph(data[7], divID, title, width, height);
+        return new coverageGraph(data[7], data[9].title, width, height);
       }else{
-        return new coverageGraph(data[7], divID, title);
+        return new coverageGraph(data[7], data[9].title);
       }
     }else{
       window.console.log('data does not exist; chart not created.');
       return null;
     }
 }
-function coverageGraph (data, divID, title, width, height) {
+function coverageGraph (data, title, width, height) {
     var w = 350;
     var h = 250;
     var padding = {top: 50, right: 25, bottom: 50, left: 65};
