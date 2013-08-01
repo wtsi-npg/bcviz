@@ -41,7 +41,7 @@ function qualityChart (data, title, width, height) {
     //Create SVG element
     var svg = d3.select('body').append('svg')
         .attr("id", "chart" + chartIndex)
-        .attr("width", "100%")
+        .attr("width", w)
         .attr("height", h);
 
     var xMin = 1;
