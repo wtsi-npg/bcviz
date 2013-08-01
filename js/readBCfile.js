@@ -66,7 +66,7 @@ function formatData (fileString) {
 			],
 			[
 				{
-					xLabel: "Cycle",
+					xLabel: "Cycle Number(forward read)",
 					yLabel: "Quality"
 				},
 				{
@@ -76,7 +76,7 @@ function formatData (fileString) {
 			],
 			[
 				{
-					xLabel: "Cycle",
+					xLabel: "Cycle Number(reverse read)",
 					yLabel: "Quality"
 				},
 				{
@@ -290,9 +290,16 @@ function tagsToFunction (tags) {
 }
 function getQualityVals(data) {
 	var returnValue = [];
-	for (var j = 2; j < data.length ; j++) {
+	var fragments = 0;
+	for (var j = 2; j < data.length; j++) {
 		returnValue.push(+data[j]);
+		fragments = fragments + (+data[j]);
 	}
+	var lineTotal = 0;
+	for (var i = 0; i < returnValue.length; i++) {
+		lineTotal = lineTotal + returnValue[i];
+        returnValue[i] = (lineTotal / fragments);
+    }
 	return returnValue;
 }
 function UrlExists(url) {
