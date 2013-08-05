@@ -39,6 +39,8 @@ htmlFile.write("""<!DOCTYPE html>
         <script type="text/javascript" src="js/readBCfile.js"></script>
     </head>
     <body>
+        <div id="aDiv">
+        </div>
         <script>
             var files = [""" + fileString)
 
@@ -48,11 +50,11 @@ htmlFile.write("""];
                 points.push(formatData(readFile(files[i])));
             }
             for (var i = points.length - 1; i >= 0; i--) {
-                var title = files[i].replace("%23", "#")
                 icChart(points[i]);
                 splitICchart(points[i]);
-                firstFragmentQuality(points[i], 350, 250);
-                lastFragmentQuality(points[i], 350, 250);
+                firstFragmentQuality(points[i], '#aDiv');
+                lastFragmentQuality(points[i], '#aDiv');
+                qualityChartLegend('#aDiv');
                 isChart(points[i]);
                 gcChart(points[i]);
                 gccChart(points[i]);
