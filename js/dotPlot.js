@@ -6,21 +6,27 @@ var keysIC = {
 var keysIS = ["totalPairs", "inwardPairs", "outwardPairs", "otherPairs"];
 var keysGC = ["First_Fragments", "Last_Fragments"];
 var keysGCC = ["A", "C", "G", "T"];
-function icChart (data, divID, title, width, height) {
+var chartIndex = 0;
+function icChart (data, width, height) {
     if(data && data[0] && data[0][1] && data[0][1].values && data[0][1].values.length !== 0){
       if(width && height){
-        return new lineChart(data[0], divID, title, keysIC.all, width, height);
+        return new lineChart(data[0], data[9].title, keysIC.all, width, height);
       }else{
-        return new lineChart(data[0], divID, title, keysIC.all);
+        return new lineChart(data[0], data[9].title, keysIC.all);
       }
     }else{
       window.console.log('data does not exist; chart not created.');
       return null;
     }
 }
-function splitICchart (data, divID, title) {
+function splitICchart (data, width, height) {
   if(data && data[0] && data[0][1] && data[0][1].values && data[0][1].values.length !== 0){
-      var returnValue = [new lineChart(data[0], divID, title, keysIC.fwd), new lineChart(data[0], divID, title, keysIC.reverse)];
+      var returnValue;
+      if(width && height){
+        returnValue = [new lineChart(data[0], data[9].title, keysIC.fwd, width, height), new lineChart(data[0], data[9].title, keysIC.reverse, width, height)];
+      }else{
+        returnValue = [new lineChart(data[0], data[9].title, keysIC.fwd), new lineChart(data[0], data[9].title, keysIC.reverse)];
+      }
       if(returnValue[0].y.domain()[1] < returnValue[1].y.domain()[1]){
         returnValue[0].y.domain(returnValue[1].y.domain());
         returnValue[0].resetDomain();
@@ -34,31 +40,43 @@ function splitICchart (data, divID, title) {
       return null;
     }
 }
-function isChart (data, divID, title) {
+function isChart (data, width, height) {
     if(data && data[1] && data[1][1] && data[1][1].values && data[1][1].values.length !== 0){
-      return new lineChart(data[1], divID, title, keysIS);
+      if(width && height){
+        return new lineChart(data[1], data[9].title, keysIS, width, height);
+      }else{
+        return new lineChart(data[1], data[9].title, keysIS);
+      }
     }else{
       window.console.log('data does not exist; chart not created.');
       return null;
     }
 }
-function gcChart (data, divID, title) {
+function gcChart (data, width, height) {
     if(data && data[4] && data[4][1] && data[4][1].values && data[4][1].values.length !== 0){
-      return new lineChart(data[4], divID, title, keysGC);
+      if(width && height){
+        return new lineChart(data[4], data[9].title, keysGC, width, height);
+      }else{
+        return new lineChart(data[4], data[9].title, keysGC);
+      }
     }else{
       window.console.log('data does not exist; chart not created.');
       return null;
     }
 }
-function gccChart (data, divID, title) {
+function gccChart (data, width, height) {
     if(data && data[5] && data[5][1] && data[5][1].values && data[5][1].values.length !== 0){
-      return new lineChart(data[5], divID, title, keysGCC);
+      if(width && height){
+        return new lineChart(data[5], data[9].title, keysGCC, width, height);
+      }else{
+        return new lineChart(data[5], data[9].title, keysGCC);
+      }
     }else{
       window.console.log('data does not exist; chart not created.');
       return null;
     }
 }
-function lineChart(data, divID, title, graphKeys, width, height) {
+function lineChart(data, title, graphKeys, width, height) {
     var w = 350;
     var h = 250;
     if(width && height){
@@ -68,6 +86,8 @@ function lineChart(data, divID, title, graphKeys, width, height) {
     var padding = {top: 50, right: 25, bottom: 50, left: 65};
     var xLabel = data[0].xLabel;
     var yLabel = data[0].yLabel;
+
+    chartIndex++;
 
     //Create SVG element
     var svg = d3.select('body').append('svg')
@@ -83,9 +103,8 @@ function lineChart(data, divID, title, graphKeys, width, height) {
     var xScale = this.x;
 
     this.y = d3.scale.linear()
-               .nice()
+             .nice()
              .range([h - padding.bottom, padding.top]);
-
     var yScale = this.y;
 
     //Define X axis
@@ -122,12 +141,12 @@ function lineChart(data, divID, title, graphKeys, width, height) {
     }
 
     svg.append("clipPath")
-       .attr("id", "chart-area")
+       .attr("id", "chart-area" + chartIndex)
        .append("rect")
        .attr("x", padding.left)
        .attr("y", padding.top)
-       .attr("width", (w - padding.right))
-       .attr("height", (h - padding.bottom));
+       .attr("width", (w - padding.right - padding.left))
+       .attr("height", (h - padding.bottom - padding.top));
 
     //background colour
     svg.append("rect")
@@ -151,7 +170,6 @@ function lineChart(data, divID, title, graphKeys, width, height) {
 
     var xMin = d3.min(points, function(p) { return d3.min(p.values, function(v) { return v.xVar; }); });
     var xMax = d3.max(points, function(p) { return d3.max(p.values, function(v) { return v.xVar; }); });
-
     var yMin = d3.min(points, function(p) { return d3.min(p.values, function(v) { return v.yVar; }); });
     var yMax = d3.max(points, function(p) { return d3.max(p.values, function(v) { return v.yVar; }); });
 
@@ -264,7 +282,7 @@ function lineChart(data, divID, title, graphKeys, width, height) {
         .data(points)
         .enter().append("g").attr("title", function (d) { return d.name; })
         .attr("id", "graphs")
-        .attr("clip-path", "url(#chart-area)");
+        .attr("clip-path", "url(#chart-area" + chartIndex + ")");
 
     //draw lines in graphs
     aValue.append("path")
@@ -298,6 +316,7 @@ function lineChart(data, divID, title, graphKeys, width, height) {
         if(zoomer.scale() === 1){
           yScale.domain([yMin, yMax]);
           xScale.domain([xMin, xMax]);
+          zoomer.translate([0,0]);
         }
         svg.select("#xAxis").call(xAxis);
         svg.select("#yAxis").call(yAxis);
@@ -309,12 +328,15 @@ function lineChart(data, divID, title, graphKeys, width, height) {
         svg.selectAll(".circles").attr("cx", function (d) {
             return cx(d.xVar);
         }).attr("cy", function (d) {
-          return cy(d.yVar);
+            return cy(d.yVar);
         });
     }
 
     this.resetDomain = function () {
       //set min and max values for the new scales
+      //set min and max values for the new scales
+      xMin = xScale.domain()[0];
+      xMax = xScale.domain()[1];
       yMin = yScale.domain()[0];
       yMax = yScale.domain()[1];
       //set zoomer to the new scales
@@ -323,7 +345,8 @@ function lineChart(data, divID, title, graphKeys, width, height) {
       zoom();
     };
 
-    this.draw = zoom();
-
+    this.draw = function(){
+      zoom();
+    };
 
 }
