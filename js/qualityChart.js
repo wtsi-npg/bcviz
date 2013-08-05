@@ -1,45 +1,59 @@
 var chartIndex = 0;
-function firstFragmentQuality (data, width, height) {
+function firstFragmentQuality (data, divID, legend, title, width, height) {
+    if(title){
+      title = data[9].title;
+    }
     if(data && data[2] && data[2][1] && data[2][1].values && data[2][1].values.length !== 0){
       if(width && height){
-        return new qualityChart(data[2], data[9].title, width, height);
+        return new qualityChart(data[2], divID, legend, title, width, height);
       }else{
-        return new qualityChart(data[2], data[9].title);
+        return new qualityChart(data[2], divID, legend, title);
       }
     }else{
       window.console.log('data does not exist; chart not created.');
       return null;
     }
 }
-function lastFragmentQuality (data, width, height) {
+function lastFragmentQuality (data, divID, legend, title, width, height) {
+    if(title){
+      title = data[9].title;
+    }
     if(data && data[3] && data[3][1] && data[3][1].values && data[3][1].values.length !== 0){
       if(width && height){
-        return new qualityChart(data[3], data[9].title, width, height);
+        return new qualityChart(data[3], divID, legend, title, width, height);
       }else{
-        return new qualityChart(data[3], data[9].title);
+        return new qualityChart(data[3], divID, legend, title);
       }
     }else{
       window.console.log('data does not exist; chart not created.');
       return null;
     }
 }
-function qualityChart (data, title, width, height) {
-    var w = (window.innerWidth - 100) / 2;
+function qualityChart (data, divID, legend, title, width, height) {
+    var w = divID.getBoundingClientRect().width / 2;
     var h = 350;
     if(width && height){
       w = width;
       h = height;
     }
-    var padding = {top: 50, right: 65, bottom: 50, left: 65};
+    var padding = {top: 50, right: 100, bottom: 50, left: 50};
     var xLabel = data[0].xLabel;
     var yLabel = data[0].yLabel;
+    
+    if(!title){
+      padding.top = 5;
+    }
 
+    if(!legend){
+      padding.right = 50;
+    }
+    
     chartIndex++;
 
     var thisChartIndex = chartIndex;
 
     //Create SVG element
-    var svg = d3.select('body').append('svg')
+    var svg = d3.select(divID).append('svg')
         .attr("id", "chart" + chartIndex)
         .attr("width", w)
         .attr("height", h);
@@ -89,22 +103,15 @@ function qualityChart (data, title, width, height) {
        .attr("width", w - (padding.right + padding.left))
        .attr("height", h - (padding.top + padding.bottom));
 
-    //background colour
-    svg.append("rect")
-       .attr("id", "background" + chartIndex)
-       .attr("x", 0)
-       .attr("y", 0)
-       .attr("width", w)
-       .attr("height", h)
-       .attr("fill", "#F2F2F2");
-
+    if(title){
     //append title
     svg.append('text')
         .attr('x', padding.left)
         .attr('y', padding.top / 2)
         .attr('font-size', h/25 + 'px')
         .text(title);
-
+    }
+    
     //Create X axis
     svg.append("g")
        .attr("class", "axis")
@@ -129,7 +136,7 @@ function qualityChart (data, title, width, height) {
        .attr("dy", -padding.left/1.5)
        .attr("transform", "translate(0," + h/2 + ")rotate(-90)")
        .attr("style", "font-size: 12; font-family: Helvetica, sans-serif")
-       .style("text-anchor", "end")
+       .style("text-anchor", "middle")
        .text(yLabel);
 
     //have object in higher scope and change it when drawing.
@@ -178,6 +185,8 @@ function qualityChart (data, title, width, height) {
     ];
 
 
+    if(legend){
+    
     svg.append("linearGradient")
           .attr("id", "temperature-gradient")
           .attr("gradientUnits", "userSpaceOnUse")
@@ -202,19 +211,21 @@ function qualityChart (data, title, width, height) {
     svg.append("g")
        .attr("class", "axis")
        .attr("id", "legendAxis" + chartIndex)
-       .attr("transform", "translate(" + (w - padding.right / 2) + ",0)")
+       .attr("transform", "translate(" + (w - padding.right / 4) + ",0)")
        .call(legendAxis);
 
     var legend = svg.append('g').attr('class', 'legend');
-    var legendWidth = padding.right / 2;
+    var legendWidth = padding.right / 4;
 
     legend.append('rect')
           .attr("id", "legendRect" + chartIndex)
           .attr('x', w - legendWidth)
-          .attr('y', padding.bottom)
+          .attr('y', padding.top)
           .attr('width', legendWidth)
           .attr('height', h - padding.bottom - padding.top)
           .attr('fill', "url(#temperature-gradient)");
+	  
+     }
 
     function clearGradiantArray(){
       returnVal = [];
