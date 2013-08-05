@@ -1,20 +1,31 @@
-function coverage (data, divID, title) {
+var chartIndex = 0;
+function coverage (data, width, height) {
     if(data && data[7] && data[7][1] && data[7][1].values && data[7][1].values.length !== 0){
-      return new coverageGraph(data[7], divID, title);
+      if(width && height){
+        return new coverageGraph(data[7], data[9].title, width, height);
+      }else{
+        return new coverageGraph(data[7], data[9].title);
+      }
     }else{
       window.console.log('data does not exist; chart not created.');
       return null;
     }
 }
-
-function coverageGraph (data, divID, title) {
+function coverageGraph (data, title, width, height) {
     var w = 350;
     var h = 250;
     var padding = {top: 50, right: 25, bottom: 50, left: 65};
     var xLabel = data[0].xLabel + " (log)";
-    var yLabel = data[0].yLabel + " (x1000)";
+    var yLabel = data[0].yLabel + "(x1000)";
+
+    if(width && height){
+      w = width;
+      h = height;
+    }
 
     var graphKeys = ["Coverage"];
+
+    chartIndex++;
 
     //Create SVG element
     var svg = d3.select('body').append('svg')
@@ -65,7 +76,7 @@ function coverageGraph (data, divID, title) {
     }
 
     svg.append("clipPath")
-       .attr("id", "chart-area")
+       .attr("id", "chart-area" + chartIndex)
        .append("rect")
        .attr("x", padding.left)
        .attr("y", padding.top)
@@ -163,7 +174,7 @@ function coverageGraph (data, divID, title) {
         .data(points)
         .enter().append("g")
         .attr("id", "graphs")
-        .attr("clip-path", "url(#chart-area)");
+        .attr("clip-path", "url(#chart-area" + chartIndex + ")");
 
     //draw lines in graphs
     aValue.append("path")
