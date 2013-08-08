@@ -5,16 +5,19 @@ function readFile(fileName)
 	if(/\S/.test(fileName)){
 		jQuery.ajax({
 			type: "GET",
-			dataType: "text",
+			dataType: "text/xml",
 			async: false,
 			url: fileName,
+			crossDomain: true,
 			success: function (text) {
+				window.console.log("here");
 				var contentsOfFileAsString = text;
 				returnValue = d3.tsv.parseRows(contentsOfFileAsString);
 				returnValue.unshift('#' + fileName);
 			},
 			error: function (x, status, error) {
-				window.console.log(error);
+				window.console.log(status + ": " + error);
+				//window.console.log(x);
 				returnValue = null;
 			}
 		});
@@ -22,8 +25,9 @@ function readFile(fileName)
 	return returnValue;
 }
 function formatData (fileString) {
+	var formattedData = null;
 	if(fileString && typeof fileString === "object" && fileString.length > 0){
-		var formattedData = [
+		formattedData = [
 			[
 				{xLabel: "Cycle",
 				yLabel: "Indel"},
@@ -240,8 +244,8 @@ function formatData (fileString) {
 		for (i = 0; i < formattedData[4][2].values.length; i++) {
 			formattedData[4][2].values[i].yVar = formattedData[4][2].values[i].yVar / maxGC;
 		}
-		return formattedData;
 	}
+	return formattedData;
 }
 //get tags from a file
 function getFileTags (fileString) {
