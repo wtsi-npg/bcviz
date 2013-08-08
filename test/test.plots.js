@@ -1,3 +1,6 @@
+var assert = chai.assert;
+var should = chai.should();
+var expect = chai.expect;
 describe('Indels per cycle graph tests', function () {
 	it('should create a new graph', function () {
 		expect(icChart(formatData(readFile('/demo/sample_1.bc')))).to.be.an('object');

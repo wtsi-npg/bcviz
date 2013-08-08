@@ -1,22 +1,28 @@
 function readFile(fileName)
 {
-	//check if file name contians only whitespace and if file exists 
-	if(/\S/.test(fileName) && UrlExists(fileName)){
-		var request = new XMLHttpRequest();
-		request.open("GET", fileName, false);
-		request.send(null);
-		var contentsOfFileAsString = request.responseText;
-		var returnValue = d3.tsv.parseRows(contentsOfFileAsString);
-		returnValue.unshift('#' + fileName);
-		return returnValue;
+	var returnValue;
+	//check if file name contians only whitespace
+	if(/\S/.test(fileName)){
+		jQuery.ajax({
+			type: "GET",
+			dataType: "text",
+			async: false,
+			url: fileName,
+			success: function (text) {
+				var contentsOfFileAsString = text;
+				returnValue = d3.tsv.parseRows(contentsOfFileAsString);
+				returnValue.unshift('#' + fileName);
+			},
+			error: function (x, status, error) {
+				window.console.log(error);
+				returnValue = null;
+			}
+		});
 	}
-	else{
-		window.console.log("file " + fileName + " does not exist.");
-		return null;
-	}
+	return returnValue;
 }
 function formatData (fileString) {
-	if(fileString){
+	if(fileString && typeof fileString === "object" && fileString.length > 0){
 		var formattedData = [
 			[
 				{xLabel: "Cycle",
@@ -301,10 +307,4 @@ function getQualityVals(data) {
         returnValue[i] = (lineTotal / fragments);
     }
 	return returnValue;
-}
-function UrlExists(url) {
-	var http = new XMLHttpRequest();
-	http.open('HEAD', url, false);
-	http.send();
-	return http.status!=404;
 }

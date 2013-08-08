@@ -317,19 +317,10 @@ function qualityChart (data, divID, title, width, height) {
         .attr("width", nodeWidth)
         .attr("clip-path", "url(#chart-area" + thisChartIndex + ")");
 
-      updatedLegend = svg.select("#legendRect" + thisChartIndex);
-
-      updatedLegend.transition().duration(1000)
-        .attr('x', w - legendWidth);
-
       var t = svg.transition().duration(1000);
 
       t.select("#xAxis" + thisChartIndex)
          .call(xAxis);
-
-      t.select("#legendAxis" + thisChartIndex)
-         .attr("transform", "translate(" + (w - padding.right / 2) + ",0)")
-         .call(legendAxis);
 
       svg.select("#xAxisText" + thisChartIndex).transition().duration(1000)
          .attr("transform", "translate(" + (w / 2) + "," + padding.bottom / 2 + ")");
