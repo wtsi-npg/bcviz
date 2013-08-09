@@ -3,16 +3,18 @@ var should = chai.should();
 var expect = chai.expect;
 describe('readFile() returns correct data types',function () {
 	//This test runs in browser but fails when run in terminal.
-	it.skip('data should exist',function (done) {
-		expect(readFile("file:///Users/db15/Documents/SangerProject/bcviz/demo/sample_1.bc")).to.exist;
+	it('data should exist',function (done) {
+		expect(readFile("/Users/db15/Documents/SangerProject/bcviz/demo/sample_1.bc")).to.exist;
+		done();
 	});
 	it('data should not exist',function () {
 		expect(readFile("fgaddfagafhdhjtjt")).to.not.exist;
 	});
 });
 describe('formatData() returns correct data types',function () {
-	it('should return an array',function () {
-		formatData(fileData).length.should.equal(10);
+	it('should return an array',function (done) {
+		formatData(readFile("/Users/db15/Documents/SangerProject/bcviz/demo/sample_1.bc")).length.should.equal(10);
+		done();
 	});
 	it('should return null',function () {
 		expect(formatData(90)).to.not.exist;

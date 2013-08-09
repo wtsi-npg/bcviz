@@ -17,7 +17,7 @@ module.exports = function(config) {
       {pattern: 'test/chai/chai.js', included: true},
       'http://d3js.org/d3.v3.js',
       'http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js',
-      //{pattern: 'demo/*.bc', watched: true, included: true, served: true},
+      {pattern: 'demo/*.bc', watched: false, included: false, served: true},
       'js/*.js',
       'test/*.js'
     ],

@@ -5,12 +5,12 @@ function readFile(fileName)
 	if(/\S/.test(fileName)){
 		jQuery.ajax({
 			type: "GET",
-			dataType: "text/xml",
+			dataType: "text",
 			async: false,
 			url: fileName,
 			crossDomain: true,
 			success: function (text) {
-				window.console.log("here");
+				//console.log(text);
 				var contentsOfFileAsString = text;
 				returnValue = d3.tsv.parseRows(contentsOfFileAsString);
 				returnValue.unshift('#' + fileName);
@@ -268,10 +268,10 @@ function tagsToFunction (tags) {
 				map.IS = isChart;
 				break;
 			case "FFQ":
-				map.FFQ = qualityChart;
+				map.FFQ = firstFragmentQuality;
 				break;
 			case "LFQ":
-				map.LFQ = qualityChart;
+				map.LFQ = lastFragmentQuality;
 				break;
 			case "GCF":
 				map.GCF = gcChart;
