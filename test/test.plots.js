@@ -1,6 +1,9 @@
+var assert = chai.assert;
+var should = chai.should();
+var expect = chai.expect;
 describe('Indels per cycle graph tests', function () {
 	it('should create a new graph', function () {
-		expect(icChart(formatData(readFile('/demo/sample_1.bc')))).to.be.an('object');
+		expect(icChart(formatData(readFile("demo/sample_1.bc")))).to.be.an('object');
 	});
 	it('should not create a new graph and return null', function () {
 		expect(icChart(formatData(readFile('/demo/78ss43_2-1.bc')))).to.be.null;
@@ -14,7 +17,7 @@ describe('Indels per cycle graph tests', function () {
 });
 describe('Insert sizes graph tests', function () {
 	it('should create a new graph', function () {
-		expect(isChart(formatData(readFile('/demo/sample_1.bc')))).to.be.an('object');
+		expect(isChart(formatData(readFile("demo/sample_1.bc")))).to.be.an('object');
 	});
 	it('should not create a new graph and return null', function () {
 		expect(isChart(formatData(readFile('/demo/78ss43_2-1.bc')))).to.be.null;
@@ -28,7 +31,7 @@ describe('Insert sizes graph tests', function () {
 });
 describe('GC Content graph tests', function () {
 	it('should create a new graph', function () {
-		expect(gcChart(formatData(readFile('/demo/sample_1.bc')))).to.be.an('object');
+		expect(gcChart(formatData(readFile("demo/sample_1.bc")))).to.be.an('object');
 	});
 	it('should not create a new graph and return null', function () {
 		expect(gcChart(formatData(readFile('/demo/78ss43_2-1.bc')))).to.be.null;
@@ -42,7 +45,7 @@ describe('GC Content graph tests', function () {
 });
 describe('ACGT content per cycle graph tests', function () {
 	it('should create a new graph', function () {
-		expect(gccChart(formatData(readFile('/demo/sample_1.bc')))).to.be.an('object');
+		expect(gccChart(formatData(readFile("demo/sample_1.bc")))).to.be.an('object');
 	});
 	it('should not create a new graph and return null', function () {
 		expect(gccChart(formatData(readFile('')))).to.be.null;
@@ -56,7 +59,7 @@ describe('ACGT content per cycle graph tests', function () {
 });
 describe('Indel distribution per cycle graph tests', function () {
 	it('should create a new graph', function () {
-		expect(indelDist(formatData(readFile('/demo/sample_1.bc')))).to.be.an('object');
+		expect(indelDist(formatData(readFile("demo/sample_1.bc")))).to.be.an('object');
 	});
 	it('should not create a new graph and return null', function () {
 		expect(indelDist(formatData(readFile('     fgafg   ')))).to.be.null;
@@ -70,7 +73,7 @@ describe('Indel distribution per cycle graph tests', function () {
 });
 describe('GC-Depth graph tests', function () {
 	it('should create a new graph', function () {
-		expect(gcDepth(formatData(readFile('/demo/sample_1.bc')))).to.be.an('object');
+		expect(gcDepth(formatData(readFile("demo/sample_1.bc")))).to.be.an('object');
 	});
 	it('should not create a new graph and return null', function () {
 		expect(gcDepth(formatData(readFile('     fgafg   ')))).to.be.null;
@@ -84,7 +87,7 @@ describe('GC-Depth graph tests', function () {
 });
 describe('Coverage distribution graph tests', function () {
 	it('should create a new graph', function () {
-		expect(coverage(formatData(readFile('/demo/sample_1.bc')))).to.be.an('object');
+		expect(coverage(formatData(readFile("demo/sample_1.bc")))).to.be.an('object');
 	});
 	it('should not create a new graph and return null', function () {
 		expect(coverage(formatData(readFile('     fgafg   ')))).to.be.null;

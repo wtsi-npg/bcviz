@@ -1,23 +1,33 @@
 function readFile(fileName)
 {
-	//check if file name contians only whitespace and if file exists 
-	if(/\S/.test(fileName) && UrlExists(fileName)){
-		var request = new XMLHttpRequest();
-		request.open("GET", fileName, false);
-		request.send(null);
-		var contentsOfFileAsString = request.responseText;
-		var returnValue = d3.tsv.parseRows(contentsOfFileAsString);
-		returnValue.unshift('#' + fileName);
-		return returnValue;
+	var returnValue;
+	//check if file name contians only whitespace
+	if(/\S/.test(fileName)){
+		jQuery.ajax({
+			type: "GET",
+			dataType: "text",
+			async: false,
+			url: fileName,
+			crossDomain: true,
+			success: function (text) {
+				//console.log(text);
+				var contentsOfFileAsString = text;
+				returnValue = d3.tsv.parseRows(contentsOfFileAsString);
+				returnValue.unshift('#' + fileName);
+			},
+			error: function (x, status, error) {
+				window.console.log(status + ": " + error);
+				//window.console.log(x);
+				returnValue = null;
+			}
+		});
 	}
-	else{
-		window.console.log("file " + fileName + " does not exist.");
-		return null;
-	}
+	return returnValue;
 }
 function formatData (fileString) {
-	if(fileString){
-		var formattedData = [
+	var formattedData = null;
+	if(fileString && typeof fileString === "object" && fileString.length > 0){
+		formattedData = [
 			[
 				{xLabel: "Cycle",
 				yLabel: "Indel"},
@@ -234,8 +244,8 @@ function formatData (fileString) {
 		for (i = 0; i < formattedData[4][2].values.length; i++) {
 			formattedData[4][2].values[i].yVar = formattedData[4][2].values[i].yVar / maxGC;
 		}
-		return formattedData;
 	}
+	return formattedData;
 }
 //get tags from a file
 function getFileTags (fileString) {
@@ -258,10 +268,10 @@ function tagsToFunction (tags) {
 				map.IS = isChart;
 				break;
 			case "FFQ":
-				map.FFQ = qualityChart;
+				map.FFQ = firstFragmentQuality;
 				break;
 			case "LFQ":
-				map.LFQ = qualityChart;
+				map.LFQ = lastFragmentQuality;
 				break;
 			case "GCF":
 				map.GCF = gcChart;
@@ -301,10 +311,4 @@ function getQualityVals(data) {
         returnValue[i] = (lineTotal / fragments);
     }
 	return returnValue;
-}
-function UrlExists(url) {
-	var http = new XMLHttpRequest();
-	http.open('HEAD', url, false);
-	http.send();
-	return http.status!=404;
 }
