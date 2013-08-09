@@ -1,35 +1,35 @@
 var chartIndex = 0;
-function firstFragmentQuality (data, divID, title, width, height) {
+function firstFragmentQuality (data, divID, legend, title, width, height) {
     if(title){
       title = data[9].title;
     }
     if(data && data[2] && data[2][1] && data[2][1].values && data[2][1].values.length !== 0){
       if(width && height){
-        return new qualityChart(data[2], divID, title, width, height);
+        return new qualityChart(data[2], divID, legend, title, width, height);
       }else{
-        return new qualityChart(data[2], divID, title);
+        return new qualityChart(data[2], divID, legend, title);
       }
     }else{
       window.console.log('data does not exist; chart not created.');
       return null;
     }
 }
-function lastFragmentQuality (data, divID, title, width, height) {
+function lastFragmentQuality (data, divID, legend, title, width, height) {
     if(title){
       title = data[9].title;
     }
     if(data && data[3] && data[3][1] && data[3][1].values && data[3][1].values.length !== 0){
       if(width && height){
-        return new qualityChart(data[3], divID, title, width, height);
+        return new qualityChart(data[3], divID, legend, title, width, height);
       }else{
-        return new qualityChart(data[3], divID, title);
+        return new qualityChart(data[3], divID, legend, title);
       }
     }else{
       window.console.log('data does not exist; chart not created.');
       return null;
     }
 }
-function qualityChart (data, divID, title, width, height) {
+function qualityChart (data, divID, legend, title, width, height) {
     var w = 350;
     var h = 250;
     if(width && height){
@@ -42,6 +42,10 @@ function qualityChart (data, divID, title, width, height) {
 
     if(!title){
       padding.top = 5;
+    }
+
+    if(typeof divID !== "string" || !/\S/.test(divID) || !d3.select(divID)[0][0]){
+      divID = "body";
     }
 
     chartIndex++;
@@ -284,6 +288,11 @@ function qualityChart (data, divID, title, width, height) {
         .attr("clip-path", "url(#chart-area" + chartIndex + ")")
         .append('title').text(function (d) { return "cycle " + d.xVar; });
 
+    //draw the legend
+    if(legend){
+      qualityChartLegend(divID, h, padding);
+    }
+
     this.resize = function (height, width) {
       h = 350;
       w = (window.innerWidth - 100) / 2;
@@ -317,27 +326,19 @@ function qualityChart (data, divID, title, width, height) {
         .attr("width", nodeWidth)
         .attr("clip-path", "url(#chart-area" + thisChartIndex + ")");
 
-      updatedLegend = svg.select("#legendRect" + thisChartIndex);
-
-      updatedLegend.transition().duration(1000)
-        .attr('x', w - legendWidth);
-
       var t = svg.transition().duration(1000);
 
       t.select("#xAxis" + thisChartIndex)
          .call(xAxis);
-
-      t.select("#legendAxis" + thisChartIndex)
-         .attr("transform", "translate(" + (w - padding.right / 2) + ",0)")
-         .call(legendAxis);
 
       svg.select("#xAxisText" + thisChartIndex).transition().duration(1000)
          .attr("transform", "translate(" + (w / 2) + "," + padding.bottom / 2 + ")");
 
     };
 }
-function qualityChartLegend (divID) {
+function qualityChartLegend (divID, h, padding) {
     var gradiantData = [];
+    var w = 50;
 
     //create gradiant
     var rainbow = new Rainbow();
@@ -350,9 +351,6 @@ function qualityChartLegend (divID) {
       gradiantData.push({offset: 5 * i + '%', color: aColor});
     }
 
-    h = 250;
-    w = 50;
-
     var svg = d3.select(divID).append('svg')
         .attr("width", w)
         .attr("height", h);
@@ -360,8 +358,8 @@ function qualityChartLegend (divID) {
     svg.append("linearGradient")
           .attr("id", "temperature-gradient")
           .attr("gradientUnits", "userSpaceOnUse")
-          .attr("x1", 0).attr("y1", h - 50)
-          .attr("x2", 0).attr("y2", 10)
+          .attr("x1", 0).attr("y1", h - padding.bottom)
+          .attr("x2", 0).attr("y2", padding.top)
         .selectAll("stop")
           .data(gradiantData)
         .enter().append("stop")
@@ -370,7 +368,7 @@ function qualityChartLegend (divID) {
 
     var legendScale = d3.scale.linear()
              .nice()
-             .range([h - 50, 10])
+             .range([h - padding.bottom, padding.top])
              .domain([100, 0]);
 
     var legendAxis = d3.svg.axis()
@@ -390,8 +388,8 @@ function qualityChartLegend (divID) {
     legend.append('rect')
           .attr("id", "legendRect" + chartIndex)
           .attr('x', w - legendWidth)
-          .attr('y', 10)
+          .attr('y', padding.top)
           .attr('width', legendWidth)
-          .attr('height', h - 60)
+          .attr('height', h - (padding.top + padding.bottom))
           .attr('fill', "url(#temperature-gradient)");
 }
