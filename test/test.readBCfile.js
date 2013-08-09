@@ -4,7 +4,7 @@ var expect = chai.expect;
 describe('readFile() returns correct data types',function () {
 	//This test runs in browser but fails when run in terminal.
 	it('data should exist',function (done) {
-		expect(readFile("/Users/db15/Documents/SangerProject/bcviz/demo/sample_1.bc")).to.exist;
+		expect(readFile("demo/sample_1.bc")).to.exist;
 		done();
 	});
 	it('data should not exist',function () {
@@ -13,7 +13,7 @@ describe('readFile() returns correct data types',function () {
 });
 describe('formatData() returns correct data types',function () {
 	it('should return an array',function (done) {
-		formatData(readFile("/Users/db15/Documents/SangerProject/bcviz/demo/sample_1.bc")).length.should.equal(10);
+		formatData(readFile("demo/sample_1.bc")).length.should.equal(10);
 		done();
 	});
 	it('should return null',function () {

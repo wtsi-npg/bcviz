@@ -7,6 +7,7 @@ module.exports = function(config) {
     // base path, that will be used to resolve files and exclude
     basePath: '',
 
+    urlRoot: '/Users/db15/Documents/SangerProject/bcviz/',
 
     // frameworks to use
     frameworks: ['mocha'],
