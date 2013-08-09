@@ -19,6 +19,7 @@ module.exports = function(config) {
       'http://d3js.org/d3.v3.js',
       'http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js',
       {pattern: 'demo/*.bc', watched: false, included: false, served: true},
+      {pattern: 'css/*.css', watched: false, included: true, served: true},
       'js/*.js',
       'test/*.js'
     ],

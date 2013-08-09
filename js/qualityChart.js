@@ -44,7 +44,7 @@ function qualityChart (data, divID, legend, title, width, height) {
       padding.top = 5;
     }
 
-    if(typeof divID !== "string" || !d3.select(divID)[0][0]){
+    if(typeof divID !== "string" || !/\S/.test(divID) || !d3.select(divID)[0][0]){
       divID = "body";
     }
 
