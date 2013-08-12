@@ -17,7 +17,7 @@ function gcDepth (data, divID, title, width, height) {
 function gcDepthGraph (data, divID, title, width, height) {
   var w = 350;
   var h = 250;
-  var padding = {top: 75, right: 25, bottom: 50, left: 65};
+  var padding = {top: 25, right: 25, bottom: 50, left: 65};
   var xLabel = data[0].xLabel;
   var yLabel = data[0].yLabel;
 
@@ -92,15 +92,6 @@ function gcDepthGraph (data, divID, title, width, height) {
     .attr("width", w - (padding.right + padding.left))
     .attr("height", h - (padding.top + padding.bottom));
 
-
-  //background colour
-  svg.append("rect")
-    .attr("x", 0)
-    .attr("y", 0)
-    .attr("width", w)
-    .attr("height", h)
-    .attr("fill", "#F2F2F2");
-
   var points = [];
 
   var graphKeys = ["10-90th Percentile", "25-75th Percentile", "50th Percentile"];
@@ -146,7 +137,7 @@ function gcDepthGraph (data, divID, title, width, height) {
 
   svg.append("text")
     .attr("x", w / 2)
-    .attr("y", padding.top * 0.75)
+    .attr("y", padding.top * 0.3)
     .attr("text-anchor", "middle")
     .text("GC Content (%)");
 
@@ -180,48 +171,14 @@ function gcDepthGraph (data, divID, title, width, height) {
     .attr("text-anchor", "middle")
     .text(gcContentScale(100));
 
-  //create the legend
-  var legend = svg.selectAll('g')
-    .data(points).enter()
-     .append('g')
-    .attr('class', 'legend');
-
-  //draw colours in legend  
-  legend.append('rect')
-      .attr('x', function(d, i){ if(i <= 1){
-                     return w - (padding.right * 3 + 15);
-                   }else{
-                     return w - ((padding.right * 3) * 3 + 15);
-                   }})
-       .attr('y', function(d, i){ if(i <= 1){
-                     return i * 20;
-                   }else{
-                     return ((i - 2) * 20);
-                   }})
-       .attr('width', 10)
-       .attr('height', 10)
-       .style('fill', function(d) {return color(d.name);});
-
-  //draw text in legend
-  legend.append('text')
-     .attr('x', function(d, i){ if(i <= 1){
-                     return w - (padding.right * 3);
-                   }else{
-                     return w - ((padding.right * 3) * 3);
-                   }})
-     .attr('y', function(d, i){ if(i <= 1){
-                     return (i * 20) + 9;
-                   }else{
-                     return ((i - 2) * 20) + 9;
-                   }})
-     .text(function(d){ return d.name;});
-
-  //append title
-  svg.append('text')
-    .attr('x', padding.left)
-    .attr('y', padding.top / 2)
-    .attr('font-size', h/25 + 'px')
-    .text(title);
+  if(title){
+    //append title
+    svg.append('text')
+      .attr('x', padding.left)
+      .attr('y', padding.top / 2)
+      .attr('font-size', h/25 + 'px')
+      .text(title);
+  }
 
   //Create X axis
   svg.append("g")
@@ -314,4 +271,32 @@ function gcDepthGraph (data, divID, title, width, height) {
      .attr("class", "line1")
      .attr("d", function(d) { return line(d.values); })
      .style("stroke", function(d) { return color(d.name); });
+
+  gcLegend(h, points, divID, color);
+}
+function gcLegend (h, points, divID, color) {
+
+  var svg = d3.select(divID).append('svg')
+    .attr("width", 100)
+    .attr("height", h);
+
+  //create the legend
+  var legend = svg.selectAll('g')
+    .data(points).enter()
+     .append('g')
+    .attr('class', 'legend');
+
+  //draw colours in legend  
+  legend.append('rect')
+      .attr('x', 1)
+       .attr('y', function(d, i){return i * 20;})
+       .attr('width', 10)
+       .attr('height', 10)
+       .style('fill', function(d) {return color(d.name);});
+
+  //draw text in legend
+  legend.append('text')
+     .attr('x', 12)
+     .attr('y', function(d, i){ return i * 20 + 9;})
+     .text(function(d){ return d.name;});
 }
