@@ -284,7 +284,7 @@ function gcDepthGraph (data, divID, title, width, height) {
 function gcLegend (h, points, divID, color) {
 
   var svg = d3.select(divID).append('svg')
-    .attr("width", 100)
+    .attr("width", h * 0.4)
     .attr("height", h);
 
   //create the legend
