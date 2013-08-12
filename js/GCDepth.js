@@ -17,7 +17,7 @@ function gcDepth (data, divID, title, width, height) {
 function gcDepthGraph (data, divID, title, width, height) {
   var w = 350;
   var h = 250;
-  var padding = {top: 40, right: 10, bottom: 40, left: 65};
+  var padding = {top: 40, right: 25, bottom: 50, left: 65};
   var xLabel = data[0].xLabel;
   var yLabel = data[0].yLabel;
 
@@ -27,7 +27,7 @@ function gcDepthGraph (data, divID, title, width, height) {
   }
 
   if(title){
-    padding.top = 75;
+    padding.top = 60;
   }
 
   var gcContent = [0];
@@ -121,7 +121,7 @@ function gcDepthGraph (data, divID, title, width, height) {
   yScale.domain([yMin,yMax]);
 
   //create top axis and labels
-  var topAxis = svg.append('g');
+  var topAxis = svg.append('g').style("font-size", "10px");
 
   topAxis.append("rect")
     .attr("x", padding.left)
@@ -143,9 +143,8 @@ function gcDepthGraph (data, divID, title, width, height) {
 
   topAxis.append("text")
     .attr("x", w / 2)
-    .attr("y", padding.top * 0.5)
+    .attr("y", padding.top - 20)
     .attr("text-anchor", "middle")
-    .style("font-size", "12px")
     .text("GC Content (%)");
 
   topAxis.append("text")
@@ -279,9 +278,9 @@ function gcDepthGraph (data, divID, title, width, height) {
      .attr("d", function(d) { return line(d.values); })
      .style("stroke", function(d) { return color(d.name); });
 
-  gcLegend(h, points, divID, color);
+  gcLegend(h, padding, points, divID, color);
 }
-function gcLegend (h, points, divID, color) {
+function gcLegend (h, padding, points, divID, color) {
 
   var svg = d3.select(divID).append('svg')
     .attr("width", h * 0.4)
@@ -296,15 +295,15 @@ function gcLegend (h, points, divID, color) {
   //draw colours in legend  
   legend.append('rect')
       .attr('x', 1)
-       .attr('y', function(d, i){return i * 20;})
+       .attr('y', function(d, i){return padding.top + i * 20;})
        .attr('width', 10)
        .attr('height', 10)
        .style('fill', function(d) {return color(d.name);});
 
   //draw text in legend
   legend.append('text')
-     .attr('x', 12)
-     .attr('y', function(d, i){ return i * 20 + 9;})
+     .attr('x', 15)
+     .attr('y', function(d, i){return padding.top + i * 20 + 9;})
      .style('font-size', '10px')
      .text(function(d){ return d.name;});
 }
