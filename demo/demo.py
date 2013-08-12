@@ -52,9 +52,8 @@ htmlFile.write("""];
             for (var i = points.length - 1; i >= 0; i--) {
                 icChart(points[i]);
                 splitICchart(points[i]);
-                firstFragmentQuality(points[i], '#aDiv', true);
-                lastFragmentQuality(points[i], '#aDiv', true);
-                qualityChartLegend('#aDiv');
+                firstFragmentQuality(points[i], '', true);
+                lastFragmentQuality(points[i], '', true);
                 isChart(points[i]);
                 gcChart(points[i]);
                 gccChart(points[i]);

@@ -6,7 +6,7 @@ describe('Indels per cycle graph tests', function () {
 		expect(icChart(formatData(readFile("demo/sample_1.bc")))).to.be.an('object');
 	});
 	it('should not create a new graph and return null', function () {
-		expect(icChart(formatData(readFile('/demo/78ss43_2-1.bc')))).to.be.null;
+		expect(icChart(formatData(readFile('1.bc')))).to.be.null;
 	});
 	it('should not create a new graph and return null', function () {
 		expect(icChart(12 + 394 / 45)).to.be.null;
@@ -20,7 +20,7 @@ describe('Insert sizes graph tests', function () {
 		expect(isChart(formatData(readFile("demo/sample_1.bc")))).to.be.an('object');
 	});
 	it('should not create a new graph and return null', function () {
-		expect(isChart(formatData(readFile('/demo/78ss43_2-1.bc')))).to.be.null;
+		expect(isChart(formatData(readFile('1.bc')))).to.be.null;
 	});
 	it('should not create a new graph and return null', function () {
 		expect(isChart(12 + 394 / 45)).to.be.null;
@@ -34,7 +34,7 @@ describe('GC Content graph tests', function () {
 		expect(gcChart(formatData(readFile("demo/sample_1.bc")))).to.be.an('object');
 	});
 	it('should not create a new graph and return null', function () {
-		expect(gcChart(formatData(readFile('/demo/78ss43_2-1.bc')))).to.be.null;
+		expect(gcChart(formatData(readFile('1.bc')))).to.be.null;
 	});
 	it('should not create a new graph and return null', function () {
 		expect(gcChart(12 + 394 / 45)).to.be.null;

@@ -1,6 +1,6 @@
 var chartIndex = 0;
 function firstFragmentQuality (data, divID, legend, title, width, height) {
-    if(title){
+    if(title && data[9]){
       title = data[9].title;
     }
     if(data && data[2] && data[2][1] && data[2][1].values && data[2][1].values.length !== 0){
@@ -44,9 +44,7 @@ function qualityChart (data, divID, legend, title, width, height) {
       padding.top = 5;
     }
 
-    if(typeof divID !== "string" || !/\S/.test(divID) || !d3.select(divID)[0][0]){
-      divID = "body";
-    }
+    divID = checkDivSelection(divID);
 
     chartIndex++;
 
