@@ -17,13 +17,17 @@ function gcDepth (data, divID, title, width, height) {
 function gcDepthGraph (data, divID, title, width, height) {
   var w = 350;
   var h = 250;
-  var padding = {top: 25, right: 25, bottom: 50, left: 65};
+  var padding = {top: 40, right: 10, bottom: 40, left: 65};
   var xLabel = data[0].xLabel;
   var yLabel = data[0].yLabel;
 
   if(width && height){
     w = width;
     h = height;
+  }
+
+  if(title){
+    padding.top = 75;
   }
 
   var gcContent = [0];
@@ -117,55 +121,58 @@ function gcDepthGraph (data, divID, title, width, height) {
   yScale.domain([yMin,yMax]);
 
   //create top axis and labels
-  svg.append("rect")
+  var topAxis = svg.append('g');
+
+  topAxis.append("rect")
     .attr("x", padding.left)
     .attr("y", padding.top)
     .attr("width", w - padding.left - padding.right + 1)
     .attr("height", 1);
 
-  svg.append("rect")
+  topAxis.append("rect")
     .attr("x", w - padding.right)
     .attr("y", padding.top - 5)
     .attr("width", 1)
     .attr("height", 5);
 
-  svg.append("rect")
+  topAxis.append("rect")
     .attr("x", padding.left)
     .attr("y", padding.top - 5)
     .attr("width", 1)
     .attr("height", 5);
 
-  svg.append("text")
+  topAxis.append("text")
     .attr("x", w / 2)
-    .attr("y", padding.top * 0.3)
+    .attr("y", padding.top * 0.5)
     .attr("text-anchor", "middle")
+    .style("font-size", "12px")
     .text("GC Content (%)");
 
-  svg.append("text")
+  topAxis.append("text")
     .attr("x", xScale(1))
     .attr("y", padding.top - 5)
     .attr("text-anchor", "middle")
     .text(gcContentScale(1));
 
-  svg.append("text")
+  topAxis.append("text")
     .attr("x", xScale(25))
     .attr("y", padding.top - 5)
     .attr("text-anchor", "middle")
     .text(gcContentScale(25));
 
-  svg.append("text")
+  topAxis.append("text")
     .attr("x", xScale(50))
     .attr("y", padding.top - 5)
     .attr("text-anchor", "middle")
     .text(gcContentScale(50));
 
-  svg.append("text")
+  topAxis.append("text")
     .attr("x", xScale(75))
     .attr("y", padding.top - 5)
     .attr("text-anchor", "middle")
     .text(gcContentScale(75));
 
-  svg.append("text")
+  topAxis.append("text")
     .attr("x", xScale(100))
     .attr("y", padding.top - 5)
     .attr("text-anchor", "middle")
@@ -175,8 +182,8 @@ function gcDepthGraph (data, divID, title, width, height) {
     //append title
     svg.append('text')
       .attr('x', padding.left)
-      .attr('y', padding.top / 2)
-      .attr('font-size', h/25 + 'px')
+      .attr('y', padding.top / 4)
+      .style('font-size', '12px')
       .text(title);
   }
 
@@ -298,5 +305,6 @@ function gcLegend (h, points, divID, color) {
   legend.append('text')
      .attr('x', 12)
      .attr('y', function(d, i){ return i * 20 + 9;})
+     .style('font-size', '10px')
      .text(function(d){ return d.name;});
 }
