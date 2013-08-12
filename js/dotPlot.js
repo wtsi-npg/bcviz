@@ -102,6 +102,10 @@ function lineChart(data, divID, title, graphKeys, width, height) {
     var xLabel = data[0].xLabel;
     var yLabel = data[0].yLabel;
 
+    if(!title){
+      padding.top = 25;
+    }
+
     divID = checkDivSelection(divID);
 
     chartIndex++;
@@ -165,14 +169,6 @@ function lineChart(data, divID, title, graphKeys, width, height) {
        .attr("width", (w - padding.right - padding.left))
        .attr("height", (h - padding.bottom - padding.top));
 
-    //background colour
-    svg.append("rect")
-       .attr("x", 0)
-       .attr("y", 0)
-       .attr("width", w)
-       .attr("height", h)
-       .attr("fill", "#F2F2F2");
-
     var points = [];
 
     for(var i in data){
@@ -205,48 +201,14 @@ function lineChart(data, divID, title, graphKeys, width, height) {
     //set yScale domain
     yScale.domain([yMin,yMax]);
 
-    //create the legend
-    var legend = svg.selectAll('g')
-        .data(points).enter()
-        .append('g')
-        .attr('class', 'legend');
-
-    //draw colours in legend    
-    legend.append('rect')
-            .attr('x', function(d, i){ if(i <= 1){
-                                         return w - (padding.right * 3 + 15);
-                                      }else{
-                                          return w - ((padding.right * 3) * 3 + 15);
-                                      }})
-             .attr('y', function(d, i){ if(i <= 1){
-                                          return i *  20;
-                                      }else{
-                                          return ((i - 2) * 20);
-                                      }})
-             .attr('width', 10)
-             .attr('height', 10)
-             .style('fill', function(d) {return color(d.name);});
-
-    //draw text in legend
-    legend.append('text')
-          .attr('x', function(d, i){ if(i <= 1){
-                                          return w - (padding.right * 3);
-                                      }else{
-                                          return w - ((padding.right * 3) * 3);
-                                      }})
-          .attr('y', function(d, i){ if(i <= 1){
-                                          return (i * 20) + 9;
-                                      }else{
-                                          return ((i - 2) * 20) + 9;
-                                      }})
-          .text(function(d){ return d.name; });
-
     //append title
-    svg.append('text')
-        .attr('x', padding.left)
-        .attr('y', padding.top / 2)
-        .attr('font-size', h/25 + 'px')
-        .text(title);
+    if(title){
+      svg.append('text')
+          .attr('x', padding.left)
+          .attr('y', padding.top / 2)
+          .attr('font-size', '10px')
+          .text(title);
+    }
 
     //Create X axis
     svg.append("g")
@@ -324,6 +286,8 @@ function lineChart(data, divID, title, graphKeys, width, height) {
       return yScale(d);
     }
 
+    dotPlotLegend(h, padding, points, divID, color);
+
     //create a new zoom behavior
     var zoomer = d3.behavior.zoom().x(xScale).y(yScale).scaleExtent([1,50]).on("zoom", zoom);
 
@@ -366,4 +330,31 @@ function lineChart(data, divID, title, graphKeys, width, height) {
       zoom();
     };
 
+}
+function dotPlotLegend (h, padding, points, divID, color) {
+
+    //Create SVG element
+    var svg = d3.select(divID).append('svg')
+        .attr("width", h * 0.4)
+        .attr("height", h);
+
+    //create the legend
+    var legend = svg.selectAll('g')
+        .data(points).enter()
+        .append('g')
+        .attr('class', 'legend');
+
+    //draw colours in legend    
+    legend.append('rect')
+            .attr('x', 1)
+             .attr('y', function(d, i){ return padding.top + i * 20; })
+             .attr('width', 10)
+             .attr('height', 10)
+             .style('fill', function(d) {return color(d.name);});
+
+    //draw text in legend
+    legend.append('text')
+          .attr('x', 15)
+          .attr('y', function(d, i){ return padding.top + (i * 20) + 9;})
+          .text(function(d){ return d.name; });
 }
