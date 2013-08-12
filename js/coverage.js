@@ -99,7 +99,7 @@ function coverageGraph (data, divID, title, width, height) {
     var points = [];
 
     for(var i in data){
-        if ($.inArray(data[i].name, graphKeys) !== -1){
+        if (jQuery.inArray(data[i].name, graphKeys) !== -1){
             points.push(data[i]);
         }
 

@@ -106,7 +106,7 @@ function gcDepthGraph (data, divID, title, width, height) {
   var graphKeys = ["10-90th Percentile", "25-75th Percentile", "50th Percentile"];
 
   for(i in data){
-    if ($.inArray(data[i].name, graphKeys) !== -1){
+    if (jQuery.inArray(data[i].name, graphKeys) !== -1){
       points.push(data[i]);
     }
   }
