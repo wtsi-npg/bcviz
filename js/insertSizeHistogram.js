@@ -1,11 +1,14 @@
+var chartIndex = 0;
 function insertSizeHistogram (data, divID, title, width, height) {
     var w = 700;
-    var h = 500;
+    var h = 250;
     if(width && height){
       w = width;
       h = height;
     }
-    var padding = {top: 25, right: 50, bottom: 50, left: 50};
+    var padding = {top: 25, right: 25, bottom: 25, left: 50};
+
+    chartIndex++;
 
     divID = checkDivSelection(divID);
     var svg = d3.select(divID).append("svg")
@@ -64,18 +67,25 @@ function insertSizeHistogram (data, divID, title, width, height) {
         .attr("transform", "translate(0," + (h-padding.bottom) + ")")
         .call(xAxis);
 
+    //add X axis origin label
+    svg.append("text")
+      .attr("transform", "translate(" + (padding.left - 5) + "," + (h - padding.bottom + 17) + ")")
+      .text(data.min_isize);
+
     function make_x_grid() {
         return d3.svg.axis()
                 .scale(xScale)
                 .orient("bottom")
                 .ticks(10);
     }
+
     function make_y_grid() {
         return d3.svg.axis()
                 .scale(yScale)
                 .orient("left")
                 .ticks(10);
     }
+
     //make x grid
     svg.append("g")
        .attr("class", "grid")
@@ -95,8 +105,10 @@ function insertSizeHistogram (data, divID, title, width, height) {
             .tickFormat("")
        );
 
+    //group for the bars
     var bars = svg.append('g');
 
+    //draw bars in group
     bars.selectAll('rect')
             .data(data.bins)
             .enter()
@@ -110,7 +122,8 @@ function insertSizeHistogram (data, divID, title, width, height) {
             .attr('stroke-width', '1px')
             .attr('stroke', 'white');
 
-    var q1 = svg.append("line")
+    //draw 1st quartile line
+    svg.append("line")
         .attr("x1", xScale(data.quartile1))
         .attr("y1", padding.top)
         .attr("x2", xScale(data.quartile1))
@@ -121,11 +134,12 @@ function insertSizeHistogram (data, divID, title, width, height) {
     svg.append('text')
         .attr("transform", "translate(" + xScale(data.quartile1) + "," + (padding.top - 5) + ")rotate(-45)")
         .attr("style", "font-size: 12; font-family: Helvetica, sans-serif")
-        .attr("text-anchor", "middle")
+        .attr("text-anchor", "bottom")
         .attr("fill", "red")
         .text(data.quartile1);
 
-    var q3 = svg.append("line")
+    //draw 3rd quartile line
+    svg.append("line")
         .attr("x1", xScale(data.quartile3))
         .attr("y1", padding.top)
         .attr("x2", xScale(data.quartile3))
@@ -136,11 +150,12 @@ function insertSizeHistogram (data, divID, title, width, height) {
     svg.append('text')
         .attr("transform", "translate(" + xScale(data.quartile3) + "," + (padding.top - 5) + ")rotate(-45)")
         .attr("style", "font-size: 12; font-family: Helvetica, sans-serif")
-        .attr("text-anchor", "middle")
+        .attr("text-anchor", "bottom")
         .attr("fill", "red")
         .text(data.quartile3);
 
-    var median = svg.append("line")
+    //draw median line
+    svg.append("line")
         .attr("x1", xScale(data.median))
         .attr("y1", padding.top)
         .attr("x2", xScale(data.median))
@@ -151,11 +166,12 @@ function insertSizeHistogram (data, divID, title, width, height) {
     svg.append('text')
         .attr("transform", "translate(" + xScale(data.median) + "," + (padding.top - 5) + ")rotate(-45)")
         .attr("style", "font-size: 12; font-family: Helvetica, sans-serif")
-        .attr("text-anchor", "middle")
+        .attr("text-anchor", "bottom")
         .attr("fill", "red")
         .text(data.median);
 
-    var expectedSize = svg.append('rect')
+    //draw expected size box
+    svg.append('rect')
         .attr('x', xScale(data.expected_size[0]))
         .attr('y', padding.top)
         .attr('width', xScale(data.expected_size[1]) - xScale(data.expected_size[0]))
