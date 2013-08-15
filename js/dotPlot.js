@@ -29,9 +29,9 @@ function splitICchart (data, divID, title, width, height) {
     if(data && data[0] && data[0][1] && data[0][1].values && data[0][1].values.length !== 0){
       var returnValue;
       if(width && height){
-        returnValue = [new lineChart(data[0], divID, false, title, keysIC.fwd, width, height), new lineChart(data[0], divID, true, title, keysIC.reverse, width, height)];
+        returnValue = [new lineChart(data[0], divID, false, "Indels per cycle(forward)", keysIC.fwd, width, height), new lineChart(data[0], divID, true, "Indels per cycle(reverse)", keysIC.reverse, width, height)];
       }else{
-        returnValue = [new lineChart(data[0], divID, false, title, keysIC.fwd), new lineChart(data[0], divID, true, title, keysIC.reverse)];
+        returnValue = [new lineChart(data[0], divID, false, "Indels per cycle(forward)", keysIC.fwd), new lineChart(data[0], divID, true, "Indels per cycle(reverse)", keysIC.reverse)];
       }
       if(returnValue[0].y.domain()[1] < returnValue[1].y.domain()[1]){
         returnValue[0].y.domain(returnValue[1].y.domain());
@@ -286,7 +286,9 @@ function lineChart(data, divID, legend, title, graphKeys, width, height) {
       return yScale(d);
     }
 
-    dotPlotLegend(h, padding, points, divID, color);
+    if(legend){
+      dotPlotLegend(h, padding, points, divID, color);
+    }
 
     //create a new zoom behavior
     var zoomer = d3.behavior.zoom().x(xScale).y(yScale).scaleExtent([1,50]).on("zoom", zoom);
