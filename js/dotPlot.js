@@ -29,9 +29,9 @@ function splitICchart (data, divID, title, width, height) {
     if(data && data[0] && data[0][1] && data[0][1].values && data[0][1].values.length !== 0){
       var returnValue;
       if(width && height){
-        returnValue = [new lineChart(data[0], divID, title, keysIC.fwd, width, height), new lineChart(data[0], divID, title, keysIC.reverse, width, height)];
+        returnValue = [new lineChart(data[0], divID, false, title, keysIC.fwd, width, height), new lineChart(data[0], divID, true, title, keysIC.reverse, width, height)];
       }else{
-        returnValue = [new lineChart(data[0], divID, title, keysIC.fwd), new lineChart(data[0], divID, title, keysIC.reverse)];
+        returnValue = [new lineChart(data[0], divID, false, title, keysIC.fwd), new lineChart(data[0], divID, true, title, keysIC.reverse)];
       }
       if(returnValue[0].y.domain()[1] < returnValue[1].y.domain()[1]){
         returnValue[0].y.domain(returnValue[1].y.domain());
@@ -91,7 +91,7 @@ function gccChart (data, divID, title, width, height) {
       return null;
     }
 }
-function lineChart(data, divID, title, graphKeys, width, height) {
+function lineChart(data, divID, legend, title, graphKeys, width, height) {
     var w = 350;
     var h = 250;
     if(width && height){

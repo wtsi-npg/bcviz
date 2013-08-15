@@ -18,10 +18,9 @@ function insertSizeHistogram (data, divID, title, width, height) {
     if(title){
         padding.top = 50;
         svg.append('text')
-            .attr('x', padding.left)
-            .attr('y', padding.top / 2)
-            .attr('font-size', '10px')
-            .text(title);
+            .attr("transform", "translate(" + padding.left + ", " + padding.top / 4 + ")")
+            .style('font-size', padding.top / 4)
+            .text('Insert Sizes: run ' + data.id_run + ", position " + data.position + ", tag " + data.tag_index);
     }
 
     var xMin = data.min_isize;
