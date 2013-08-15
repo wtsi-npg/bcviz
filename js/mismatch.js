@@ -173,7 +173,7 @@ function mismatchPlot (data, divID, legend, title, width, height) {
         .attr('x', 25)
         .attr('y', function (d, i) { return i * 15 + (h / 2) - 30; })
         .attr('dy', '10px')
-        .style('text-anchor', 'end')
+        .style('text-anchor', 'middle')
         .text(function (d) {
           return d;
         });
