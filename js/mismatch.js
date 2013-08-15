@@ -72,7 +72,7 @@ function mismatchPlot (data, divID, legend, title, width, height) {
       w = width;
       h = height;
     }
-    var padding = {top: 25, right: 25, bottom: 25, left: 65};
+    var padding = {top: 50, right: 25, bottom: 50, left: 65};
 
     chartIndex++;
 
