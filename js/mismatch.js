@@ -111,9 +111,6 @@ function mismatchPlot (data, divID, legend, title, width, height) {
         .range(["rgb(8, 18, 247)", "rgb(49, 246, 19)", "rgb(236, 242, 28)", "rgb(219, 68, 0)"])
         .domain(data.quality_bin_values.concat('N'));
 
-
-    console.log(data.quality_bin_values.concat('N'));
-
     //Define X axis
     var xAxis = d3.svg.axis()
           .scale(xScale)

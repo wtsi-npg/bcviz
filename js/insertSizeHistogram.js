@@ -169,12 +169,14 @@ function insertSizeHistogram (data, divID, title, width, height) {
         .attr("fill", "red")
         .text(data.median);
 
-    //draw expected size box
-    svg.append('rect')
-        .attr('x', xScale(data.expected_size[0]))
-        .attr('y', padding.top)
-        .attr('width', xScale(data.expected_size[1]) - xScale(data.expected_size[0]))
-        .attr('height',  h - padding.bottom - padding.top)
-        .attr('fill', 'blue')
-        .attr('opacity', 0.2);
+    if(data.expected_size && data.expected_size.length >= 2){
+      //draw expected size box
+      svg.append('rect')
+          .attr('x', xScale(data.expected_size[0]))
+          .attr('y', padding.top)
+          .attr('width', xScale(data.expected_size[1]) - xScale(data.expected_size[0]))
+          .attr('height',  h - padding.bottom - padding.top)
+          .attr('fill', 'blue')
+          .attr('opacity', 0.2);
+    }
 }
