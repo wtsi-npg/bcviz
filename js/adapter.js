@@ -1,5 +1,5 @@
 var chartIndex = 0;
-function newAdapterChart (data, divID, title, width, height) {
+function newAdapterChart (data, divID, width, height) {
     var mismatchData = {
       id_run: data.id_run,
       tag_index: data.tag_index,
@@ -23,8 +23,8 @@ function newAdapterChart (data, divID, title, width, height) {
         forwardData.yMax = reverseData.yMax;
     }
     //draw new plots
-    adapterChart(forwardData, divID, false, title, width, height);
-    adapterChart(reverseData, divID, true, title, width, height);
+    adapterChart(forwardData, divID, false, "Forward", width, height);
+    adapterChart(reverseData, divID, true, "Reverse", width, height);
 }
 function format_adapter_chart (data) {
     var formattedData = [];
@@ -54,7 +54,7 @@ function adapterChart (data, divID, legend, title, width, height) {
         svg.append('text')
             .attr("transform", "translate(" + padding.left + ", " + padding.top / 4 + ")")
             .style('font-size', padding.top / 4)
-            .text('Insert Sizes: run ' + data.id_run + ", position " + data.position + ", tag " + data.tag_index);
+            .text(title + ' Adapter Start Count: run ' + data.id_run + ", position " + data.position + ", tag " + data.tag_index);
     }
 
     var xMin = d3.min(data.formattedData, function (d) { return d.xVar; });
