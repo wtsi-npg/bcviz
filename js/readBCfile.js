@@ -52,7 +52,7 @@ function formatData (fileString) {
 				}
 			],
 			[
-				{xLabel: "Line Number",
+				{xLabel: "Insert Size",
 				yLabel: "Pairs"},
 				{
 					name: "totalPairs",
