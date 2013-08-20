@@ -48,18 +48,21 @@ htmlFile.write("""<!DOCTYPE html>
             var files = [""" + fileString)
 
 htmlFile.write("""];
+            var i = 0;
             var points = [];
-            for (var i = files.length - 1; i >= 0; i--) {
-                points.push(formatData(readFile(files[i])));
+            function loadGraph (i) {
+                if (points[i] == null) {
+                  points[i] = formatData(readFile(files[i]));
+                }
             }
-	    function drawGraph () {
+            function unloadGraph (i) {
+                if (points[i] != null) {
+                  points[i] = null;
+                }
+            }
+	    function drawGraph (i) {
+                loadGraph(i);
 		d3.selectAll("svg").remove();
-		if(i >= points.length){
-		    i = points.length-1;
-		}
-		if(i < 0){
-		    i = 0;
-		}
 		icChart(points[i])
 		splitICchart(points[i]);
 		isChart(points[i]);
@@ -69,17 +72,46 @@ htmlFile.write("""];
 		gcDepth(points[i]);
 		coverage(points[i]);
 	    }
+            function nextGraph() {
+		i++;
+		if(i >= files.length){
+		    i = files.length-1;
+		}
+		drawGraph(i);
+                if (i-11 >= 0) {
+                  unloadGraph(i-11);
+                }
+                if (i+10 < files.length) {
+                  loadGraph(i+10);
+                }
+            }
+            function prevGraph() {
+		i--;
+		if(i < 0){
+		    i = 0;
+		}
+		drawGraph(i);
+                if (i+11 < files.length) {
+                  unloadGraph(i+11);
+                }
+                if (i-10 >= 0) {
+                  loadGraph(i-10);
+                }
+            }
 	    $(window).keydown(function (e) {
 		    if(e.which === 188){
-			i--;
-			drawGraph();
+                        prevGraph();
 		    }
 		    if(e.which === 190){
-			i++;
-			drawGraph();
+                        nextGraph();
 		    }
 		})
-	    drawGraph();
+            // draw (and load) the first graph
+	    drawGraph(0);
+            // load the rest of the first 10 graphs as well
+            for (var i = 1; i <= 9; i++) {
+               loadGraph(i);
+            }
         </script>
     </body>
 </html>
