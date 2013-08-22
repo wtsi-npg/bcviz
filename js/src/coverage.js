@@ -89,14 +89,6 @@ define(['jquery', 'd3', 'src/divSelections'], function(jQuery, d3, checkDivSelec
            .attr("width", w - (padding.right + padding.left))
            .attr("height", h - (padding.top + padding.bottom));
 
-        //background colour
-        svg.append("rect")
-           .attr("x", 0)
-           .attr("y", 0)
-           .attr("width", w)
-           .attr("height", h)
-           .attr("fill", "#F2F2F2");
-
         var points = [];
 
         for(var i in data){

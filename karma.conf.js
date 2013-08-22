@@ -20,7 +20,7 @@ module.exports = function(config) {
       {pattern: 'js/**/*.js', included: false},
       {pattern: 'test/*Spec.js', included: false},
       {pattern: 'test/chai.js', included: false},
-      'test/test-main.js'
+      'test/test.main.js'
     ],
 
 

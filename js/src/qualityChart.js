@@ -1,5 +1,5 @@
 var chartIndex = 0;
-define(['jquery', 'd3', 'src/divSelections'], function(jQuery, d3, checkDivSelection){
+define(['jquery', 'd3', 'src/divSelections', 'lib/rainbowvis'], function(jQuery, d3, checkDivSelection){
     return function (data, direction, divID, legend, title, width, height) {
         if(direction === "r"){
             direction = 3;

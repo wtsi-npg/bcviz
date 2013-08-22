@@ -1,4 +1,4 @@
-define(['jquery'], function(jQuery){
+define(['jquery', 'd3'], function(jQuery, d3){
 function readFile(fileName)
 {
 	var returnValue;
@@ -55,7 +55,7 @@ return function (fileName) {
 				}
 			],
 			[
-				{xLabel: "Line Number",
+				{xLabel: "Insert Size",
 				yLabel: "Pairs"},
 				{
 					name: "totalPairs",
