@@ -1,5 +1,5 @@
 // Karma configuration
-// Generated on Wed Aug 07 2013 14:26:08 GMT+0100 (BST)
+// Generated on Wed Aug 21 2013 12:06:34 GMT+0100 (GMT Daylight Time)
 
 module.exports = function(config) {
   config.set({
@@ -10,24 +10,23 @@ module.exports = function(config) {
     urlRoot: '/Users/db15/Documents/SangerProject/bcviz/',
 
     // frameworks to use
-    frameworks: ['mocha'],
+    frameworks: ['mocha', 'requirejs'],
 
 
     // list of files / patterns to load in the browser
     files: [
-      {pattern: 'test/chai/chai.js', included: true},
-      'http://d3js.org/d3.v3.js',
-      'http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js',
       {pattern: 'demo/*.bc', watched: false, included: false, served: true},
       {pattern: 'css/*.css', watched: false, included: true, served: true},
-      'js/*.js',
-      'test/*.js'
+      {pattern: 'js/**/*.js', included: false},
+      {pattern: 'test/*Spec.js', included: false},
+      {pattern: 'test/chai.js', included: false},
+      'test/test-main.js'
     ],
 
 
     // list of files to exclude
     exclude: [
-      
+      'js/main.js'
     ],
 
 
@@ -52,6 +51,7 @@ module.exports = function(config) {
     // enable / disable watching file and executing tests whenever any file changes
     autoWatch: true,
 
+
     // Start these browsers, currently available:
     // - Chrome
     // - ChromeCanary
@@ -62,18 +62,6 @@ module.exports = function(config) {
     // - IE (only Windows)
     browsers: ['PhantomJS'],
 
-    // you can define custom flags
-    customLaunchers: {
-      'PhantomJS_custom': {
-        base: 'PhantomJS',
-        options: {
-          windowName: 'my-window',
-          settings: {
-            webSecurityEnabled: false
-          }
-        }
-      }
-    },
 
     // If browser does not capture in given timeout [ms], kill it
     captureTimeout: 60000,
