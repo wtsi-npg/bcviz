@@ -60,6 +60,10 @@ require(['src/readBCfile', 'src/qualityChart', 'src/ICcharts', 'src/ISchart', 's
     var files = [""" + fileString)
 
 mainJS.write("""];
+    var initialNumberFiles = files.length;
+    if(initialNumberFiles > 10){
+        initialNumberFiles = 10;
+    }
     var i = 0;
     var formattedData = [];
     function loadGraph (i) {
@@ -93,11 +97,11 @@ mainJS.write("""];
             i = files.length-1;
         }
         drawGraph(i);
-        if (i-11 >= 0) {
-            unloadGraph(i-11);
+        if (i - initialNumberFiles >= 0) {
+            unloadGraph(i - initialNumberFiles);
         }
-        if (i+10 < files.length) {
-            loadGraph(i+10);
+        if (i + initialNumberFiles < files.length) {
+            loadGraph(i + initialNumberFiles + 1);
         }
     }
     function prevGraph() {
@@ -106,11 +110,11 @@ mainJS.write("""];
             i = 0;
         }
         drawGraph(i);
-        if (i+11 < files.length) {
-          unloadGraph(i+11);
+        if (i + initialNumberFiles < files.length) {
+          unloadGraph(i + initialNumberFiles + 1);
         }
-        if (i-10 >= 0) {
-          loadGraph(i-10);
+        if (i - initialNumberFiles >= 0) {
+          loadGraph(i- initialNumberFiles);
         }
     }
     $(window).keydown(function (e) {
@@ -124,7 +128,7 @@ mainJS.write("""];
     // draw (and load) the first graph
     drawGraph(0);
     // load the rest of the first 10 graphs as well
-    for (var i = 1; i <= 9; i++) {
+    for (var i = 1; i <= initialNumberFiles - 1; i++) {
         loadGraph(i);
     }
     i = 0;
