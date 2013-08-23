@@ -123,7 +123,7 @@ function ColourGradient()
 		return formatHex(c_Base10.toString(16));
 	}
 
-	formatHex = function (hex) 
+	var formatHex = function (hex) 
 	{
 		if (hex.length === 1) {
 			return '0' + hex;

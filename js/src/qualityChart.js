@@ -6,10 +6,10 @@ define(['jquery', 'd3', 'src/divSelections', 'lib/rainbowvis'], function(jQuery,
         }else{
             direction = 2;
         }
-        if(title && data[9]){
-            title = data[9].title;
-        }
         if(data && data[direction] && data[direction][1] && data[direction][1].values && data[direction][1].values.length !== 0){
+            if(title && data[9]){
+                title = data[9].title;
+            }
             return new qualityChart(data[direction], divID, legend, title, width, height);
         }else{
             window.console.log('data does not exist; chart not created.');
@@ -23,13 +23,9 @@ define(['jquery', 'd3', 'src/divSelections', 'lib/rainbowvis'], function(jQuery,
             w = width;
             h = height;
         }
-        var padding = {top: 50, right: 10, bottom: 50, left: 50};
+        var padding = {top: 5, right: 10, bottom: 50, left: 50};
         var xLabel = data[0].xLabel;
         var yLabel = data[0].yLabel;
-
-        if(!title){
-          padding.top = 5;
-        }
 
         divID = checkDivSelection(divID);
 
@@ -42,6 +38,16 @@ define(['jquery', 'd3', 'src/divSelections', 'lib/rainbowvis'], function(jQuery,
             .attr("id", "chart" + chartIndex)
             .attr("width", w)
             .attr("height", h);
+
+        if(title){
+            padding.top = 50;
+            //append title
+            svg.append('text')
+                .attr('x', padding.left)
+                .attr('y', padding.top / 2)
+                .attr('font-size', h/25 + 'px')
+                .text(title);
+        }
 
         var xMin = 1;
         var xMax = data[1].values.length + 1;
@@ -88,15 +94,6 @@ define(['jquery', 'd3', 'src/divSelections', 'lib/rainbowvis'], function(jQuery,
            .attr("width", w - (padding.right + padding.left))
            .attr("height", h - (padding.top + padding.bottom));
 
-        if(title){
-        //append title
-        svg.append('text')
-            .attr('x', padding.left)
-            .attr('y', padding.top / 2)
-            .attr('font-size', h/25 + 'px')
-            .text(title);
-        }
-
         //Create X axis
         svg.append("g")
            .attr("class", "axis")
@@ -129,9 +126,9 @@ define(['jquery', 'd3', 'src/divSelections', 'lib/rainbowvis'], function(jQuery,
         var gradiantData;
 
         function clearGradiantArray(){
-            returnVal = [];
+            var returnVal = [];
             for (var i = 1; i <= 20; i++) {
-                aColor = '#' + rainbow.colourAt(i);
+                var aColor = '#' + rainbow.colourAt(i);
                 returnVal.push({offset: '0%', color: aColor});
                 returnVal.push({offset: '0%', color: aColor});
             }
@@ -271,6 +268,8 @@ define(['jquery', 'd3', 'src/divSelections', 'lib/rainbowvis'], function(jQuery,
             .attr("stroke", function (d, i) { return "url(#temperature-gradient" + chartIndex + "-" + i + ")"; })
             .attr("clip-path", "url(#chart-area" + chartIndex + ")")
             .append('title').text(function (d) { return "cycle " + d.xVar; });
+
+        var rects = grid.selectAll('rect');
 
         //draw the legend
         if(legend){

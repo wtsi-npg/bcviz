@@ -97,11 +97,6 @@ define(['jquery', 'd3', 'src/divSelections'], function(jQuery, d3, checkDivSelec
         if(xMin === xMax){
           xMax++;
           xMin--;
-          xAxis.ticks(2);
-        }
-
-        if(yMax - yMin === 1){
-          yAxis.ticks(1);
         }
 
         xScale.domain([xMin, xMax]);

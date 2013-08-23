@@ -1,31 +1,36 @@
 var chartIndex = 0;
 define(['jquery', 'd3', 'src/divSelections'], function(jQuery, d3, checkDivSelection){
     return function (data, divID, width, height) {
-        var mismatchData = {
-            id_run: data.id_run,
-            tag_index: data.tag_index,
-            position: data.position
-        };
-        //create forward and reverse data objects
-        var forwardData = Object.create(mismatchData);
-        var reverseData = Object.create(mismatchData);
-        //define individual data points for forward and reverse
-        forwardData.start_counts = data.forward_start_counts;
-        reverseData.start_counts = data.reverse_start_counts;
-        //format the data
-        forwardData.formattedData = format_adapter_chart(forwardData);
-        reverseData.formattedData = format_adapter_chart(reverseData);
-        //change the yMax variable to be the larger of the two graphs
-        forwardData.yMax = roundToPowerOfTen(d3.max(forwardData.formattedData, function (d) { return d.yVar; }));
-        reverseData.yMax = roundToPowerOfTen(d3.max(reverseData.formattedData, function (d) { return d.yVar; }));
-        if(forwardData.yMax > reverseData.yMax){
-            reverseData.yMax = forwardData.yMax;
-        }else{
-            forwardData.yMax = reverseData.yMax;
-        }
-        //draw new plots
-        adapterChart(forwardData, divID, false, "Forward", width, height);
-        adapterChart(reverseData, divID, true, "Reverse", width, height);
+        if(data && typeof data === "object"){
+            var mismatchData = {
+                id_run: data.id_run,
+                tag_index: data.tag_index,
+                position: data.position
+            };
+            //create forward and reverse data objects
+            var forwardData = Object.create(mismatchData);
+            var reverseData = Object.create(mismatchData);
+            //define individual data points for forward and reverse
+            forwardData.start_counts = data.forward_start_counts;
+            reverseData.start_counts = data.reverse_start_counts;
+            //format the data
+            forwardData.formattedData = format_adapter_chart(forwardData);
+            reverseData.formattedData = format_adapter_chart(reverseData);
+            //change the yMax variable to be the larger of the two graphs
+            forwardData.yMax = roundToPowerOfTen(d3.max(forwardData.formattedData, function (d) { return d.yVar; }));
+            reverseData.yMax = roundToPowerOfTen(d3.max(reverseData.formattedData, function (d) { return d.yVar; }));
+            if(forwardData.yMax > reverseData.yMax){
+                reverseData.yMax = forwardData.yMax;
+            }else{
+                forwardData.yMax = reverseData.yMax;
+            }
+            //draw new plots
+            var forwardGraph = new adapterChart(forwardData, divID, false, "Forward", width, height);
+            var reverseGraph = new adapterChart(reverseData, divID, true, "Reverse", width, height);
+            return({forward: forwardGraph, reverse: reverseGraph});
+          }else{
+            return null;
+          }
     };
         function format_adapter_chart (data) {
             var formattedData = [];

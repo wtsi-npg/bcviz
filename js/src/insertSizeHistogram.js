@@ -1,6 +1,13 @@
 var chartIndex = 0;
 define(['jquery', 'd3', 'src/divSelections'], function(jQuery, d3, checkDivSelection){
     return function (data, divID, title, width, height) {
+        if(data && typeof data === "object"){
+            return new histogram(data, divID, title, width, height);
+        }else{
+            return null;
+        }
+    };
+    function histogram(data, divID, title, width, height) {
         var w = 700;
         var h = 250;
         if(width && height){
@@ -180,5 +187,5 @@ define(['jquery', 'd3', 'src/divSelections'], function(jQuery, d3, checkDivSelec
               .attr('fill', 'blue')
               .attr('opacity', 0.2);
         }
-    };
+    }
 });

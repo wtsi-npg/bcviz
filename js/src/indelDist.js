@@ -67,7 +67,12 @@ define(['jquery', 'd3', 'src/divSelections'], function(jQuery, d3, checkDivSelec
         var yAxisLeft = d3.svg.axis()
               .scale(yScaleLeft)
               .orient("left")
-              .ticks(10, function (d) {return d;});
+              .ticks(10, function (d) {
+                        if(d < 1){
+                        }else{
+                            return d;
+                        }
+                    });
 
         /*var yAxisRight = d3.svg.axis()
               .scale(yScaleRight)

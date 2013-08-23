@@ -34,6 +34,8 @@ htmlFile.write("""<!DOCTYPE html>
         <div id="instructions">
             <p>To switch to another set of bamcheck graphs, use the &quot;.&quot; key to move forward and the &quot;,&quot; key to move backwards.</p>
         </div>
+        <div id="fileName">
+        </div>
         <div id="aDiv">
         </div>
     </body>
@@ -41,10 +43,7 @@ htmlFile.write("""<!DOCTYPE html>
 """)
 htmlFile.close()
 mainJS = open('main.js', 'w')
-mainJS.write("""var files = [""" + fileString)
-
-mainJS.write("""];
-require.config({
+mainJS.write("""require.config({
     baseUrl: '/js',
 
     paths: {
@@ -58,31 +57,35 @@ require.config({
     }
 });
 require(['src/readBCfile', 'src/qualityChart', 'src/ICcharts', 'src/ISchart', 'src/gcChart', 'src/gccChart', 'src/indelDist', 'src/GCDepth', 'src/coverage'], function (read, quality, ic, is, gc, gcc, id, gcDepth, coverage) {
+    var files = [""" + fileString)
+
+mainJS.write("""];
     var i = 0;
-    var points = [];
+    var formattedData = [];
     function loadGraph (i) {
-        if (points[i] == null) {
-            points[i] = read(files[i]);
+        if (formattedData[i] == null) {
+            formattedData[i] = read(files[i]);
         }
     }
     function unloadGraph (i) {
-        if (points[i] != null) {
-            points[i] = null;
+        if (formattedData[i] != null) {
+            formattedData[i] = null;
         }
     }
     function drawGraph (i) {
         loadGraph(i);
         d3.selectAll("svg").remove();
-        ic(points[i], false, false, true);
-        ic(points[i], true, false, true);
-        quality(points[i], "f", "      ", false, true);
-        quality(points[i], "r", "      ", true, true);
-        is(points[i], false, true);
-        gc(points[i], false, true);
-        gcc(points[i], false, true);
-        id(points[i]);
-        gcDepth(points[i]);
-        coverage(points[i]);
+        document.getElementById("fileName").innerHTML = "<h2>" + files[i].replace("%23", "#") + "</h2>";
+        ic(formattedData[i], false, false, true);
+        ic(formattedData[i], true, false, true);
+        quality(formattedData[i], "f", "      ", false, false);
+        quality(formattedData[i], "r", "      ", true, false);
+        is(formattedData[i], false, true);
+        gc(formattedData[i], false, true);
+        gcc(formattedData[i], false, true);
+        id(formattedData[i]);
+        gcDepth(formattedData[i]);
+        coverage(formattedData[i]);
     }
     function nextGraph() {
         i++;
@@ -117,13 +120,14 @@ require(['src/readBCfile', 'src/qualityChart', 'src/ICcharts', 'src/ISchart', 's
         if(e.which === 190){
             nextGraph();
         }
-    })
+    });
     // draw (and load) the first graph
     drawGraph(0);
     // load the rest of the first 10 graphs as well
     for (var i = 1; i <= 9; i++) {
         loadGraph(i);
     }
+    i = 0;
 });
 """)
 mainJS.close()

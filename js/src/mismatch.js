@@ -1,38 +1,43 @@
 var chartIndex = 0;
 define(['jquery', 'd3', 'src/divSelections'], function(jQuery, d3, checkDivSelection){
     return function (data, divID, title, width, height) {
-        var mismatchData = {
-          id_run: data.id_run,
-          tag_index: data.tag_index,
-          position: data.position,
-          quality_bin_values: data.quality_bin_values
-        };
-        //create forward and reverse data objects
-        var forwardData = Object.create(mismatchData);
-        var reverseData = Object.create(mismatchData);
-        //define individual data points for forward and reverse
-        forwardData.n_count = data.forward_n_count;
-        forwardData.quality_bins = data.forward_quality_bins;
-        forwardData.count = data.forward_count;
-        reverseData.n_count = data.reverse_n_count;
-        reverseData.quality_bins = data.reverse_quality_bins;
-        reverseData.count = data.reverse_count;
-        //format the data
-        var forwardFormattedData = formatMismatch(forwardData);
-        forwardData.formattedData = forwardFormattedData.formattedData;
-        var reverseFormattedData = formatMismatch(reverseData);
-        reverseData.formattedData = reverseFormattedData.formattedData;
-        //change the yMax variable to be the larger of the two graphs
-        if(forwardFormattedData.yMax > reverseFormattedData.yMax){
-          forwardData.yMax = forwardFormattedData.yMax;
-          reverseData.yMax = forwardFormattedData.yMax;
+        if(data && typeof data === "object"){
+            var mismatchData = {
+                id_run: data.id_run,
+                tag_index: data.tag_index,
+                position: data.position,
+                quality_bin_values: data.quality_bin_values
+            };
+            //create forward and reverse data objects
+            var forwardData = Object.create(mismatchData);
+            var reverseData = Object.create(mismatchData);
+            //define individual data points for forward and reverse
+            forwardData.n_count = data.forward_n_count;
+            forwardData.quality_bins = data.forward_quality_bins;
+            forwardData.count = data.forward_count;
+            reverseData.n_count = data.reverse_n_count;
+            reverseData.quality_bins = data.reverse_quality_bins;
+            reverseData.count = data.reverse_count;
+            //format the data
+            var forwardFormattedData = formatMismatch(forwardData);
+            forwardData.formattedData = forwardFormattedData.formattedData;
+            var reverseFormattedData = formatMismatch(reverseData);
+            reverseData.formattedData = reverseFormattedData.formattedData;
+            //change the yMax variable to be the larger of the two graphs
+            if(forwardFormattedData.yMax > reverseFormattedData.yMax){
+              forwardData.yMax = forwardFormattedData.yMax;
+              reverseData.yMax = forwardFormattedData.yMax;
+            }else{
+              forwardData.yMax = reverseFormattedData.yMax;
+              reverseData.yMax = reverseFormattedData.yMax;
+            }
+            //draw new plots
+            var forward = new mismatchPlot(forwardData, divID, false, title, width, height);
+            var reverse = new mismatchPlot(reverseData, divID, true, title, width, height);
+            return {forward: forward, reverse: reverse};
         }else{
-          forwardData.yMax = reverseFormattedData.yMax;
-          reverseData.yMax = reverseFormattedData.yMax;
+            return null;
         }
-        //draw new plots
-        mismatchPlot(forwardData, divID, false, title, width, height);
-        mismatchPlot(reverseData, divID, true, title, width, height);
     };
     function formatMismatch (data) {
         var barData = data.quality_bins;
