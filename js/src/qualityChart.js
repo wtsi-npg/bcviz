@@ -269,8 +269,6 @@ define(['jquery', 'd3', 'src/divSelections', 'lib/rainbowvis'], function(jQuery,
             .attr("clip-path", "url(#chart-area" + chartIndex + ")")
             .append('title').text(function (d) { return "cycle " + d.xVar; });
 
-        var rects = grid.selectAll('rect');
-
         //draw the legend
         if(legend){
           qualityChartLegend(divID, h, padding);
