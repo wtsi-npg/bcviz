@@ -13,7 +13,6 @@ define(['jquery', 'd3'], function(jQuery, d3){
 					//console.log(text);
 					var contentsOfFileAsString = text;
 					returnValue = d3.tsv.parseRows(contentsOfFileAsString);
-					z = returnValue;
 					returnValue.unshift('#' + fileName);
 				},
 				error: function (x, status, error) {
