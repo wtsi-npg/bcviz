@@ -11,7 +11,7 @@ define(['src/dotPlot'], function(dotPlot){
         if(data && data[0] && data[0][1] && data[0][1].values && data[0][1].values.length !== 0){
             if(split){
                 var returnValue;
-                returnValue = [new dotPlot(data[0], divID, false, "Indels per cycle(forward)", keysIC.fwd, width, height), new dotPlot(data[0], divID, true, "Indels per cycle(reverse)", keysIC.reverse, width, height)];
+                returnValue = [new dotPlot(data[0], divID, false, "Indels per cycle(forward)", keysIC.fwd, width, height, "_fwd"), new dotPlot(data[0], divID, true, "Indels per cycle(reverse)", keysIC.reverse, width, height, "_rev")];
                 //check to which graph has the larger domain and change them to be equal.
                 if(returnValue[0].y.domain()[1] < returnValue[1].y.domain()[1]){
                     returnValue[0].y.domain(returnValue[1].y.domain());

@@ -1,18 +1,18 @@
 var chartIndex = 0;
 define(['jquery', 'd3', 'src/divSelections'], function(jQuery, d3, checkDivSelection){
-    return function (data, divID, legend, title, graphKeys, width, height) {
+    return function (data, divID, legend, title, graphKeys, width, height, direction) {
         var w = 350;
         var h = 250;
         if(width && height){
-          w = width;
-          h = height;
+            w = width;
+            h = height;
         }
         var padding = {top: 50, right: 25, bottom: 50, left: 65};
         var xLabel = data[0].xLabel;
         var yLabel = data[0].yLabel;
 
         if(!title){
-          padding.top = 25;
+            padding.top = 25;
         }
 
         divID = checkDivSelection(divID);
@@ -95,8 +95,8 @@ define(['jquery', 'd3', 'src/divSelections'], function(jQuery, d3, checkDivSelec
         var yMax = d3.max(points, function(p) { return d3.max(p.values, function(v) { return v.yVar; }); });
 
         if(xMin === xMax){
-          xMax++;
-          xMin--;
+            xMax++;
+            xMin--;
         }
 
         xScale.domain([xMin, xMax]);
@@ -183,14 +183,14 @@ define(['jquery', 'd3', 'src/divSelections'], function(jQuery, d3, checkDivSelec
               .attr("fill", function(d) { return color(d.name); });
 
         function cx (d) {
-          return xScale(d);
+            return xScale(d);
         }
         function cy (d) {
-          return yScale(d);
+            return yScale(d);
         }
 
         if(legend){
-          dotPlotLegend(h, padding, points, divID, color);
+            dotPlotLegend(h, padding, graphKeys, divID, color, direction);
         }
 
         //create a new zoom behavior
@@ -235,7 +235,11 @@ define(['jquery', 'd3', 'src/divSelections'], function(jQuery, d3, checkDivSelec
           zoom();
         };
     };
-    function dotPlotLegend (h, padding, points, divID, color) {
+    function dotPlotLegend (h, padding, graphKeys, divID, color, direction) {
+
+        if(!direction){
+            direction = "";
+        }
 
         //Create SVG element
         var svg = d3.select(divID).append('svg')
@@ -244,7 +248,7 @@ define(['jquery', 'd3', 'src/divSelections'], function(jQuery, d3, checkDivSelec
 
         //create the legend
         var legend = svg.selectAll('g')
-            .data(points).enter()
+            .data(graphKeys).enter()
             .append('g')
             .attr('class', 'legend');
 
@@ -254,12 +258,12 @@ define(['jquery', 'd3', 'src/divSelections'], function(jQuery, d3, checkDivSelec
                  .attr('y', function(d, i){ return padding.top + i * 20; })
                  .attr('width', 10)
                  .attr('height', 10)
-                 .style('fill', function(d) {return color(d.name);});
+                 .style('fill', function(d) {return color(d);});
 
         //draw text in legend
         legend.append('text')
               .attr('x', 15)
               .attr('y', function(d, i){ return padding.top + (i * 20) + 9;})
-              .text(function(d){ return d.name; });
+              .text(function(d){ return d.substring(0, d.lastIndexOf(direction)); });
     }
 });
