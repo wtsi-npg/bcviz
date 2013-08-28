@@ -1,4 +1,4 @@
-define(['jquery', 'd3'], function(jQuery, d3){
+define(['jquery'], function(jQuery){
 	function readFile(fileName) {
 		var returnValue;
 		//check if file name contians only whitespace
