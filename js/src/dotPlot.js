@@ -22,8 +22,7 @@ define(['jquery', 'd3', 'src/divSelections'], function(jQuery, d3, checkDivSelec
         //Create SVG element
         var svg = d3.select(divID).append('svg')
             .attr("width", w)
-            .attr("height", h)
-            .call(d3.behavior.zoom().on('zoom', zoomer));
+            .attr("height", h);
 
         //create scale functions
         this.x = d3.scale.linear()
@@ -77,6 +76,13 @@ define(['jquery', 'd3', 'src/divSelections'], function(jQuery, d3, checkDivSelec
            .attr("y", padding.top)
            .attr("width", (w - padding.right - padding.left))
            .attr("height", (h - padding.bottom - padding.top));
+
+        var rect = svg.append("rect")
+            .attr("opacity", 0)
+            .attr("x", padding.left)
+            .attr("y", padding.top)
+            .attr("width", (w - padding.right - padding.left))
+            .attr("height", (h - padding.bottom - padding.top));
 
         var points = [];
 
@@ -196,7 +202,7 @@ define(['jquery', 'd3', 'src/divSelections'], function(jQuery, d3, checkDivSelec
         //create a new zoom behavior
         var zoomer = d3.behavior.zoom().x(xScale).y(yScale).scaleExtent([1,50]).on("zoom", zoom);
 
-        svg.call(zoomer);
+        rect.call(zoomer);
 
         function zoom() {
             if(zoomer.scale() === 1){

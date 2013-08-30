@@ -1,4 +1,4 @@
-define(['chai', '../js/src/divSelections.js'], function ( chai, checkDivSelection) {
+define(['chai', '../js/src/divSelections.js', 'd3'], function ( chai, checkDivSelection, d3) {
 	var assert = chai.assert;
 	var should = chai.should();
 	var expect = chai.expect;
