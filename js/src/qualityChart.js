@@ -1,5 +1,5 @@
 var chartIndex = 0;
-define(['jquery', 'd3', 'src/divSelections', 'lib/rainbowvis'], function(jQuery, d3, checkDivSelection){
+define(['d3', 'src/divSelections'], function(d3, checkDivSelection){
     return function (data, direction, divID, legend, title, width, height) {
         if(direction === "r"){
             direction = 3;
@@ -17,11 +17,13 @@ define(['jquery', 'd3', 'src/divSelections', 'lib/rainbowvis'], function(jQuery,
         }
     };
     function qualityChart (data, divID, legend, title, width, height) {
-        var w = 350;
-        var h = 250;
+        this.width = 350;
+        this.height = 250;
+        var w = this.width;
+        var h = this.height;
         if(width && height){
-            w = width;
-            h = height;
+            this.width = width;
+            this.height = height;
         }
         var padding = {top: 5, right: 10, bottom: 50, left: 50};
         var xLabel = data[0].xLabel;
@@ -34,10 +36,12 @@ define(['jquery', 'd3', 'src/divSelections', 'lib/rainbowvis'], function(jQuery,
         var thisChartIndex = chartIndex;
 
         //Create SVG element
-        var svg = d3.select(divID).append('svg')
+        this.svg = d3.select(divID).append('svg')
             .attr("id", "chart" + chartIndex)
             .attr("width", w)
             .attr("height", h);
+
+        var svg = this.svg;
 
         if(title){
             padding.top = 50;
@@ -59,9 +63,13 @@ define(['jquery', 'd3', 'src/divSelections', 'lib/rainbowvis'], function(jQuery,
         var nodeHeight = (h - padding.top-padding.bottom) / 50;
 
         //create gradiant
-        var rainbow = new Rainbow();
+        /*var rainbow = new Rainbow();
         rainbow.setNumberRange(1, 20);
-        rainbow.setSpectrum('lime', 'blue', 'yellow', 'red', 'black');
+        rainbow.setSpectrum('lime', 'blue', 'yellow', 'red', 'black');*/
+
+        var colours = d3.scale.linear()
+            .domain([1, 5, 10, 15, 20])
+            .range(['lime', 'blue', 'yellow', 'red', 'black']);
 
         //create scale functions
         var xScale = d3.scale.linear()
@@ -76,50 +84,50 @@ define(['jquery', 'd3', 'src/divSelections', 'lib/rainbowvis'], function(jQuery,
 
         //Define X axis
         var xAxis = d3.svg.axis()
-              .scale(xScale)
-              .orient("bottom")
-              .ticks(10);
+                .scale(xScale)
+                .orient("bottom")
+                .ticks(10);
 
         //define Y axis
         var yAxis = d3.svg.axis()
-              .scale(yScale)
-              .orient("left")
-              .ticks(10);
+                .scale(yScale)
+                .orient("left")
+                .ticks(10);
 
         svg.append("clipPath")
-           .attr("id", "chart-area" + chartIndex)
-           .append("rect")
-           .attr("x", padding.left)
-           .attr("y", padding.top)
-           .attr("width", w - (padding.right + padding.left))
-           .attr("height", h - (padding.top + padding.bottom));
+            .attr("id", "chart-area" + chartIndex)
+            .append("rect")
+            .attr("x", padding.left)
+            .attr("y", padding.top)
+            .attr("width", w - (padding.right + padding.left))
+            .attr("height", h - (padding.top + padding.bottom));
 
         //Create X axis
         svg.append("g")
-           .attr("class", "axis")
-           .attr("id", "xAxis" + chartIndex)
-           .attr("transform", "translate(0," + (h-padding.bottom) + ")")
-           .call(xAxis)
-          .append("text")
-           .attr("id", "xAxisText" + chartIndex)
-           .attr("dy", ".71em")
-           .attr("text-anchor", "middle")
-           .attr("transform", "translate(" + (w / 2) + "," + padding.bottom / 2 + ")")
-           .attr("style", "font-size: 12; font-family: Helvetica, sans-serif")
-           .text(xLabel);
+            .attr("class", "axis")
+            .attr("id", "xAxis" + chartIndex)
+            .attr("transform", "translate(0," + (h-padding.bottom) + ")")
+            .call(xAxis)
+            .append("text")
+            .attr("id", "xAxisText" + chartIndex)
+            .attr("dy", ".71em")
+            .attr("text-anchor", "middle")
+            .attr("transform", "translate(" + (w / 2) + "," + padding.bottom / 2 + ")")
+            .attr("style", "font-size: 12; font-family: Helvetica, sans-serif")
+            .text(xLabel);
 
         //Create Y axis
         svg.append("g")
-           .attr("class", "axis")
-           .attr("id", "yAxis" + chartIndex)
-           .attr("transform", "translate(" + padding.left + ", 0)")
-           .call(yAxis)
-          .append("text")
-           .attr("dy", -padding.left/1.5)
-           .attr("transform", "translate(0," + h/2 + ")rotate(-90)")
-           .attr("style", "font-size: 12; font-family: Helvetica, sans-serif")
-           .style("text-anchor", "middle")
-           .text(yLabel);
+            .attr("class", "axis")
+            .attr("id", "yAxis" + chartIndex)
+            .attr("transform", "translate(" + padding.left + ", 0)")
+            .call(yAxis)
+            .append("text")
+            .attr("dy", -padding.left/1.5)
+            .attr("transform", "translate(0," + h/2 + ")rotate(-90)")
+            .attr("style", "font-size: 12; font-family: Helvetica, sans-serif")
+            .style("text-anchor", "middle")
+            .text(yLabel);
 
         //have object in higher scope and change it when drawing.
         //must be set to the percents for each rect. 
@@ -128,7 +136,7 @@ define(['jquery', 'd3', 'src/divSelections', 'lib/rainbowvis'], function(jQuery,
         function clearGradiantArray(){
             var returnVal = [];
             for (var i = 1; i <= 20; i++) {
-                var aColor = '#' + rainbow.colourAt(i);
+                var aColor = colours(i);
                 returnVal.push({offset: '0%', color: aColor});
                 returnVal.push({offset: '0%', color: aColor});
             }
@@ -246,15 +254,15 @@ define(['jquery', 'd3', 'src/divSelections', 'lib/rainbowvis'], function(jQuery,
 
             //create new gradient with individual ID
             svg.append("linearGradient")
-              .attr("id", "temperature-gradient" + chartIndex + "-" + count)
-              .attr("gradientUnits", "userSpaceOnUse")
-              .attr("x1", 0).attr("y1", h - padding.bottom)
-              .attr("x2", 0).attr("y2", padding.top)
+                .attr("id", "temperature-gradient" + chartIndex + "-" + count)
+                .attr("gradientUnits", "userSpaceOnUse")
+                .attr("x1", 0).attr("y1", h - padding.bottom)
+                .attr("x2", 0).attr("y2", padding.top)
             .selectAll("stop")
-              .data(gradiantData)
+                .data(gradiantData)
             .enter().append("stop")
-              .attr("offset", function(d) { return d.offset; })
-              .attr("stop-color", function(d) { return d.color; });
+                .attr("offset", function(d) { return d.offset; })
+                .attr("stop-color", function(d) { return d.color; });
         }
 
         var grid = svg.selectAll(".qualLine")
@@ -271,15 +279,15 @@ define(['jquery', 'd3', 'src/divSelections', 'lib/rainbowvis'], function(jQuery,
 
         //draw the legend
         if(legend){
-          qualityChartLegend(divID, h, padding);
+            qualityChartLegend(divID, h, padding);
         }
 
         this.resize = function (height, width) {
             h = 350;
             w = (window.innerWidth - 100) / 2;
             if(height && width){
-                h = height;
-                w = width;
+                this.height = height;
+                this.width = width;
             }
             nodeWidth = (w-padding.left-padding.right) / xMax;
 
@@ -322,14 +330,18 @@ define(['jquery', 'd3', 'src/divSelections', 'lib/rainbowvis'], function(jQuery,
         var w = 50;
 
         //create gradiant
-        var rainbow = new Rainbow();
+        /*var rainbow = new Rainbow();
         rainbow.setNumberRange(1, 20);
-        rainbow.setSpectrum('lime', 'blue', 'yellow', 'red', 'black');
+        rainbow.setSpectrum('lime', 'blue', 'yellow', 'red', 'black');*/
+
+        var colours = d3.scale.linear()
+            .domain([1, 5, 10, 15, 20])
+            .range(['lime', 'blue', 'yellow', 'red', 'black']);
 
         for (var i = 1; i <= 20; i++) {
-          aColor = '#' + rainbow.colourAt(i);
-          gradiantData.push({offset: (5 * i) - 5 + '%', color: aColor});
-          gradiantData.push({offset: 5 * i + '%', color: aColor});
+            aColor = colours(i);
+            gradiantData.push({offset: (5 * i) - 5 + '%', color: aColor});
+            gradiantData.push({offset: 5 * i + '%', color: aColor});
         }
 
         var svg = d3.select(divID).append('svg')
@@ -337,15 +349,15 @@ define(['jquery', 'd3', 'src/divSelections', 'lib/rainbowvis'], function(jQuery,
             .attr("height", h);
 
         svg.append("linearGradient")
-              .attr("id", "temperature-gradient")
-              .attr("gradientUnits", "userSpaceOnUse")
-              .attr("x1", 0).attr("y1", h - padding.bottom)
-              .attr("x2", 0).attr("y2", padding.top)
+                .attr("id", "temperature-gradient")
+                .attr("gradientUnits", "userSpaceOnUse")
+                .attr("x1", 0).attr("y1", h - padding.bottom)
+                .attr("x2", 0).attr("y2", padding.top)
             .selectAll("stop")
-              .data(gradiantData)
+                .data(gradiantData)
             .enter().append("stop")
-              .attr("offset", function(d) { return d.offset; })
-              .attr("stop-color", function(d) { return d.color; });
+                .attr("offset", function(d) { return d.offset; })
+                .attr("stop-color", function(d) { return d.color; });
 
         var legendScale = d3.scale.linear()
                  .nice()
@@ -353,25 +365,25 @@ define(['jquery', 'd3', 'src/divSelections', 'lib/rainbowvis'], function(jQuery,
                  .domain([100, 0]);
 
         var legendAxis = d3.svg.axis()
-              .scale(legendScale)
-              .orient("left")
-              .ticks(10);
+                .scale(legendScale)
+                .orient("left")
+                .ticks(10);
 
         var legend = svg.append('g').attr('class', 'legend');
         var legendWidth = 20;
 
         svg.append("g")
-           .attr("class", "axis")
-           .attr("id", "legendAxis" + chartIndex)
-           .attr("transform", "translate(" + (w - legendWidth) + ",0)")
-           .call(legendAxis);
+            .attr("class", "axis")
+            .attr("id", "legendAxis" + chartIndex)
+            .attr("transform", "translate(" + (w - legendWidth) + ",0)")
+            .call(legendAxis);
 
         legend.append('rect')
-              .attr("id", "legendRect" + chartIndex)
-              .attr('x', w - legendWidth)
-              .attr('y', padding.top)
-              .attr('width', legendWidth)
-              .attr('height', h - (padding.top + padding.bottom))
-              .attr('fill', "url(#temperature-gradient)");
+                .attr("id", "legendRect" + chartIndex)
+                .attr('x', w - legendWidth)
+                .attr('y', padding.top)
+                .attr('width', legendWidth)
+                .attr('height', h - (padding.top + padding.bottom))
+                .attr('fill', "url(#temperature-gradient)");
     }
 });
