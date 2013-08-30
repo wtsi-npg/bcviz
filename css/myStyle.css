@@ -1,5 +1,9 @@
 body {
-  font: 10px sans-serif;
+  font: 12px sans-serif;
+}
+svg {
+  font-size: 10px; 
+  font-family: Helvetica, sans-serif;
 }
 .axis path,
 .axis line1,

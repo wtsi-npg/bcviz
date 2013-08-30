@@ -52,6 +52,7 @@ mainJS.write("""require.config({
     },
     shim: {
         d3: {
+            //makes d3 available automatically for all modules
             exports: 'd3'
         }
     }
@@ -64,6 +65,7 @@ mainJS.write("""];
     if(initialNumberFiles > 10){
         initialNumberFiles = 10;
     }
+    var charts = [];
     var i = 0;
     var formattedData = [];
     function loadGraph (i) {
@@ -77,13 +79,14 @@ mainJS.write("""];
         }
     }
     function drawGraph (i) {
+        charts = [];
         loadGraph(i);
         d3.selectAll("svg").remove();
         document.getElementById("fileName").innerHTML = "<h2>" + files[i].replace("%23", "#") + "</h2>";
         ic(formattedData[i], false, false, true);
         ic(formattedData[i], true, false, true);
-        quality(formattedData[i], "f", "      ", false, false);
-        quality(formattedData[i], "r", "      ", true, false);
+        charts.push(quality(formattedData[i], "f", "      ", false, false));
+        charts.push(quality(formattedData[i], "r", "      ", true, false));
         is(formattedData[i], false, true);
         gc(formattedData[i], false, true);
         gcc(formattedData[i], false, true);
@@ -132,6 +135,12 @@ mainJS.write("""];
         loadGraph(i);
     }
     i = 0;
+    window.onresize = function () {
+        for(var i = 0; i < charts.length; i++){
+            if(charts[i])
+                charts[i].resize();
+        }
+    };
 });
 """)
 mainJS.close()

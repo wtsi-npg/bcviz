@@ -25,8 +25,8 @@ define(['jquery', 'd3', 'src/divSelections'], function(jQuery, d3, checkDivSelec
                 forwardData.yMax = reverseData.yMax;
             }
             //draw new plots
-            var forwardGraph = new adapterChart(forwardData, divID, false, "Forward", width, height);
-            var reverseGraph = new adapterChart(reverseData, divID, true, "Reverse", width, height);
+            var forwardGraph = new adapterChart(forwardData, divID, "Forward", width, height);
+            var reverseGraph = new adapterChart(reverseData, divID, "Reverse", width, height);
             return({forward: forwardGraph, reverse: reverseGraph});
           }else{
             return null;
@@ -42,12 +42,12 @@ define(['jquery', 'd3', 'src/divSelections'], function(jQuery, d3, checkDivSelec
         function roundToPowerOfTen (aNumb) {
             return Math.pow(10, Math.ceil(Math.log(aNumb) / Math.LN10));
         }
-        function adapterChart (data, divID, legend, title, width, height) {
+        function adapterChart (data, divID, title, width, height) {
             var w = 500;
             var h = 250;
             if(width && height){
-              w = width;
-              h = height;
+                w = width;
+                h = height;
             }
             var padding = {top: 25, right: 25, bottom: 25, left: 50};
 
