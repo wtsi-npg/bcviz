@@ -1,6 +1,6 @@
 var chartIndex = 0;
-define(['jquery', 'd3', 'src/divSelections'], function(jQuery, d3, checkDivSelection){
-    return function (data, divID, title, width, height) {
+define(['jquery','d3', 'src/divSelections'], function(jQuery, d3, checkDivSelection){
+    return function (data, divID, title, legend, width, height) {
         if(data && typeof data === "object"){
             var mismatchData = {
                 id_run: data.id_run,
@@ -33,7 +33,7 @@ define(['jquery', 'd3', 'src/divSelections'], function(jQuery, d3, checkDivSelec
             }
             //draw new plots
             var forward = new mismatchPlot(forwardData, divID, false, title, width, height);
-            var reverse = new mismatchPlot(reverseData, divID, true, title, width, height);
+            var reverse = new mismatchPlot(reverseData, divID, legend, title, width, height);
             return {forward: forward, reverse: reverse};
         }else{
             return null;

@@ -19,7 +19,7 @@ module.exports = function(config) {
       {pattern: 'css/*.css', watched: false, included: true, served: true},
       {pattern: 'js/**/*.js', included: false},
       {pattern: 'test/*Spec.js', included: false},
-      {pattern: 'test/chai.js', included: false},
+      {pattern: 'test/chai-1.7.2.js', included: false},
       'test/test.main.js'
     ],
 

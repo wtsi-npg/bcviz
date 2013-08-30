@@ -11,16 +11,16 @@ require.config({
 });
 require(['src/mismatch'], function (m) {
     jQuery.getJSON("demo/sample_sequence_error.json", function (data) {
-        m(data, "#div1", true);
+        m(data, "#div1", true, true);
     });
 });
 require(['src/adapter'], function (a) {
     jQuery.getJSON("demo/sample_adapter.json", function (data) {
-        a(data, "#div2", true);
+        a(data, "#div2");
     });
 });
 require(['src/insertSizeHistogram'], function (i) {
     jQuery.getJSON("demo/sample_insert_size.json", function (data) {
-        i(data, "#div3", true);
+        i(data, "#div3");
     });
 });
