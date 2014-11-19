@@ -24,6 +24,9 @@
  */
 
 define(['jquery', 'd3'], function(jQuery, d3){
+	var xScale;
+	var yScale;
+
 	return function(divID) {
 		var data = jQuery(divID).data("check");
 		var width = jQuery(divID).data("width");
@@ -64,12 +67,12 @@ define(['jquery', 'd3'], function(jQuery, d3){
         var nodeWidth = (width-padding.left-padding.right) / data.bins.length;
 
         //create scale functions
-        var xScale = d3.scale.linear()
+         xScale = d3.scale.linear()
                  .nice()
                  .range([padding.left, width - (padding.right)])
                  .domain([xMin,xMax]);
 
-        var yScale = d3.scale.linear()
+         yScale = d3.scale.linear()
                  .nice()
                  .range([height - padding.bottom, padding.top])
                  .domain([yMin, yMax]);
@@ -154,6 +157,11 @@ define(['jquery', 'd3'], function(jQuery, d3){
                 .attr('stroke', 'white');
 
 
+
+		if (data.norm_fit_modes) { drawStandardDistribution(data,svg); }
+	}
+
+	function drawStandardDistribution(data, svg) {
 		//
 		// overlay a normal distribution curve
 		//
