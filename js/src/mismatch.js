@@ -1,6 +1,41 @@
-var chartIndex = 0;
-define(['jquery','d3', 'src/divSelections'], function(jQuery, d3, checkDivSelection){
-    return function (data, divID, title, legend, width, height) {
+/*
+ * Author: David Bryson and Jennifer Liddle <js10@sanger.ac.uk>
+ *
+ * Created: 3rd November 2014
+ *
+ * Display a 'Mismatch' chart
+ *
+ * Use:
+ *
+ * <div class='bcviz_mismatch' data-direction='forward' data-check='data' data-width=500 data-height=200></div>
+ *
+ * where width and height are optional and have the default values shown above
+ *       direction        is either 'forward' or 'reverse' and defaults to 'forward'
+ *       data             is a json formatted string which contains:
+ *             bins
+ *             id_run
+ *             position
+ *             tag_index
+ *             bin_width
+ *             min_isize
+ *             mean
+ *             std
+ *             norm_fit_modes
+ *
+ */
+
+define(['jquery','d3'], function(jQuery, d3){
+    return function (divID, width, height) {
+		if (!width) { width = jQuery(divID).data("width"); }
+		if (!width) { width = 450; }
+		if (!height) { height = jQuery(divID).data("height"); }
+		if (!height) { height = 350; }
+
+		var legend = jQuery(divID).data("legend");
+		var data = jQuery(divID).data("check");
+		var direction = jQuery(divID).data("direction");
+		if (!direction) { direction = 'forward'; }
+
         if(data && typeof data === "object"){
             var mismatchData = {
                 id_run: data.id_run,
@@ -32,13 +67,17 @@ define(['jquery','d3', 'src/divSelections'], function(jQuery, d3, checkDivSelect
               reverseData.yMax = reverseFormattedData.yMax;
             }
             //draw new plots
-            var forward = new mismatchPlot(forwardData, divID, false, title, width, height);
-            var reverse = new mismatchPlot(reverseData, divID, legend, title, width, height);
+			if (direction == 'forward') {
+				return new mismatchPlot(forwardData, divID, 'Forward', width, height, legend);
+			} else {
+				return new mismatchPlot(reverseData, divID, 'Reverse', width, height, legend);
+			}
             return {forward: forward, reverse: reverse};
         }else{
             return null;
         }
     };
+
     function formatMismatch (data) {
         var barData = data.quality_bins;
         barData.push(data.n_count);
@@ -71,7 +110,8 @@ define(['jquery','d3', 'src/divSelections'], function(jQuery, d3, checkDivSelect
         };
         return returnVal;
     }
-    function mismatchPlot (data, divID, legend, title, width, height) {
+
+    function mismatchPlot (data, divID, title, width, height, legend) {
         var w = 450;
         var h = 350;
         if(width && height){
@@ -79,10 +119,6 @@ define(['jquery','d3', 'src/divSelections'], function(jQuery, d3, checkDivSelect
           h = height;
         }
         var padding = {top: 50, right: 25, bottom: 50, left: 65};
-
-        chartIndex++;
-
-        divID = checkDivSelection(divID);
 
         var svg = d3.select(divID).append("svg")
             .attr("width", w)
@@ -132,14 +168,12 @@ define(['jquery','d3', 'src/divSelections'], function(jQuery, d3, checkDivSelect
         //Create Y axis
         svg.append("g")
            .attr("class", "axis")
-           .attr("id", "yAxis" + chartIndex)
            .attr("transform", "translate(" + padding.left + ", 0)")
            .call(yAxis);
 
         //Create X axis
         svg.append("g")
             .attr("class", "axis")
-            .attr("id", "xAxis" + chartIndex)
             .attr("transform", "translate(0," + (h-padding.bottom) + ")")
             .call(xAxis);
 
@@ -157,7 +191,7 @@ define(['jquery','d3', 'src/divSelections'], function(jQuery, d3, checkDivSelect
             .attr('stroke', 'white')
             .style("fill", function(d) { return color(d.name); });
 
-        if(legend){
+		if (legend) {
           var legendSVG = d3.select(divID)
             .append('svg')
             .attr('width', w / 4)
@@ -183,6 +217,7 @@ define(['jquery','d3', 'src/divSelections'], function(jQuery, d3, checkDivSelect
             .text(function (d) {
               return d;
             });
-        }
+		}
+
     }
 });

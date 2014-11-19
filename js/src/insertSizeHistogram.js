@@ -1,51 +1,77 @@
-var chartIndex = 0;
-define(['jquery', 'd3', 'src/divSelections'], function(jQuery, d3, checkDivSelection){
-    return function (data, divID, title, width, height) {
+/*
+ * Author: David Bryson and Jennifer Liddle <js10@sanger.ac.uk>
+ *
+ * Created: 29 October 2014
+ *
+ * Display an 'insert size' histogram and overlay a normal distribution curve
+ *
+ * Use:
+ *
+ * <div class='insert_size_histogram' data-check='data' data-width=650 data-height=700></div>
+ *
+ * where width and height are option and have the default values shown above
+ *       data             is a json formatted string which contains:
+ *             bins
+ *             id_run
+ *             position
+ *             tag_index
+ *             bin_width
+ *             min_isize
+ *             mean
+ *             std
+ *             norm_fit_modes
+ *
+ */
+
+define(['jquery', 'd3'], function(jQuery, d3){
+	return function(divID) {
+		var data = jQuery(divID).data("check");
+		var width = jQuery(divID).data("width");
+		var height = jQuery(divID).data("height");
         if(data && typeof data === "object"){
-            return new histogram(data, divID, title, width, height);
+            return new histogram(data, divID, width, height);
         }else{
             return null;
         }
     };
-    function histogram(data, divID, title, width, height) {
-        var w = 700;
-        var h = 250;
-        if(width && height){
-          w = width;
-          h = height;
-        }
+
+    function histogram(data, divID, width, height) {
+		if (!width) { width = 650; }
+		if (!height) { height = 300; }
         var padding = {top: 25, right: 25, bottom: 25, left: 50};
 
-        chartIndex++;
+		var svg = d3.select(divID).append("svg")
+            .attr("width", width)
+            .attr("height", height);
 
-        divID = checkDivSelection(divID);
-        var svg = d3.select(divID).append("svg")
-            .attr("width", w)
-            .attr("height", h);
+		padding.top = 50;
+		svg.append('text')
+			.attr("transform", "translate(" + padding.left + ", " + padding.top / 4 + ")")
+			.style('font-size', padding.top / 4)
+			.text('Insert Sizes: run ' + data.id_run + ", position " + data.position + ", tag " + data.tag_index);
 
-        if(title){
-            padding.top = 50;
-            svg.append('text')
-                .attr("transform", "translate(" + padding.left + ", " + padding.top / 4 + ")")
-                .style('font-size', padding.top / 4)
-                .text('Insert Sizes: run ' + data.id_run + ", position " + data.position + ", tag " + data.tag_index);
-        }
+		// every value is a string. Force to numeric.
+		data.bin_width = +data.bin_width;
+		data.min_isize = +data.min_isize;
+		data.mean = +data.mean;
+		data.std = +data.std;
+		data.bins.forEach(function(v,i,a) { a[i]=+v; });
 
         var xMin = data.min_isize;
         var xMax = (data.bins.length * data.bin_width) + data.min_isize;
         var yMin = 0;
         var yMax = d3.max(data.bins);
-        var nodeWidth = (w-padding.left-padding.right) / data.bins.length;
+        var nodeWidth = (width-padding.left-padding.right) / data.bins.length;
 
         //create scale functions
         var xScale = d3.scale.linear()
                  .nice()
-                 .range([padding.left, w - (padding.right)])
+                 .range([padding.left, width - (padding.right)])
                  .domain([xMin,xMax]);
 
         var yScale = d3.scale.linear()
                  .nice()
-                 .range([h - padding.bottom, padding.top])
+                 .range([height - padding.bottom, padding.top])
                  .domain([yMin, yMax]);
 
         //Define X axis
@@ -63,20 +89,18 @@ define(['jquery', 'd3', 'src/divSelections'], function(jQuery, d3, checkDivSelec
         //Create Y axis
         svg.append("g")
            .attr("class", "axis")
-           .attr("id", "yAxis" + chartIndex)
            .attr("transform", "translate(" + padding.left + ", 0)")
            .call(yAxis);
 
         //Create X axis
         svg.append("g")
             .attr("class", "axis")
-            .attr("id", "xAxis" + chartIndex)
-            .attr("transform", "translate(0," + (h-padding.bottom) + ")")
+            .attr("transform", "translate(0," + (height-padding.bottom) + ")")
             .call(xAxis);
 
         //add X axis origin label
         svg.append("text")
-          .attr("transform", "translate(" + (padding.left - 5) + "," + (h - padding.bottom + 17) + ")")
+          .attr("transform", "translate(" + (padding.left - 5) + "," + (height - padding.bottom + 17) + ")")
           .text(data.min_isize);
 
         function make_x_grid() {
@@ -97,9 +121,9 @@ define(['jquery', 'd3', 'src/divSelections'], function(jQuery, d3, checkDivSelec
         svg.append("g")
            .attr("class", "grid")
            .attr("id","xGrid")
-           .attr("transform", "translate(0," + (h - padding.bottom) + ")")
+           .attr("transform", "translate(0," + (height - padding.bottom) + ")")
            .call(make_x_grid()
-                   .tickSize(-h+(padding.top + padding.bottom), 0, 0)
+                   .tickSize(-height+(padding.top + padding.bottom), 0, 0)
                    .tickFormat("")
            );
         //make y grid
@@ -108,7 +132,7 @@ define(['jquery', 'd3', 'src/divSelections'], function(jQuery, d3, checkDivSelec
            .attr("id","yGrid")
            .attr("transform", "translate(" + padding.left + ",0)")
            .call(make_y_grid()
-                .tickSize(-w+(padding.left + padding.right), 0,0)
+                .tickSize(-width+(padding.left + padding.right), 0,0)
                 .tickFormat("")
            );
 
@@ -123,69 +147,61 @@ define(['jquery', 'd3', 'src/divSelections'], function(jQuery, d3, checkDivSelec
                 .attr('x', function (d, i) { return xScale((i * data.bin_width) + data.min_isize); })
                 .attr('y', function (d) { return yScale(d); })
                 .attr('width', nodeWidth)
-                .attr('height', function (d) { return h - padding.bottom - yScale(d); })
+                .attr('height', function (d) { return height - padding.bottom - yScale(d); })
                 .attr('fill', 'blue')
                 .attr('opacity', 0.6)
                 .attr('stroke-width', '1px')
                 .attr('stroke', 'white');
 
-        //draw 1st quartile line
-        svg.append("line")
-            .attr("x1", xScale(data.quartile1))
-            .attr("y1", padding.top)
-            .attr("x2", xScale(data.quartile1))
-            .attr("y2", h - padding.bottom)
-            .attr("stroke-width", "2px")
-            .style("stroke", "red");
 
-        svg.append('text')
-            .attr("transform", "translate(" + xScale(data.quartile1) + "," + (padding.top - 5) + ")rotate(-45)")
-            .attr("style", "font-size: 12; font-family: Helvetica, sans-serif")
-            .attr("text-anchor", "bottom")
-            .attr("fill", "red")
-            .text(data.quartile1);
+		//
+		// overlay a normal distribution curve
+		//
 
-        //draw 3rd quartile line
-        svg.append("line")
-            .attr("x1", xScale(data.quartile3))
-            .attr("y1", padding.top)
-            .attr("x2", xScale(data.quartile3))
-            .attr("y2", h - padding.bottom)
-            .attr("stroke-width", "2px")
-            .style("stroke", "red");
+		// first, look up the mean and standard deviation
+		var mean = data.mean;
+		var std = data.std;
+		data.norm_fit_modes.forEach(function(d) {
+			if (d.length == 3) {
+				mean = d[1];
+				std = d[2];
+			}
+		});
 
-        svg.append('text')
-            .attr("transform", "translate(" + xScale(data.quartile3) + "," + (padding.top - 5) + ")rotate(-45)")
-            .attr("style", "font-size: 12; font-family: Helvetica, sans-serif")
-            .attr("text-anchor", "bottom")
-            .attr("fill", "red")
-            .text(data.quartile3);
+		// Calculate the normal distribution curve
+		var norm = [];
+		data.bins.forEach(function(v,i) {
+			// standard deviation is data.std
+			// mu is data.mean
+			var m = (std * Math.sqrt(2*Math.PI));
+			var x = (i * data.bin_width) + data.min_isize;
+			var e = Math.exp(-(x-mean)*(x-mean) / (2 * std * std));
+			var n = e/m;
+			var point = {x:i, y:n};
+			norm.push(point);
+		});
 
-        //draw median line
-        svg.append("line")
-            .attr("x1", xScale(data.median))
-            .attr("y1", padding.top)
-            .attr("x2", xScale(data.median))
-            .attr("y2", h - padding.bottom)
-            .attr("stroke-width", "2px")
-            .style("stroke", "red");
+		// scale the normal distribution to fit the graph
+		var max_norm = 0;
+		norm.forEach(function(v,i) { 
+			if (max_norm < v.y) { 
+				max_norm = v.y; 
+			} 
+		});
+		var max_height = Math.max.apply(null,data.bins);
+		var scale = max_height / max_norm;
 
-        svg.append('text')
-            .attr("transform", "translate(" + xScale(data.median) + "," + (padding.top - 5) + ")rotate(-45)")
-            .attr("style", "font-size: 12; font-family: Helvetica, sans-serif")
-            .attr("text-anchor", "bottom")
-            .attr("fill", "red")
-            .text(data.median);
+		// overlay it on the bar chart
+		var lineFunc = d3.svg.line()
+			.x(function(d) { return xScale((d.x * data.bin_width) + data.min_isize); })
+			.y(function(d) { return yScale(d.y * scale); })
+			.interpolate('basis');
 
-        if(data.expected_size && data.expected_size.length >= 2){
-          //draw expected size box
-          svg.append('rect')
-              .attr('x', xScale(data.expected_size[0]))
-              .attr('y', padding.top)
-              .attr('width', xScale(data.expected_size[1]) - xScale(data.expected_size[0]))
-              .attr('height',  h - padding.bottom - padding.top)
-              .attr('fill', 'blue')
-              .attr('opacity', 0.2);
-        }
+		svg.append('svg:path')
+			.attr('d', lineFunc(norm))
+			.attr('stroke', 'black')
+			.attr('stroke-width', 2)
+			.attr('fill', 'none');
+
     }
 });

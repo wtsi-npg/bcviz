@@ -24,15 +24,10 @@ Creating and running demo:
 
    to see visuals for bamchek files. Step through individual files with '>' and '<'.
 
-5.  http://localhost:8888/JSON_sample.html - visuals for json autoqc results
+5.  http://localhost:8888/test.html - visuals for json autoqc results
 
 Running tests:
 --------------
-Prerequisites:
-    karma javascript test runner http://karma-runner.github.io/0.10/index.html, ('npm install karma' to install)
-    karma mocha - a karma plugin to run mocha http://visionmedia.github.io/mocha/ javascript test framework (npm install karma-mocha)
 
-edit urlRoot parameter in bcviz/karma.confiq.js
-
-PATH_TO_KARMA_BIN/karma start
+phantomjs js/run-qunit.js file://`pwd`/test.html
 

@@ -1,6 +1,40 @@
-var chartIndex = 0;
-define(['jquery', 'd3', 'src/divSelections'], function(jQuery, d3, checkDivSelection){
-    return function (data, divID, width, height) {
+/*
+ * Author: David Bryson and Jennifer Liddle <js10@sanger.ac.uk>
+ *
+ * Created: Halloween 2014
+ *
+ * Display an 'adapter' histogram
+ *
+ * Use:
+ *
+ * <div class='bcviz_insert_size' data-direction='forward' data-check='data' data-width=500 data-height=200></div>
+ *
+ * where width and height are option and have the default values shown above
+ *       direction        is either 'forward' or 'reverse' and defaults to 'forward'
+ *       data             is a json formatted string which contains:
+ *             bins
+ *             id_run
+ *             position
+ *             tag_index
+ *             bin_width
+ *             min_isize
+ *             mean
+ *             std
+ *             norm_fit_modes
+ *
+ */
+
+define(['jquery', 'd3'], function(jQuery, d3){
+    return function (divID, width, height) {
+		if (!width) { width = jQuery(divID).data("width"); }
+		if (!width) { width = 500; }
+		if (!height) { height = jQuery(divID).data("height"); }
+		if (!height) { height = 200; }
+
+		var data = jQuery(divID).data("check");
+		var direction = jQuery(divID).data("direction");
+		if (!direction) { direction = 'forward'; }
+
         if(data && typeof data === "object"){
             var mismatchData = {
                 id_run: data.id_run,
@@ -25,13 +59,16 @@ define(['jquery', 'd3', 'src/divSelections'], function(jQuery, d3, checkDivSelec
                 forwardData.yMax = reverseData.yMax;
             }
             //draw new plots
-            var forwardGraph = new adapterChart(forwardData, divID, "Forward", width, height);
-            var reverseGraph = new adapterChart(reverseData, divID, "Reverse", width, height);
-            return({forward: forwardGraph, reverse: reverseGraph});
+			if (direction == 'forward') {
+				return new adapterChart(forwardData, divID, "Forward", width, height);
+			} else {
+				return new adapterChart(reverseData, divID, "Reverse", width, height);
+			}
           }else{
             return null;
           }
     };
+
         function format_adapter_chart (data) {
             var formattedData = [];
             for(var k in data.start_counts){
@@ -51,9 +88,6 @@ define(['jquery', 'd3', 'src/divSelections'], function(jQuery, d3, checkDivSelec
             }
             var padding = {top: 25, right: 25, bottom: 25, left: 50};
 
-            chartIndex++;
-
-            divID = checkDivSelection(divID);
             var svg = d3.select(divID).append("svg")
                 .attr("width", w)
                 .attr("height", h);
@@ -89,20 +123,20 @@ define(['jquery', 'd3', 'src/divSelections'], function(jQuery, d3, checkDivSelec
                   .ticks(10);
 
             //define Y axis
+
             var yAxis = d3.svg.axis()
                   .scale(yScale)
                   .orient("left")
                   .ticks(10, function (d) {
                         if(d < 1){
                         }else{
-                            return d;
+                            return Math.round(Math.log(d) / Math.LN10);
                         }
                     });
 
             //Create X axis
             svg.append("g")
                 .attr("class", "axis")
-                .attr("id", "xAxis" + chartIndex)
                 .attr("transform", "translate(0," + (h-padding.bottom) + ")")
                 .call(xAxis);
 
@@ -130,14 +164,12 @@ define(['jquery', 'd3', 'src/divSelections'], function(jQuery, d3, checkDivSelec
             //Create Y axis
             svg.append("g")
                .attr("class", "axis")
-               .attr("id", "yAxis" + chartIndex)
                .attr("transform", "translate(" + padding.left + ", 0)")
                .call(yAxis);
 
             //make x grid
             svg.append("g")
                .attr("class", "grid")
-               .attr("id","xGrid")
                .attr("transform", "translate(0," + (h - padding.bottom) + ")")
                .call(make_x_grid()
                        .tickSize(-h+(padding.top + padding.bottom), 0, 0)
@@ -171,3 +203,4 @@ define(['jquery', 'd3', 'src/divSelections'], function(jQuery, d3, checkDivSelec
                     .attr('stroke', 'white');
         }
 });
+
