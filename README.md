@@ -29,5 +29,9 @@ Creating and running demo:
 Running tests:
 --------------
 
+To look at the tests:
+http://localhost:8887/test.html
+
+To run headless:
 phantomjs js/run-qunit.js file://`pwd`/test.html
 
