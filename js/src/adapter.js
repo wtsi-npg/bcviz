@@ -103,7 +103,8 @@ define(['jquery', 'd3'], function(jQuery, d3){
             var xMin = d3.min(data.formattedData, function (d) { return d.xVar; });
             var xMax = d3.max(data.formattedData, function (d) { return d.xVar; }) + 1;
             var yMin = 0.1;
-			var yMax = 100000;
+			var yMax = data.yMax;
+//			var yMax = Math.pow(10,Math.round(Math.log(data.yMax) / Math.LN10)+1);
             var nodeWidth = (w-padding.left-padding.right) / xMax;
 
             //create scale functions
@@ -124,16 +125,12 @@ define(['jquery', 'd3'], function(jQuery, d3){
                   .ticks(10);
 
             //define Y axis
-
-            var yAxis = d3.svg.axis()
-                  .scale(yScale)
-                  .orient("left")
-                  .ticks(10, function (d) {
-                        if(d < 1){
-                        }else{
-                            return Math.round(Math.log(d) / Math.LN10);
-                        }
-                    });
+			var yAxis = d3.svg.axis()
+				.scale(yScale)
+				.orient("left")
+				.ticks(5, function (d) {
+					if (d >= 1) { return Math.round(Math.log(d) / Math.LN10); }
+				});
 
             //Create X axis
             svg.append("g")
