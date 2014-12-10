@@ -103,6 +103,7 @@ define(['jquery', 'd3'], function(jQuery, d3){
             var xMin = d3.min(data.formattedData, function (d) { return d.xVar; });
             var xMax = d3.max(data.formattedData, function (d) { return d.xVar; }) + 1;
             var yMin = 0.1;
+			var yMax = 100000;
             var nodeWidth = (w-padding.left-padding.right) / xMax;
 
             //create scale functions
@@ -159,7 +160,7 @@ define(['jquery', 'd3'], function(jQuery, d3){
                         .ticks(10);
             }
 
-            yScale.domain([yMin, data.yMax]);
+            yScale.domain([yMin, yMax]);
 
             //Create Y axis
             svg.append("g")
