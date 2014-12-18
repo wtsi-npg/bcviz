@@ -24,14 +24,15 @@ Creating and running demo:
 
    to see visuals for bamchek files. Step through individual files with '>' and '<'.
 
-5.  http://localhost:8888/test.html - visuals for json autoqc results
+5.  http://localhost:8888/index.html - visuals for json autoqc results
 
 Running tests:
 --------------
 
 To look at the tests:
-http://localhost:8887/test.html
+http://localhost:8888/test.html
 
 To run headless:
 phantomjs js/run-qunit.js file://`pwd`/test.html
+
 
