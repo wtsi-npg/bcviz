@@ -34,5 +34,3 @@ http://localhost:8888/test.html
 
 To run headless:
 phantomjs js/run-qunit.js file://`pwd`/test.html
-
-
