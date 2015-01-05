@@ -31,7 +31,7 @@ define(['jquery', 'd3'], function(jQuery, d3){
 		var data = jQuery(divID).data("check");
 		var width = jQuery(divID).data("width");
 		var height = jQuery(divID).data("height");
-        if(data && typeof data === "object"){
+        if(data && typeof data === "object" && data.bins != null){
             return new histogram(data, divID, width, height);
         }else{
             return null;
@@ -81,7 +81,8 @@ define(['jquery', 'd3'], function(jQuery, d3){
         var xAxis = d3.svg.axis()
               .scale(xScale)
               .orient("bottom")
-              .ticks(10);
+              .ticks(10)
+		      .tickFormat(function(d) { if (d==100 && xMin > 50) { return '' } else { return d; } });
 
         //define Y axis
         var yAxis = d3.svg.axis()

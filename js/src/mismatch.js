@@ -36,7 +36,7 @@ define(['jquery','d3'], function(jQuery, d3){
 		var direction = jQuery(divID).data("direction");
 		if (!direction) { direction = 'forward'; }
 
-        if(data && typeof data === "object"){
+        if(data && typeof data === "object" && data.forward_n_count != null && data.reverse_n_count != null && data.forward_n_count.length !=0 && data.reverse_n_count.length != 0){
             var mismatchData = {
                 id_run: data.id_run,
                 tag_index: data.tag_index,
@@ -198,7 +198,7 @@ define(['jquery','d3'], function(jQuery, d3){
             .attr('height', h);
 
           var legendPoints = legendSVG.selectAll('.legend')
-            .data(color.domain().reverse())
+            .data(color.domain())
             .enter()
             .append('g')
             .attr('class', 'legend');
@@ -214,8 +214,11 @@ define(['jquery','d3'], function(jQuery, d3){
             .attr('y', function (d, i) { return i * 15 + (h / 2) - 30; })
             .attr('dy', '10px')
             .style('text-anchor', 'middle')
-            .text(function (d) {
-              return d;
+            .text(function (d,i) {
+              if (i==0) { return ">=" + d; }
+			  if (i==1) { return "=<" + d; }
+			  if (i==2) { return "=<" + d; }
+			  return d;
             });
 		}
 

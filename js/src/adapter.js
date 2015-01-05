@@ -49,7 +49,9 @@ define(['jquery', 'd3'], function(jQuery, d3){
             reverseData.start_counts = data.reverse_start_counts;
             //format the data
             forwardData.formattedData = format_adapter_chart(forwardData);
+			if (forwardData.formattedData.length == 0) { return null; }
             reverseData.formattedData = format_adapter_chart(reverseData);
+			if (reverseData.formattedData.length == 0) { return null; }
             //change the yMax variable to be the larger of the two graphs
             forwardData.yMax = roundToPowerOfTen(d3.max(forwardData.formattedData, function (d) { return d.yVar; }));
             reverseData.yMax = roundToPowerOfTen(d3.max(reverseData.formattedData, function (d) { return d.yVar; }));
@@ -97,7 +99,7 @@ define(['jquery', 'd3'], function(jQuery, d3){
                 svg.append('text')
                     .attr("transform", "translate(" + padding.left + ", " + padding.top / 4 + ")")
                     .style('font-size', padding.top / 4)
-                    .text(title + ' Adapter Start Count: run ' + data.id_run + ", position " + data.position + ", tag " + data.tag_index);
+                    .text(title + ' Adapter Start Count: run ' + data.id_run + ", position " + data.position);
             }
 
             var xMin = d3.min(data.formattedData, function (d) { return d.xVar; });
