@@ -2,17 +2,32 @@
 <html>
     <head>
         <meta charset="utf-8">
-        <title>Bamcheck demo</title>
+        <title>bcviz Test Suite</title>
+        <link rel="stylesheet" type="text/css" href="css/qunit-1.15.0.css">
         <link rel="stylesheet" type="text/css" href="css/bcviz.css">
-        <script data-main="main" src="js/lib/require.js"></script>
     </head>
     <body>
-        <div id="instructions">
-            <p>To switch to another set of bamcheck graphs, use the &quot;.&quot; key to move forward and the &quot;,&quot; key to move backwards.</p>
-        </div>
-        <div id="fileName">
-        </div>
-        <div id="aDiv">
-        </div>
+		<div id="qunit"></div>
+		<div id="qunit-fixture"></div>
+		<br/><br/>
+
+		<div class=bcviz_test>
+
+		<fieldset style='float:left;'><legend>Insert Size Histogram</legend>
+		<div class="insert_size"></div>
+		</fieldset>
+
+		<fieldset style='float:right;'><legend>Adapter</legend>
+		<div class="adapter"></div>
+		</fieldset>
+		<div style='clear:both;'></div>
+
+		<fieldset><legend>Sequence Mismatch</legend>
+		<div class="mismatch"></div>
+		</fieldset>
+
+		</div>
+
+		<script data-main="test/main" src="js/lib/require.js"></script>
     </body>
 </html>
