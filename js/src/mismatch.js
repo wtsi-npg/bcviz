@@ -194,7 +194,7 @@ define(['jquery','d3'], function(jQuery, d3){
 		if (legend) {
           var legendSVG = d3.select(divID)
             .append('svg')
-            .attr('width', w / 4)
+            .attr('width', 50)
             .attr('height', h);
 
           var legendPoints = legendSVG.selectAll('.legend')
