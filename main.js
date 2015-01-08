@@ -1,49 +1,4 @@
-import glob
-from urllib import quote
-import os
-import sys
-
-inputDir = raw_input('Enter Directory Containing Files: ')
-print
-filetypes = ('*.bc', '*.bamcheck')
-files = []
-for filetype in filetypes:
-    files.extend(glob.glob(os.path.relpath(os.path.join(inputDir, filetype))))
-if not files:
-    print 'No files found in Directory'
-    sys.exit()
-i = 0
-for aFile in files:
-    files[i] = quote(aFile)
-    i = i + 1
-fileString = ""
-for aFile in files:
-    fileString = fileString + "\",\"" + aFile
-fileString = fileString[2:]
-fileString = fileString + "\""
-htmlFile = open('index.html', 'w')
-htmlFile.write("""<!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="utf-8">
-        <title>Bamcheck demo</title>
-        <link rel="stylesheet" type="text/css" href="css/bcviz.css">
-        <script data-main="main" src="js/lib/require.js"></script>
-    </head>
-    <body>
-        <div id="instructions">
-            <p>To switch to another set of bamcheck graphs, use the &quot;.&quot; key to move forward and the &quot;,&quot; key to move backwards.</p>
-        </div>
-        <div id="fileName">
-        </div>
-        <div id="aDiv">
-        </div>
-    </body>
-</html>
-""")
-htmlFile.close()
-mainJS = open('main.js', 'w')
-mainJS.write("""require.config({
+require.config({
     baseUrl: '/js',
 
     paths: {
@@ -58,9 +13,7 @@ mainJS.write("""require.config({
     }
 });
 require(['src/readBCfile', 'src/qualityChart', 'src/ICcharts', 'src/ISchart', 'src/gcChart', 'src/gccChart', 'src/indelDist', 'src/GCDepth', 'src/coverage'], function (read, quality, ic, is, gc, gcc, id, gcDepth, coverage) {
-    var files = [""" + fileString)
-
-mainJS.write("""];
+    var files = ["demo/sample_1.bc","demo/sample_2.bc","demo/sample_3.bc","demo/sample_4.bc"];
     var initialNumberFiles = files.length;
     if(initialNumberFiles > 10){
         initialNumberFiles = 10;
@@ -142,5 +95,3 @@ mainJS.write("""];
         }
     };
 });
-""")
-mainJS.close()
