@@ -48,10 +48,14 @@ define(['jquery', 'd3'], function(jQuery, d3){
             .attr("height", height);
 
 		padding.top = 50;
+		var txt = 'Insert Sizes: run ' + data.id_run + ", position " + data.position;
+		if (data.tag_index) {
+                txt = txt + ", tag " + data.tag_index;
+            }
 		svg.append('text')
 			.attr("transform", "translate(" + padding.left + ", " + padding.top / 4 + ")")
 			.style('font-size', padding.top / 4)
-			.text('Insert Sizes: run ' + data.id_run + ", position " + data.position + ", tag " + data.tag_index);
+			.text(txt);
 
 		// every value is a string. Force to numeric.
 		data.bin_width = +data.bin_width;

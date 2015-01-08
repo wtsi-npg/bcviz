@@ -94,12 +94,16 @@ define(['jquery', 'd3'], function(jQuery, d3){
                 .attr("width", w)
                 .attr("height", h);
 
-            if(title){
+            if (title) {
                 padding.top = 50;
+				var txt = title + ' Adapter Start Count: run ' + data.id_run + ", position " + data.position;
+				if (data.tag_index) {
+					txt = txt + ", tag " + data.tag_index;
+				}
                 svg.append('text')
                     .attr("transform", "translate(" + padding.left + ", " + padding.top / 4 + ")")
                     .style('font-size', padding.top / 4)
-                    .text(title + ' Adapter Start Count: run ' + data.id_run + ", position " + data.position);
+                    .text(txt);
             }
 
             var xMin = d3.min(data.formattedData, function (d) { return d.xVar; });
