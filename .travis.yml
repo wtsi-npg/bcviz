@@ -1,2 +1,2 @@
-script: phantomjs js/run-qunit.js file://pwd/test.html
+script: phantomjs js/run-qunit.js test.html
 
