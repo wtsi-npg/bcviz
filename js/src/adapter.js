@@ -49,12 +49,12 @@ define(['jquery', 'd3'], function(jQuery, d3){
             reverseData.start_counts = data.reverse_start_counts;
             //format the data
             forwardData.formattedData = format_adapter_chart(forwardData);
-			if (forwardData.formattedData.length == 0) { return null; }
             reverseData.formattedData = format_adapter_chart(reverseData);
-			if (reverseData.formattedData.length == 0) { return null; }
             //change the yMax variable to be the larger of the two graphs
             forwardData.yMax = roundToPowerOfTen(d3.max(forwardData.formattedData, function (d) { return d.yVar; }));
+			if (isNaN(forwardData.yMax)) { forwardData.yMax = 0; }
             reverseData.yMax = roundToPowerOfTen(d3.max(reverseData.formattedData, function (d) { return d.yVar; }));
+			if (isNaN(reverseData.yMax)) { reverseData.yMax = 0; }
             if(forwardData.yMax > reverseData.yMax){
                 reverseData.yMax = forwardData.yMax;
             }else{
@@ -62,8 +62,10 @@ define(['jquery', 'd3'], function(jQuery, d3){
             }
             //draw new plots
 			if (direction == 'forward') {
+				if (forwardData.formattedData.length == 0) { return null; }
 				return new adapterChart(forwardData, divID, "Forward", width, height);
 			} else {
+				if (reverseData.formattedData.length == 0) { return null; }
 				return new adapterChart(reverseData, divID, "Reverse", width, height);
 			}
           }else{

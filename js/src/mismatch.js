@@ -36,7 +36,7 @@ define(['jquery','d3'], function(jQuery, d3){
 		var direction = jQuery(divID).data("direction");
 		if (!direction) { direction = 'forward'; }
 
-        if(data && typeof data === "object" && data.forward_n_count != null && data.reverse_n_count != null && data.forward_n_count.length !=0 && data.reverse_n_count.length != 0){
+        if(data && typeof data === "object" && (data.forward_count.length !=0 || data.reverse_count.length != 0)){
             var mismatchData = {
                 id_run: data.id_run,
                 tag_index: data.tag_index,
@@ -55,17 +55,25 @@ define(['jquery','d3'], function(jQuery, d3){
             reverseData.count = data.reverse_count;
             //format the data
             var forwardFormattedData = formatMismatch(forwardData);
-            forwardData.formattedData = forwardFormattedData.formattedData;
+			if (forwardFormattedData) {
+            	forwardData.formattedData = forwardFormattedData.formattedData;
+            	forwardData.yMax = forwardFormattedData.yMax;
+			}
             var reverseFormattedData = formatMismatch(reverseData);
-            reverseData.formattedData = reverseFormattedData.formattedData;
+			if (reverseFormattedData) {
+	            reverseData.formattedData = reverseFormattedData.formattedData;
+	            reverseData.yMax = reverseFormattedData.yMax;
+			}
             //change the yMax variable to be the larger of the two graphs
-            if(forwardFormattedData.yMax > reverseFormattedData.yMax){
-              forwardData.yMax = forwardFormattedData.yMax;
-              reverseData.yMax = forwardFormattedData.yMax;
-            }else{
-              forwardData.yMax = reverseFormattedData.yMax;
-              reverseData.yMax = reverseFormattedData.yMax;
-            }
+			if (forwardFormattedData && reverseFormattedData) {
+				if (forwardFormattedData.yMax > reverseFormattedData.yMax){
+					forwardData.yMax = forwardFormattedData.yMax;
+					reverseData.yMax = forwardFormattedData.yMax;
+				} else {
+					forwardData.yMax = reverseFormattedData.yMax;
+					reverseData.yMax = reverseFormattedData.yMax;
+				}
+			}
             //draw new plots
 			if (direction == 'forward') {
 				return new mismatchPlot(forwardData, divID, 'Forward', width, height, legend);
@@ -80,6 +88,9 @@ define(['jquery','d3'], function(jQuery, d3){
 
     function formatMismatch (data) {
         var barData = data.quality_bins;
+		if (!barData) {
+			return null;
+		}
         barData.push(data.n_count);
 
         var formattedData = [];
@@ -112,6 +123,7 @@ define(['jquery','d3'], function(jQuery, d3){
     }
 
     function mismatchPlot (data, divID, title, width, height, legend) {
+		if (!data.formattedData) { return null; }
         var w = 450;
         var h = 350;
         if(width && height){
