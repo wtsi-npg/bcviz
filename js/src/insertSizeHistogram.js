@@ -63,6 +63,8 @@ define(['jquery', 'd3'], function(jQuery, d3){
 		data.mean = +data.mean;
 		data.std = +data.std;
 		data.paired_reads_direction_in = +data.paired_reads_direction_in;
+		data.num_well_aligned_reads_opp_dir = +data.num_well_aligned_reads_opp_dir;
+		data.num_well_aligned_reads = +data.num_well_aligned_reads;
 		data.bins.forEach(function(v,i,a) { a[i]=+v; });
 
         var xMin = data.min_isize;
