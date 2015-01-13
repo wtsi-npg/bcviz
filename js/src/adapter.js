@@ -133,11 +133,20 @@ define(['jquery', 'd3'], function(jQuery, d3){
                   .ticks(10);
 
             //define Y axis
+			var superscript = "⁰¹²³⁴⁵⁶⁷⁸⁹";
+			var vArray = [];
+			var n;
+			for (n=0; n<Math.log(yMax)/Math.LN10; n++) {
+				vArray.push(Math.pow(10,n));
+			}
+			vArray.push(Math.pow(10,n));
+
 			var yAxis = d3.svg.axis()
 				.scale(yScale)
 				.orient("left")
+				.tickValues(vArray)
 				.ticks(5, function (d) {
-					if (d >= 1) { return Math.round(Math.log(d) / Math.LN10); }
+					if (d >= 1) { return "10"+superscript[Math.round(Math.log(d) / Math.LN10)]; }
 				});
 
             //Create X axis
