@@ -27,7 +27,7 @@ define(['jquery', 'd3'], function(jQuery, d3){
 	var xScale;
 	var yScale;
 
-	return function(divID) {
+	drawChart = function(divID) {
 		var data = jQuery(divID).data("check");
 		var width = jQuery(divID).data("width");
 		var height = jQuery(divID).data("height");
@@ -230,4 +230,9 @@ define(['jquery', 'd3'], function(jQuery, d3){
 			.attr('fill', 'none');
 
     }
+
+	return {
+		drawChart: drawChart,
+	};
+
 });

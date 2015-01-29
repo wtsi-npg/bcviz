@@ -25,7 +25,7 @@
  */
 
 define(['jquery', 'd3'], function(jQuery, d3){
-    return function (divID, width, height) {
+    var drawChart = function (divID, width, height) {
 		if (!width) { width = jQuery(divID).data("width"); }
 		if (!width) { width = 500; }
 		if (!height) { height = jQuery(divID).data("height"); }
@@ -73,7 +73,7 @@ define(['jquery', 'd3'], function(jQuery, d3){
           }
     };
 
-        function format_adapter_chart (data) {
+    function format_adapter_chart (data) {
             var formattedData = [];
             for(var k in data.start_counts){
                 formattedData.push({xVar: parseInt(k, 10), yVar: data.start_counts[k]});
@@ -216,6 +216,14 @@ define(['jquery', 'd3'], function(jQuery, d3){
                     .attr('opacity', 0.6)
                     .attr('stroke-width', '1px')
                     .attr('stroke', 'white');
+
+			return 1;
         }
+
+	return {
+		drawChart: drawChart,
+		_formatChart: format_adapter_chart,
+		_roundToPowerOfTen: roundToPowerOfTen,
+	};
 });
 
