@@ -31,7 +31,7 @@ define(['jquery', 'd3'], function(jQuery, d3){
 		var data = jQuery(divID).data("check");
 		var width = jQuery(divID).data("width");
 		var height = jQuery(divID).data("height");
-        if(data && typeof data === "object" && data.bins != null){
+        if(data && typeof data === "object" && data.bins != null && data.bins.length > 1){
             return new histogram(data, divID, width, height);
         }else{
             return null;
