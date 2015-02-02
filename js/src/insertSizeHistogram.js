@@ -150,16 +150,6 @@ define(['jquery', 'd3'], function(jQuery, d3){
         //group for the bars
         var bars = svg.append('g');
 
-		var bar_colour = 'blue';
-		if (data.paired_reads_direction_in) {
-			if (data.num_well_aligned_reads_opp_dir > data.num_well_aligned_reads) {
-				bar_colour = 'orange';
-			}
-		} else {
-			if (data.num_well_aligned_reads_opp_dir < data.num_well_aligned_reads) {
-				bar_colour = 'orange';
-			}
-		}
         //draw bars in group
         bars.selectAll('rect')
                 .data(data.bins)
@@ -169,7 +159,7 @@ define(['jquery', 'd3'], function(jQuery, d3){
                 .attr('y', function (d) { return yScale(d); })
                 .attr('width', nodeWidth)
                 .attr('height', function (d) { return height - padding.bottom - yScale(d); })
-                .attr('fill', bar_colour)
+                .attr('fill', data.paired_reads_direction_in ? "blue" : "orange")
                 .attr('opacity', 0.6)
                 .attr('stroke-width', '1px')
                 .attr('stroke', 'white');
