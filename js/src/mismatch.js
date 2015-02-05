@@ -24,8 +24,8 @@
  *
  */
 
-define(['jquery','d3'], function(jQuery, d3){
-    return function (divID, width, height) {
+define(['jquery','d3'], function(jQuery, d3) {
+    drawChart = function (divID, width, height) {
 		if (!width) { width = jQuery(divID).data("width"); }
 		if (!width) { width = 450; }
 		if (!height) { height = jQuery(divID).data("height"); }
@@ -136,9 +136,9 @@ define(['jquery','d3'], function(jQuery, d3){
             .attr("width", w)
             .attr("height", h);
 
+		var txt = 'Mismatch percent by cycle: run ' + data.id_run + ", position " + data.position;
         if (title) {
             padding.top = 50;
-			txt = 'Mismatch percent by cycle: run ' + data.id_run + ", position " + data.position;
 			if (data.tag_index) {
 				txt = txt + ", tag " + data.tag_index;
 			}
@@ -239,4 +239,8 @@ define(['jquery','d3'], function(jQuery, d3){
 		}
 
     }
+
+	return {
+		drawChart: drawChart,
+	};
 });

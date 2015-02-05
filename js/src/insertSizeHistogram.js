@@ -27,11 +27,11 @@ define(['jquery', 'd3'], function(jQuery, d3){
 	var xScale;
 	var yScale;
 
-	return function(divID) {
+	drawChart = function(divID) {
 		var data = jQuery(divID).data("check");
 		var width = jQuery(divID).data("width");
 		var height = jQuery(divID).data("height");
-        if(data && typeof data === "object" && data.bins != null){
+        if(data && typeof data === "object" && data.bins != null && data.bins.length > 1){
             return new histogram(data, divID, width, height);
         }else{
             return null;
@@ -63,6 +63,8 @@ define(['jquery', 'd3'], function(jQuery, d3){
 		data.mean = +data.mean;
 		data.std = +data.std;
 		data.paired_reads_direction_in = +data.paired_reads_direction_in;
+		data.num_well_aligned_reads_opp_dir = +data.num_well_aligned_reads_opp_dir;
+		data.num_well_aligned_reads = +data.num_well_aligned_reads;
 		data.bins.forEach(function(v,i,a) { a[i]=+v; });
 
         var xMin = data.min_isize;
@@ -148,16 +150,6 @@ define(['jquery', 'd3'], function(jQuery, d3){
         //group for the bars
         var bars = svg.append('g');
 
-		var bar_colour = 'blue';
-		if (data.paired_reads_direction_in) {
-			if (data.num_well_aligned_reads_opp_dir > data.num_well_aligned_reads) {
-				bar_colour = 'orange';
-			}
-		} else {
-			if (data.num_well_aligned_reads_opp_dir < data.num_well_aligned_reads) {
-				bar_colour = 'orange';
-			}
-		}
         //draw bars in group
         bars.selectAll('rect')
                 .data(data.bins)
@@ -167,7 +159,7 @@ define(['jquery', 'd3'], function(jQuery, d3){
                 .attr('y', function (d) { return yScale(d); })
                 .attr('width', nodeWidth)
                 .attr('height', function (d) { return height - padding.bottom - yScale(d); })
-                .attr('fill', bar_colour)
+                .attr('fill', data.paired_reads_direction_in ? "blue" : "orange")
                 .attr('opacity', 0.6)
                 .attr('stroke-width', '1px')
                 .attr('stroke', 'white');
@@ -228,4 +220,9 @@ define(['jquery', 'd3'], function(jQuery, d3){
 			.attr('fill', 'none');
 
     }
+
+	return {
+		drawChart: drawChart,
+	};
+
 });

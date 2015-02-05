@@ -10,7 +10,7 @@ define(
 				jQuery('.mismatch').each(function(i) { 
 					jQuery(this).attr('data-check', JSON.stringify(aJSON)); 
 					jQuery(this).attr('data-legend', '1'); 
-					h=mismatch(this); 
+					h=mismatch.drawChart(this); 
 				});
 				QUnit.ok(h,"Created mismatch ok");
 //				d3.select('svg').remove();

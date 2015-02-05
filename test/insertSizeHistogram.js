@@ -8,7 +8,10 @@ define(
 //				var divId = jQuery('#graph')
 //				jQuery().attr('data-check', JSON.stringify(aJSON));
 				var h;
-				jQuery('.insert_size').each(function(i) { jQuery(this).attr('data-check',JSON.stringify(aJSON)); h=insertSizeHistogram(this); });
+				jQuery('.insert_size').each(function(i) { 
+					jQuery(this).attr('data-check',JSON.stringify(aJSON)); 
+					h=insertSizeHistogram.drawChart(this); 
+				});
 				QUnit.ok(h,"Created histogram ok");
 //				d3.select('svg').remove();
             });
