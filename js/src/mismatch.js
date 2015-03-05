@@ -12,35 +12,40 @@
  * where width and height are optional and have the default values shown above
  *       direction        is either 'forward' or 'reverse' and defaults to 'forward'
  *       data             is a json formatted string which contains:
- *             bins
- *             id_run
- *             position
- *             tag_index
- *             bin_width
- *             min_isize
- *             mean
- *             std
- *             norm_fit_modes
+ *             forward_count
+ *             forward_n_count
+ *             forward_quality_bins
+ *             reverse_count
+ *             reverse_n_count
+ *             reverse_quality_bins
+ *             quality_bin_values
+ *
+ *      width, height     are options width, height in pixels
+ *
+ *      title             is an optional title for the graphs
+ *
+ * Returns : an chart object containing svg_fwd, svg_rev, svg_legend for forward graph, reverse graph, and legend.
+ * They can be used thus:
+ *
+ * jQuery("#graph_fwd").append( function() { return chart.svg_fwd.node(); } );
+ * jQuery("#graph_rev").append( function() { return chart.svg_rev.node(); } );
+ * jQuery("#graph_leg").append( function() { return chart.svg_legend.node(); } );
  *
  */
 
 define(['jquery','d3'], function(jQuery, d3) {
-    drawChart = function (divID, width, height) {
-		if (!width) { width = jQuery(divID).data("width"); }
-		if (!width) { width = 450; }
-		if (!height) { height = jQuery(divID).data("height"); }
-		if (!height) { height = 350; }
 
-		var legend = jQuery(divID).data("legend");
-		var data = jQuery(divID).data("check");
-		var direction = jQuery(divID).data("direction");
-		if (!direction) { direction = 'forward'; }
+    drawChart = function (config) {
+        var svg_fwd;
+        var svg_rev;
+        var svg_legend;
+        var data = config.data;
+        var width = config.width || 450;
+        var height = config.height || 350;
+        var title = config.title || '';
 
         if(data && typeof data === "object" && (data.forward_count.length !=0 || data.reverse_count.length != 0)){
             var mismatchData = {
-                id_run: data.id_run,
-                tag_index: data.tag_index,
-                position: data.position,
                 quality_bin_values: data.quality_bin_values
             };
             //create forward and reverse data objects
@@ -74,16 +79,19 @@ define(['jquery','d3'], function(jQuery, d3) {
 					reverseData.yMax = reverseFormattedData.yMax;
 				}
 			}
+
+        var colour = d3.scale.ordinal()
+            .range(["rgb(8, 18, 247)", "rgb(49, 246, 19)", "rgb(236, 242, 28)", "rgb(219, 68, 0)"])
+            .domain(data.quality_bin_values.concat('N'));
             //draw new plots
-			if (direction == 'forward') {
-				return new mismatchPlot(forwardData, divID, 'Forward', width, height, legend);
-			} else {
-				return new mismatchPlot(reverseData, divID, 'Reverse', width, height, legend);
-			}
-            return {forward: forward, reverse: reverse};
-        }else{
-            return null;
+			svg_fwd = mismatchPlot(forwardData, width, height, 'Forward '+title, colour);
+			svg_rev = mismatchPlot(reverseData, width, height, 'Reverse '+title, colour);
         }
+
+
+        svg_legend = draw_legend(height,colour);
+
+        return { 'svg_fwd': svg_fwd, 'svg_rev': svg_rev, 'svg_legend': svg_legend };
     };
 
     function formatMismatch (data) {
@@ -122,31 +130,17 @@ define(['jquery','d3'], function(jQuery, d3) {
         return returnVal;
     }
 
-    function mismatchPlot (data, divID, title, width, height, legend) {
+    function mismatchPlot (data, w, h, title, colour) {
 		if (!data.formattedData) { return null; }
-        var w = 450;
-        var h = 350;
-        if(width && height){
-          w = width;
-          h = height;
-        }
         var padding = {top: 50, right: 25, bottom: 50, left: 65};
 
-        var svg = d3.select(divID).append("svg")
-            .attr("width", w)
-            .attr("height", h);
+        var bare_svg = document.createElementNS(d3.ns.prefix.svg, 'svg');
+        var svg = d3.select(bare_svg).attr("width", w).attr("height", h);
 
-		var txt = 'Mismatch percent by cycle: run ' + data.id_run + ", position " + data.position;
-        if (title) {
-            padding.top = 50;
-			if (data.tag_index) {
-				txt = txt + ", tag " + data.tag_index;
-			}
-            svg.append('text')
-                .attr("transform", "translate(" + padding.left + ", " + padding.top / 2 + ")")
-                .style('font-size', padding.top / 4)
-				.text(txt);
-        }
+        svg.append('text')
+            .attr("transform", "translate(" + padding.left + ", " + padding.top / 2 + ")")
+            .style('font-size', padding.top / 4)
+            .text(title);
 
         var xMin = 0;
         var xMax = data.quality_bins[0].length;
@@ -164,10 +158,6 @@ define(['jquery','d3'], function(jQuery, d3) {
                  .nice()
                  .range([h - padding.bottom, padding.top])
                  .domain([yMin, data.yMax]);
-
-        var color = d3.scale.ordinal()
-            .range(["rgb(8, 18, 247)", "rgb(49, 246, 19)", "rgb(236, 242, 28)", "rgb(219, 68, 0)"])
-            .domain(data.quality_bin_values.concat('N'));
 
         //Define X axis
         var xAxis = d3.svg.axis()
@@ -205,16 +195,21 @@ define(['jquery','d3'], function(jQuery, d3) {
             .attr('height', function (d) { return yScale(d.y0) - yScale(d.y1); })
             .attr('stroke-width', 1)
             .attr('stroke', 'white')
-            .style("fill", function(d) { return color(d.name); });
+            .style("fill", function(d) { return colour(d.name); });
 
-		if (legend) {
-          var legendSVG = d3.select(divID)
+        return svg;
+    }
+
+    function draw_legend(h,colour) {
+        var bare_svg = document.createElementNS(d3.ns.prefix.svg, 'svg');
+
+          var legendSVG = d3.select(bare_svg)
             .append('svg')
             .attr('width', 50)
             .attr('height', h);
 
           var legendPoints = legendSVG.selectAll('.legend')
-            .data(color.domain())
+            .data(colour.domain())
             .enter()
             .append('g')
             .attr('class', 'legend');
@@ -223,7 +218,7 @@ define(['jquery','d3'], function(jQuery, d3) {
             .attr('y', function (d, i) { return i * 15 + (h / 2) - 30; })
             .attr('width', 10)
             .attr('height', 10)
-            .style('fill', color);
+            .style('fill', colour);
 
           legendPoints.append('text')
             .attr('x', 25)
@@ -236,8 +231,8 @@ define(['jquery','d3'], function(jQuery, d3) {
 			  if (i==2) { return "=<" + d; }
 			  return d;
             });
-		}
 
+        return legendSVG;
     }
 
 	return {

@@ -7,40 +7,34 @@
  *
  * Use:
  *
- * <div class='bcviz_insert_size' data-direction='forward' data-check='data' data-width=500 data-height=200></div>
+ * var chart = adapter.drawChart({'data': aJSON, 'width': w, 'height': h, 'title': t});
  *
- * where width and height are option and have the default values shown above
- *       direction        is either 'forward' or 'reverse' and defaults to 'forward'
- *       data             is a json formatted string which contains:
- *             bins
- *             id_run
- *             position
- *             tag_index
- *             bin_width
- *             min_isize
- *             mean
- *             std
- *             norm_fit_modes
+ * Where :     data             is a json formatted string which contains:
+ *                forward_start_counts
+ *                reverse_start_counts
+ *
+ *             width, height    are options, and specify width, height in pixels
+ *
+ *             title            is an option title for the graphs
+ *
+ * Returns : an chart object containing a SVGs svg_fwdm svg_rev for the forward and reverse graphs, which can be used thus:
+ *
+ * jQuery("#graph_fwd").append( function() { return chart.svg_fwd.node(); } );
+ * jQuery("#graph_rev").append( function() { return chart.svg_rev.node(); } );
  *
  */
 
 define(['jquery', 'd3'], function(jQuery, d3){
-    var drawChart = function (divID, width, height) {
-		if (!width) { width = jQuery(divID).data("width"); }
-		if (!width) { width = 500; }
-		if (!height) { height = jQuery(divID).data("height"); }
-		if (!height) { height = 200; }
-
-		var data = jQuery(divID).data("check");
-		var direction = jQuery(divID).data("direction");
-		if (!direction) { direction = 'forward'; }
+    var drawChart = function (config) {
+        var svg_fwd;
+        var svg_rev;
+		var data = config.data;
+        var width = config.width;
+        var height = config.height;
+        var title = config.title || '';
 
         if(data && typeof data === "object"){
-            var mismatchData = {
-                id_run: data.id_run,
-                tag_index: data.tag_index,
-                position: data.position
-            };
+            var mismatchData = {};
             //create forward and reverse data objects
             var forwardData = Object.create(mismatchData);
             var reverseData = Object.create(mismatchData);
@@ -61,16 +55,12 @@ define(['jquery', 'd3'], function(jQuery, d3){
                 forwardData.yMax = reverseData.yMax;
             }
             //draw new plots
-			if (direction == 'forward') {
 				if (forwardData.formattedData.length == 0) { return null; }
-				return new adapterChart(forwardData, divID, "Forward", width, height);
-			} else {
+				svg_fwd = new adapterChart(forwardData, width, height, 'Forward ' + title);
 				if (reverseData.formattedData.length == 0) { return null; }
-				return new adapterChart(reverseData, divID, "Reverse", width, height);
-			}
-          }else{
-            return null;
+				svg_rev = new adapterChart(reverseData, width, height, 'Reverse ' + title);
           }
+        return { 'svg_fwd': svg_fwd, 'svg_rev': svg_rev };
     };
 
     function format_adapter_chart (data) {
@@ -80,39 +70,34 @@ define(['jquery', 'd3'], function(jQuery, d3){
             }
             return formattedData;
         }
+
         function roundToPowerOfTen (aNumb) {
             return Math.pow(10, Math.ceil(Math.log(aNumb) / Math.LN10));
         }
-        function adapterChart (data, divID, title, width, height) {
+
+        function adapterChart (data, width, height, title) {
             var w = 500;
             var h = 250;
             if(width && height){
                 w = width;
                 h = height;
             }
-            var padding = {top: 25, right: 25, bottom: 25, left: 50};
+            var padding = {top: 36, right: 25, bottom: 25, left: 50};
 
-            var svg = d3.select(divID).append("svg")
-                .attr("width", w)
-                .attr("height", h);
+            var bare_svg = document.createElementNS(d3.ns.prefix.svg, 'svg');
+            var svg = d3.select(bare_svg).attr("width", w).attr("height", h);
 
             if (title) {
-                padding.top = 50;
-				var txt = title + ' Adapter Start Count: run ' + data.id_run + ", position " + data.position;
-				if (data.tag_index) {
-					txt = txt + ", tag " + data.tag_index;
-				}
                 svg.append('text')
                     .attr("transform", "translate(" + padding.left + ", " + padding.top / 4 + ")")
                     .style('font-size', padding.top / 4)
-                    .text(txt);
+                    .text(title);
             }
 
             var xMin = d3.min(data.formattedData, function (d) { return d.xVar; });
             var xMax = d3.max(data.formattedData, function (d) { return d.xVar; }) + 1;
             var yMin = 0.1;
 			var yMax = data.yMax;
-//			var yMax = Math.pow(10,Math.round(Math.log(data.yMax) / Math.LN10)+1);
             var nodeWidth = (w-padding.left-padding.right) / xMax;
 
             //create scale functions
@@ -217,7 +202,7 @@ define(['jquery', 'd3'], function(jQuery, d3){
                     .attr('stroke-width', '1px')
                     .attr('stroke', 'white');
 
-			return 1;
+			return svg;
         }
 
 	return {
