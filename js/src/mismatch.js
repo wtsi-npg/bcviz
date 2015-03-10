@@ -43,6 +43,7 @@ define(['jquery','d3'], function(jQuery, d3) {
         var width = config.width || 450;
         var height = config.height || 350;
         var title = config.title || '';
+        var colour;
 
         if(data && typeof data === "object" && (data.forward_count.length !=0 || data.reverse_count.length != 0)){
             var mismatchData = {
@@ -60,45 +61,51 @@ define(['jquery','d3'], function(jQuery, d3) {
             reverseData.count = data.reverse_count;
             //format the data
             var forwardFormattedData = formatMismatch(forwardData);
-			if (forwardFormattedData) {
-            	forwardData.formattedData = forwardFormattedData.formattedData;
-            	forwardData.yMax = forwardFormattedData.yMax;
-			}
+            if (forwardFormattedData) {
+                forwardData.formattedData = forwardFormattedData.formattedData;
+                forwardData.yMax = forwardFormattedData.yMax;
+            }
             var reverseFormattedData = formatMismatch(reverseData);
-			if (reverseFormattedData) {
-	            reverseData.formattedData = reverseFormattedData.formattedData;
-	            reverseData.yMax = reverseFormattedData.yMax;
-			}
+            if (reverseFormattedData) {
+                reverseData.formattedData = reverseFormattedData.formattedData;
+                reverseData.yMax = reverseFormattedData.yMax;
+            }
             //change the yMax variable to be the larger of the two graphs
-			if (forwardFormattedData && reverseFormattedData) {
-				if (forwardFormattedData.yMax > reverseFormattedData.yMax){
-					forwardData.yMax = forwardFormattedData.yMax;
-					reverseData.yMax = forwardFormattedData.yMax;
-				} else {
-					forwardData.yMax = reverseFormattedData.yMax;
-					reverseData.yMax = reverseFormattedData.yMax;
-				}
-			}
+            if (forwardFormattedData && reverseFormattedData) {
+                if (forwardFormattedData.yMax > reverseFormattedData.yMax){
+                    forwardData.yMax = forwardFormattedData.yMax;
+                    reverseData.yMax = forwardFormattedData.yMax;
+                } else {
+                    forwardData.yMax = reverseFormattedData.yMax;
+                    reverseData.yMax = reverseFormattedData.yMax;
+                }
+            }
 
-        var colour = d3.scale.ordinal()
-            .range(["rgb(8, 18, 247)", "rgb(49, 246, 19)", "rgb(236, 242, 28)", "rgb(219, 68, 0)"])
-            .domain(data.quality_bin_values.concat('N'));
+            var xMin = 0;
+            var xMax = d3.max([forwardData.quality_bins[0].length, reverseData.quality_bins[0].length]);
+            var yMin = 0;
+            var yMax = d3.max([forwardFormattedData.yMax, reverseFormattedData.yMax]);
+
+            colour = d3.scale.ordinal()
+                .range(["rgb(8, 18, 247)", "rgb(49, 246, 19)", "rgb(236, 242, 28)", "rgb(219, 68, 0)"])
+                .domain(data.quality_bin_values.concat('N'));
+
             //draw new plots
-			svg_fwd = mismatchPlot(forwardData, width, height, 'Forward '+title, colour);
-			svg_rev = mismatchPlot(reverseData, width, height, 'Reverse '+title, colour);
+            svg_fwd = mismatchPlot(forwardData, xMin, xMax, yMin, yMax, width, height, 'Forward '+title, colour);
+            svg_rev = mismatchPlot(reverseData, xMin, xMax, yMin, yMax, width, height, 'Reverse '+title, colour);
         }
 
 
-        svg_legend = draw_legend(height,colour);
+        if (colour) { svg_legend = draw_legend(height,colour); }
 
         return { 'svg_fwd': svg_fwd, 'svg_rev': svg_rev, 'svg_legend': svg_legend };
     };
 
     function formatMismatch (data) {
         var barData = data.quality_bins;
-		if (!barData) {
-			return null;
-		}
+        if (!barData) {
+            return null;
+        }
         barData.push(data.n_count);
 
         var formattedData = [];
@@ -119,19 +126,19 @@ define(['jquery','d3'], function(jQuery, d3) {
             }
             pushData[barData.length - 1].name = 'N';
             formattedData.push(pushData);
-            if(yMax < (yVar / total) * 100){
+            if (yMax < (yVar / total) * 100) {
                 yMax = (yVar / total) * 100;
             }
         }
         var returnVal = {
-          formattedData: formattedData,
-          yMax: yMax
+            formattedData: formattedData,
+            yMax: yMax
         };
         return returnVal;
     }
 
-    function mismatchPlot (data, w, h, title, colour) {
-		if (!data.formattedData) { return null; }
+    function mismatchPlot (data, xMin, xMax, yMin, yMax, w, h, title, colour) {
+        if (!data.formattedData) { return null; }
         var padding = {top: 50, right: 25, bottom: 50, left: 65};
 
         var bare_svg = document.createElementNS(d3.ns.prefix.svg, 'svg');
@@ -142,10 +149,6 @@ define(['jquery','d3'], function(jQuery, d3) {
             .style('font-size', padding.top / 4)
             .text(title);
 
-        var xMin = 0;
-        var xMax = data.quality_bins[0].length;
-        var yMin = 0;
-        //var yMax = d3.max(formattedData, function (d) { return d[4].total ;});
         var nodeWidth = (w-padding.left-padding.right) / xMax;
 
         //create scale functions
@@ -157,7 +160,7 @@ define(['jquery','d3'], function(jQuery, d3) {
         var yScale = d3.scale.linear()
                  .nice()
                  .range([h - padding.bottom, padding.top])
-                 .domain([yMin, data.yMax]);
+                 .domain([yMin, yMax]);
 
         //Define X axis
         var xAxis = d3.svg.axis()
@@ -203,39 +206,39 @@ define(['jquery','d3'], function(jQuery, d3) {
     function draw_legend(h,colour) {
         var bare_svg = document.createElementNS(d3.ns.prefix.svg, 'svg');
 
-          var legendSVG = d3.select(bare_svg)
+        var legendSVG = d3.select(bare_svg)
             .append('svg')
             .attr('width', 50)
             .attr('height', h);
 
-          var legendPoints = legendSVG.selectAll('.legend')
+        var legendPoints = legendSVG.selectAll('.legend')
             .data(colour.domain())
             .enter()
             .append('g')
             .attr('class', 'legend');
 
-          legendPoints.append('rect')
+        legendPoints.append('rect')
             .attr('y', function (d, i) { return i * 15 + (h / 2) - 30; })
             .attr('width', 10)
             .attr('height', 10)
             .style('fill', colour);
 
-          legendPoints.append('text')
+        legendPoints.append('text')
             .attr('x', 25)
             .attr('y', function (d, i) { return i * 15 + (h / 2) - 30; })
             .attr('dy', '10px')
             .style('text-anchor', 'middle')
             .text(function (d,i) {
-              if (i==0) { return ">=" + d; }
-			  if (i==1) { return "=<" + d; }
-			  if (i==2) { return "=<" + d; }
-			  return d;
+                if (i==0) { return ">=" + d; }
+                if (i==1) { return "=<" + d; }
+                if (i==2) { return "=<" + d; }
+                return d;
             });
 
         return legendSVG;
     }
 
-	return {
-		drawChart: drawChart,
-	};
+    return {
+        drawChart: drawChart,
+    };
 });
