@@ -45,7 +45,7 @@ define(['jquery','d3'], function(jQuery, d3) {
         var title = config.title || '';
         var colour;
 
-        if(data && typeof data === "object" && (data.forward_count.length !=0 || data.reverse_count.length != 0)){
+        if (data && typeof data === "object") {
             var mismatchData = {
                 quality_bin_values: data.quality_bin_values
             };
@@ -82,10 +82,15 @@ define(['jquery','d3'], function(jQuery, d3) {
             }
 
             var xMin = 0;
-            var xMax = d3.max([forwardData.quality_bins[0].length, reverseData.quality_bins[0].length]);
+            var fwd_xMax = forwardData.quality_bins ? forwardData.quality_bins[0].length : 0;
+            var rev_xMax = reverseData.quality_bins ? reverseData.quality_bins[0].length : 0;
+            var xMax = d3.max([fwd_xMax, rev_xMax]);
             var yMin = 0;
             var yMax = d3.max([forwardFormattedData.yMax, reverseFormattedData.yMax]);
+            xMax = xMax || 100;
+            yMax = yMax || 50;
 
+            data.quality_bin_values  = data.quality_bin_values || [];
             colour = d3.scale.ordinal()
                 .range(["rgb(8, 18, 247)", "rgb(49, 246, 19)", "rgb(236, 242, 28)", "rgb(219, 68, 0)"])
                 .domain(data.quality_bin_values.concat('N'));
@@ -103,12 +108,10 @@ define(['jquery','d3'], function(jQuery, d3) {
 
     function formatMismatch (data) {
         var barData = data.quality_bins;
-        if (!barData) {
-            return null;
-        }
-        barData.push(data.n_count);
-
         var formattedData = [];
+        if (!barData) { return { formattedData: formattedData, yMax: 0 }; }
+
+        barData.push(data.n_count);
 
         var yMax = 0;
 
@@ -138,7 +141,6 @@ define(['jquery','d3'], function(jQuery, d3) {
     }
 
     function mismatchPlot (data, xMin, xMax, yMin, yMax, w, h, title, colour) {
-        if (!data.formattedData) { return null; }
         var padding = {top: 50, right: 25, bottom: 50, left: 65};
 
         var bare_svg = document.createElementNS(d3.ns.prefix.svg, 'svg');
@@ -185,6 +187,8 @@ define(['jquery','d3'], function(jQuery, d3) {
             .attr("class", "axis")
             .attr("transform", "translate(0," + (h-padding.bottom) + ")")
             .call(xAxis);
+
+        if (!data.formattedData) { return svg; }
 
         var barGroup = svg.selectAll('.g')
            .data(data.formattedData)
