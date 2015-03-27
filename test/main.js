@@ -1,12 +1,10 @@
 
 "use strict";
 require.config({
-    baseUrl: '/js',
-
     paths: {
-		jquery: 'lib/jquery/jquery',
-		d3: 'lib/d3/d3',
-        'QUnit': 'lib/qunit/qunit/qunit'
+		jquery: '../js/lib/jquery/jquery',
+		d3: '../js/lib/d3/d3',
+        'QUnit': '../js/lib/qunit/qunit/qunit'
     },
     shim: {
 		d3: { exports: 'd3' },
