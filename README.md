@@ -25,8 +25,8 @@ Creating and running demo:
 Running tests:
 --------------
 
-To look at the tests:
-http://localhost:8888
+In a browser: http://localhost:8888/test/test.html
 
-To run headless:
-phantomjs js/run-qunit.js test.html
+Headless: phantomjs test/run-qunit.js test/test.html
+
+
