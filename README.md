@@ -20,7 +20,7 @@ Creating and running demo:
 
 4. In your browser go to: 
 
-    http://localhost:8888/
+    http://localhost:8888/test/test.html
 
 Running tests:
 --------------
