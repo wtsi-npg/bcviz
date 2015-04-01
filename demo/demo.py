@@ -27,8 +27,8 @@ htmlFile.write("""<!DOCTYPE html>
     <head>
         <meta charset="utf-8">
         <title>Bamcheck demo</title>
-        <link rel="stylesheet" type="text/css" href="css/bcviz.css">
-        <script data-main="main" src="js/lib/requirejs/require.js"></script>
+        <link rel="stylesheet" type="text/css" href="/css/bcviz.css">
+        <script data-main="main" src="/js/lib/requirejs/require.js"></script>
     </head>
     <body>
         <div id="instructions">
