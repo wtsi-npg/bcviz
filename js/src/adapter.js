@@ -63,6 +63,8 @@ define(['jquery', 'd3'], function(jQuery, d3){
             // draw new plots
             svg_fwd = new adapterChart(forwardData, xMin, xMax, yMin, yMax, width, height, 'Forward ' + title);
             svg_rev = new adapterChart(reverseData, xMin, xMax, yMin, yMax, width, height, 'Reverse ' + title);
+            if (!data.forward_fasta_read_count) { svg_fwd = null; }
+            if (!data.reverse_fasta_read_count) { svg_rev = null; }
         }
         return { 'svg_fwd': svg_fwd, 'svg_rev': svg_rev };
     };

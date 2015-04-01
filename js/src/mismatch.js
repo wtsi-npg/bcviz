@@ -98,6 +98,9 @@ define(['jquery','d3'], function(jQuery, d3) {
             //draw new plots
             svg_fwd = mismatchPlot(forwardData, xMin, xMax, yMin, yMax, width, height, 'Forward '+title, colour);
             svg_rev = mismatchPlot(reverseData, xMin, xMax, yMin, yMax, width, height, 'Reverse '+title, colour);
+
+            if (!data.forward_aligned_read_count) { svg_fwd = null; }
+            if (!data.reverse_aligned_read_count) { svg_rev = null; }
         }
 
 
