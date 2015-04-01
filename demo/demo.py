@@ -27,8 +27,8 @@ htmlFile.write("""<!DOCTYPE html>
     <head>
         <meta charset="utf-8">
         <title>Bamcheck demo</title>
-        <link rel="stylesheet" type="text/css" href="css/bcviz.css">
-        <script data-main="main" src="js/lib/require.js"></script>
+        <link rel="stylesheet" type="text/css" href="/css/bcviz.css">
+        <script data-main="main" src="/js/lib/requirejs/require.js"></script>
     </head>
     <body>
         <div id="instructions">
@@ -47,8 +47,8 @@ mainJS.write("""require.config({
     baseUrl: '/js',
 
     paths: {
-        jquery: 'lib/jquery-2.0.3',
-        d3: 'lib/d3'
+        jquery: 'lib/jquery/jquery',
+        d3: 'lib/d3/d3'
     },
     shim: {
         d3: {

@@ -1,0 +1,19 @@
+{
+  "name": "bcviz",
+  "dependencies":{
+    "jquery":"2.0.3",
+    "d3":"3.2.8",
+    "requirejs":"2.1.8"
+  },
+  "devDependencies":{
+    "qunit":"1.15.0"
+  },
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
