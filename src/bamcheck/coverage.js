@@ -1,5 +1,5 @@
 var chartIndex = 0;
-define(['jquery', 'd3', 'src/divSelections'], function(jQuery, d3, checkDivSelection){
+define(['jquery', 'd3', 'src/bamcheck/divSelections'], function(jQuery, d3, checkDivSelection){
     return function (data, divID, title, width, height) {
         if(title && data[9]){
           title = data[9].title;

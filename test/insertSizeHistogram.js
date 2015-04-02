@@ -1,6 +1,6 @@
 "use strict";
 define(
-    ['../js/src/insertSizeHistogram'],
+    ['../src/qcjson/insertSizeHistogram'],
     function(insertSizeHistogram) {
         var run = function() {
             QUnit.test('insertSizeHistogram tests', function() {

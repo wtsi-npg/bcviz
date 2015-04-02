@@ -3,9 +3,9 @@
 require.config({
   baseUrl: '../',
   paths: {
-    jquery: 'js/lib/jquery/jquery',
-    d3:     'js/lib/d3/d3',
-    QUnit:  'js/lib/qunit/qunit/qunit',
+    jquery: 'external/jquery/jquery',
+    d3:     'external/d3/d3',
+    QUnit:  'external/qunit/qunit/qunit',
   },
   shim: {
     d3: { exports: 'd3' },

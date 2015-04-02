@@ -2,13 +2,12 @@
   "name": "bcviz",
   "homepage": "https://github.com/wtsi-npg/bcviz",
   "moduleType": "amd",
-  "licence": "GPL",
   "private": true,
 
   "repository": {
     "type": "git",
     "url": "git://github.com/wtsi-npg/bcviz"
-  }
+  },
 
   "authors": [
     "David Bryson",
@@ -16,7 +15,7 @@
     "Marina Gourtovaia <mg8@sanger.ac.uk>",
     "Jennifer Liddle <js10@sanger.ac.uk>",
     "Jaime Tovar <jmtc@sanger.ac.uk>"
-  ]
+  ],
 
   "dependencies":{
     "jquery":"2.0.3",

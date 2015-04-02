@@ -1,4 +1,4 @@
-define(['src/dotPlot'], function(dotPlot){
+define(['src/bamcheck/dotPlot'], function(dotPlot){
     var keysIC = {
         all: ["insertions_fwd","deletions_fwd","insertions_rev","deletions_rev"],
         fwd: ["insertions_fwd","deletions_fwd"],

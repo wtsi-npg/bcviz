@@ -1,7 +1,7 @@
 bcviz
 =====
 
-D3 based JavaScript visualisation for bamcheck file format
+D3 based JavaScript visualisation for bamcheck and NPG autoqc json file formats.
 
 Requires bower to install package dependencies.
 
@@ -20,7 +20,7 @@ Creating and running demo:
 
 4. In your browser go to: 
 
-    http://localhost:8888/test/test.html
+    http://localhost:8888/demo
 
 Running tests:
 --------------
