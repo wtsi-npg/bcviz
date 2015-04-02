@@ -3,23 +3,28 @@
  *
  * Created: 29 October 2014
  *
- * Display an 'insert size' histogram and overlay a normal distribution curve
+ * Create an 'insert size' histogram and overlay a normal distribution curve
  *
  * Use:
  *
- * <div class='insert_size_histogram' data-check='data' data-width=650 data-height=700></div>
+ * var chart = insertSizeHistogram.drawChart({'data': aJSON, 'width': w, 'height': h, 'title': t});
  *
- * where width and height are option and have the default values shown above
- *       data             is a json formatted string which contains:
+ * Where :  data             is a json formatted string which contains:
  *             bins
- *             id_run
- *             position
- *             tag_index
  *             bin_width
  *             min_isize
  *             mean
  *             std
  *             norm_fit_modes
+ *
+ *          width, height  are optional width, height in pixels
+ *
+ *          title          is an optional title for the graph
+ *
+ *
+ * Returns : an chart object containing an SVG of the graph, which can be used thus:
+ *
+ * jQuery("#graph").append( function() { return chart.svg.node(); } );
  *
  */
 
@@ -27,35 +32,31 @@ define(['jquery', 'd3'], function(jQuery, d3){
 	var xScale;
 	var yScale;
 
-	drawChart = function(divID) {
-		var data = jQuery(divID).data("check");
-		var width = jQuery(divID).data("width");
-		var height = jQuery(divID).data("height");
+	drawChart = function(config) {
+		var data = config.data;
+		var width = config.width;
+		var height = config.height;
+		var title = config.title || '';
         if(data && typeof data === "object" && data.bins != null && data.bins.length > 1){
-            return new histogram(data, divID, width, height);
+            return histogram(data, width, height, title);
         }else{
             return null;
         }
     };
 
-    function histogram(data, divID, width, height) {
+    function histogram(data, width, height, title) {
 		if (!width) { width = 650; }
 		if (!height) { height = 300; }
-        var padding = {top: 25, right: 25, bottom: 25, left: 50};
+        var padding = {top: 50, right: 25, bottom: 25, left: 50};
 
-		var svg = d3.select(divID).append("svg")
-            .attr("width", width)
-            .attr("height", height);
+        var bare_svg = document.createElementNS(d3.ns.prefix.svg, 'svg');
+        var svg = d3.select(bare_svg).attr("width", width).attr("height",height);
 
-		padding.top = 50;
-		var txt = 'Insert Sizes: run ' + data.id_run + ", position " + data.position;
-		if (data.tag_index) {
-                txt = txt + ", tag " + data.tag_index;
-            }
+        // add title
 		svg.append('text')
 			.attr("transform", "translate(" + padding.left + ", " + padding.top / 4 + ")")
 			.style('font-size', padding.top / 4)
-			.text(txt);
+			.text(title);
 
 		// every value is a string. Force to numeric.
 		data.bin_width = +data.bin_width;
@@ -167,6 +168,7 @@ define(['jquery', 'd3'], function(jQuery, d3){
 
 
 		if (data.norm_fit_modes) { drawStandardDistribution(data,svg); }
+        return { 'svg': svg};
 	}
 
 	function drawStandardDistribution(data, svg) {

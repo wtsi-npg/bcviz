@@ -29,4 +29,3 @@ In a browser: http://localhost:8888/test/test.html
 
 Headless: phantomjs test/run-qunit.js test/test.html
 
-
