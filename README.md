@@ -29,4 +29,4 @@ To look at the tests:
 http://localhost:8888
 
 To run headless:
-phantomjs js/run-qunit.js test.html
+phantomjs js/run-qunit.js index.html
