@@ -28,10 +28,3 @@ svg {
   stroke-width: 0;
 }
 
-.bcviz_test fieldset {
-	border-radius: 15px 15px 15px 15px;
-	overflow: hidden;
-	font-size: 14px;
-	font-weight: bold;
-}
-
