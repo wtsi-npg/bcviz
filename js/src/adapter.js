@@ -7,223 +7,206 @@
  *
  * Use:
  *
- * <div class='bcviz_insert_size' data-direction='forward' data-check='data' data-width=500 data-height=200></div>
+ * var chart = adapter.drawChart({'data': aJSON, 'width': w, 'height': h, 'title': t});
  *
- * where width and height are option and have the default values shown above
- *       direction        is either 'forward' or 'reverse' and defaults to 'forward'
- *       data             is a json formatted string which contains:
- *             bins
- *             id_run
- *             position
- *             tag_index
- *             bin_width
- *             min_isize
- *             mean
- *             std
- *             norm_fit_modes
+ * Where :     data             is a json formatted string which contains:
+ *                forward_start_counts
+ *                reverse_start_counts
+ *
+ *             width, height    are options, and specify width, height in pixels
+ *
+ *             title            is an option title for the graphs
+ *
+ * Returns : an chart object containing a SVGs svg_fwdm svg_rev for the forward and reverse graphs, which can be used thus:
+ *
+ * jQuery("#graph_fwd").append( function() { return chart.svg_fwd.node(); } );
+ * jQuery("#graph_rev").append( function() { return chart.svg_rev.node(); } );
  *
  */
 
 define(['jquery', 'd3'], function(jQuery, d3){
-    var drawChart = function (divID, width, height) {
-		if (!width) { width = jQuery(divID).data("width"); }
-		if (!width) { width = 500; }
-		if (!height) { height = jQuery(divID).data("height"); }
-		if (!height) { height = 200; }
+    var drawChart = function (config) {
+        var svg_fwd;
+        var svg_rev;
+        var data = config.data;
+        var width = config.width;
+        var height = config.height;
+        var title = config.title || '';
 
-		var data = jQuery(divID).data("check");
-		var direction = jQuery(divID).data("direction");
-		if (!direction) { direction = 'forward'; }
+        if (data && typeof data === "object") {
+            var mismatchData = {};
 
-        if(data && typeof data === "object"){
-            var mismatchData = {
-                id_run: data.id_run,
-                tag_index: data.tag_index,
-                position: data.position
-            };
-            //create forward and reverse data objects
+            // create forward and reverse data objects
             var forwardData = Object.create(mismatchData);
             var reverseData = Object.create(mismatchData);
-            //define individual data points for forward and reverse
+
+            // define individual data points for forward and reverse
             forwardData.start_counts = data.forward_start_counts;
             reverseData.start_counts = data.reverse_start_counts;
-            //format the data
+
+            // format the data
             forwardData.formattedData = format_adapter_chart(forwardData);
             reverseData.formattedData = format_adapter_chart(reverseData);
-            //change the yMax variable to be the larger of the two graphs
+
             forwardData.yMax = roundToPowerOfTen(d3.max(forwardData.formattedData, function (d) { return d.yVar; }));
-			if (isNaN(forwardData.yMax)) { forwardData.yMax = 0; }
+            if (isNaN(forwardData.yMax)) { forwardData.yMax = 0; }
             reverseData.yMax = roundToPowerOfTen(d3.max(reverseData.formattedData, function (d) { return d.yVar; }));
-			if (isNaN(reverseData.yMax)) { reverseData.yMax = 0; }
-            if(forwardData.yMax > reverseData.yMax){
-                reverseData.yMax = forwardData.yMax;
-            }else{
-                forwardData.yMax = reverseData.yMax;
-            }
-            //draw new plots
-			if (direction == 'forward') {
-				if (forwardData.formattedData.length == 0) { return null; }
-				return new adapterChart(forwardData, divID, "Forward", width, height);
-			} else {
-				if (reverseData.formattedData.length == 0) { return null; }
-				return new adapterChart(reverseData, divID, "Reverse", width, height);
-			}
-          }else{
-            return null;
-          }
+            if (isNaN(reverseData.yMax)) { reverseData.yMax = 0; }
+
+            // set xMin and xMax to be the same for the two graphs
+            var xMin = d3.min(forwardData.formattedData.concat(reverseData.formattedData), function (d) { return d.xVar; });
+            var xMax = d3.max(forwardData.formattedData.concat(reverseData.formattedData), function (d) { return d.xVar; });
+            var yMin = 0.1;
+            var yMax = d3.max(forwardData.formattedData.concat(reverseData.formattedData), function (d) { return d.yVar; });
+            yMax = roundToPowerOfTen(yMax);
+
+            // draw new plots
+            svg_fwd = new adapterChart(forwardData, xMin, xMax, yMin, yMax, width, height, 'Forward ' + title);
+            svg_rev = new adapterChart(reverseData, xMin, xMax, yMin, yMax, width, height, 'Reverse ' + title);
+            if (!data.forward_fasta_read_count) { svg_fwd = null; }
+            if (!data.reverse_fasta_read_count) { svg_rev = null; }
+        }
+        return { 'svg_fwd': svg_fwd, 'svg_rev': svg_rev };
     };
 
-    function format_adapter_chart (data) {
-            var formattedData = [];
-            for(var k in data.start_counts){
-                formattedData.push({xVar: parseInt(k, 10), yVar: data.start_counts[k]});
-            }
-            return formattedData;
+    function format_adapter_chart(data) {
+        var formattedData = [];
+        for(var k in data.start_counts){
+            formattedData.push({xVar: parseInt(k, 10), yVar: data.start_counts[k]});
         }
-        function roundToPowerOfTen (aNumb) {
-            return Math.pow(10, Math.ceil(Math.log(aNumb) / Math.LN10));
+        return formattedData;
+    }
+
+    function roundToPowerOfTen (aNumb) {
+        return Math.pow(10, Math.ceil(Math.log(aNumb) / Math.LN10));
+    }
+
+    function adapterChart (data, xMin, xMax, yMin, yMax, width, height, title) {
+        var w = width || 500;
+        var h = height || 250;
+        var padding = {top: 36, right: 25, bottom: 25, left: 50};
+
+        var bare_svg = document.createElementNS(d3.ns.prefix.svg, 'svg');
+        var svg = d3.select(bare_svg).attr("width", w).attr("height", h);
+
+        if (title) {
+            svg.append('text')
+                .attr("transform", "translate(" + padding.left + ", " + padding.top / 4 + ")")
+                .style('font-size', padding.top / 4)
+                .text(title);
         }
-        function adapterChart (data, divID, title, width, height) {
-            var w = 500;
-            var h = 250;
-            if(width && height){
-                w = width;
-                h = height;
-            }
-            var padding = {top: 25, right: 25, bottom: 25, left: 50};
 
-            var svg = d3.select(divID).append("svg")
-                .attr("width", w)
-                .attr("height", h);
+        var nodeWidth = (w-padding.left-padding.right) / xMax;
 
-            if (title) {
-                padding.top = 50;
-				var txt = title + ' Adapter Start Count: run ' + data.id_run + ", position " + data.position;
-				if (data.tag_index) {
-					txt = txt + ", tag " + data.tag_index;
-				}
-                svg.append('text')
-                    .attr("transform", "translate(" + padding.left + ", " + padding.top / 4 + ")")
-                    .style('font-size', padding.top / 4)
-                    .text(txt);
-            }
+        // create scale functions
+        var xScale = d3.scale.linear()
+                 .nice()
+                 .range([padding.left, w - (padding.right)])
+                 .domain([xMin,xMax]);
 
-            var xMin = d3.min(data.formattedData, function (d) { return d.xVar; });
-            var xMax = d3.max(data.formattedData, function (d) { return d.xVar; }) + 1;
-            var yMin = 0.1;
-			var yMax = data.yMax;
-//			var yMax = Math.pow(10,Math.round(Math.log(data.yMax) / Math.LN10)+1);
-            var nodeWidth = (w-padding.left-padding.right) / xMax;
+        var yScale = d3.scale.log()
+                 .clamp(true)
+                 .nice()
+                 .range([h - padding.bottom, padding.top]);
 
-            //create scale functions
-            var xScale = d3.scale.linear()
-                     .nice()
-                     .range([padding.left, w - (padding.right)])
-                     .domain([xMin,xMax]);
-
-            var yScale = d3.scale.log()
-                     .clamp(true)
-                     .nice()
-                     .range([h - padding.bottom, padding.top]);
-
-            //Define X axis
-            var xAxis = d3.svg.axis()
+        // Define X axis
+        var xAxis = d3.svg.axis()
                   .scale(xScale)
                   .orient("bottom")
                   .ticks(10);
 
-            //define Y axis
-			var superscript = "⁰¹²³⁴⁵⁶⁷⁸⁹";
-			var vArray = [];
-			var n;
-			for (n=0; n<Math.log(yMax)/Math.LN10; n++) {
-				vArray.push(Math.pow(10,n));
-			}
-			vArray.push(Math.pow(10,n));
+        // define Y axis
+        var superscript = "⁰¹²³⁴⁵⁶⁷⁸⁹";
+        var vArray = [];
+        var n;
+        for (n=0; n<Math.log(yMax)/Math.LN10; n++) {
+            vArray.push(Math.pow(10,n));
+        }
+        vArray.push(Math.pow(10,n));
 
-			var yAxis = d3.svg.axis()
-				.scale(yScale)
-				.orient("left")
-				.tickValues(vArray)
-				.ticks(5, function (d) {
-					if (d >= 1) { return "10"+superscript[Math.round(Math.log(d) / Math.LN10)]; }
-				});
+        var yAxis = d3.svg.axis()
+            .scale(yScale)
+            .orient("left")
+            .tickValues(vArray)
+            .ticks(5, function (d) {
+                if (d >= 1) { return "10"+superscript[Math.round(Math.log(d) / Math.LN10)]; }
+            });
 
-            //Create X axis
-            svg.append("g")
-                .attr("class", "axis")
-                .attr("transform", "translate(0," + (h-padding.bottom) + ")")
-                .call(xAxis);
+        // Create X axis
+        svg.append("g")
+            .attr("class", "axis")
+            .attr("transform", "translate(0," + (h-padding.bottom) + ")")
+            .call(xAxis);
 
-            //add X axis origin label
-            svg.append("text")
-              .attr("transform", "translate(" + (padding.left - 5) + "," + (h - padding.bottom + 17) + ")")
-              .text(data.min_isize);
+        // add X axis origin label
+        svg.append("text")
+          .attr("transform", "translate(" + (padding.left - 5) + "," + (h - padding.bottom + 17) + ")")
+          .text(data.min_isize);
 
-            function make_x_grid() {
-                return d3.svg.axis()
-                        .scale(xScale)
-                        .orient("bottom")
-                        .ticks(10);
-            }
-
-            function make_y_grid() {
-                return d3.svg.axis()
-                        .scale(yScale)
-                        .orient("left")
-                        .ticks(10);
-            }
-
-            yScale.domain([yMin, yMax]);
-
-            //Create Y axis
-            svg.append("g")
-               .attr("class", "axis")
-               .attr("transform", "translate(" + padding.left + ", 0)")
-               .call(yAxis);
-
-            //make x grid
-            svg.append("g")
-               .attr("class", "grid")
-               .attr("transform", "translate(0," + (h - padding.bottom) + ")")
-               .call(make_x_grid()
-                       .tickSize(-h+(padding.top + padding.bottom), 0, 0)
-                       .tickFormat("")
-               );
-            //make y grid
-            svg.append("g")
-               .attr("class", "grid")
-               .attr("id","yGrid")
-               .attr("transform", "translate(" + padding.left + ",0)")
-               .call(make_y_grid()
-                    .tickSize(-w+(padding.left + padding.right), 0,0)
-                    .tickFormat("")
-               );
-
-            //group for the bars
-            var bars = svg.append('g');
-
-            //draw bars in group
-            bars.selectAll('rect')
-                    .data(data.formattedData)
-                    .enter()
-                    .append('rect')
-                    .attr('x', function (d) { return xScale(d.xVar); })
-                    .attr('y', function (d) { return yScale(d.yVar); })
-                    .attr('width', nodeWidth)
-                    .attr('height', function (d) { return h - padding.bottom - yScale(d.yVar); })
-                    .attr('fill', 'blue')
-                    .attr('opacity', 0.6)
-                    .attr('stroke-width', '1px')
-                    .attr('stroke', 'white');
-
-			return 1;
+        function make_x_grid() {
+            return d3.svg.axis()
+                    .scale(xScale)
+                    .orient("bottom")
+                    .ticks(10);
         }
 
-	return {
-		drawChart: drawChart,
-		_formatChart: format_adapter_chart,
-		_roundToPowerOfTen: roundToPowerOfTen,
-	};
+        function make_y_grid() {
+            return d3.svg.axis()
+                    .scale(yScale)
+                    .orient("left")
+                    .ticks(10);
+        }
+
+        yScale.domain([yMin, yMax]);
+
+        // Create Y axis
+        svg.append("g")
+           .attr("class", "axis")
+           .attr("transform", "translate(" + padding.left + ", 0)")
+           .call(yAxis);
+
+        // make x grid
+        svg.append("g")
+           .attr("class", "grid")
+           .attr("transform", "translate(0," + (h - padding.bottom) + ")")
+           .call(make_x_grid()
+                   .tickSize(-h+(padding.top + padding.bottom), 0, 0)
+                   .tickFormat("")
+           );
+        // make y grid
+        svg.append("g")
+           .attr("class", "grid")
+           .attr("id","yGrid")
+           .attr("transform", "translate(" + padding.left + ",0)")
+           .call(make_y_grid()
+                .tickSize(-w+(padding.left + padding.right), 0,0)
+                .tickFormat("")
+           );
+
+        // group for the bars
+        var bars = svg.append('g');
+
+        // draw bars in group
+        bars.selectAll('rect')
+            .data(data.formattedData)
+            .enter()
+            .append('rect')
+            .attr('x', function (d) { return xScale(d.xVar); })
+            .attr('y', function (d) { return yScale(d.yVar); })
+            .attr('width', nodeWidth)
+            .attr('height', function (d) { return h - padding.bottom - yScale(d.yVar); })
+            .attr('fill', 'blue')
+            .attr('opacity', 0.6)
+            .attr('stroke-width', '1px')
+            .attr('stroke', 'white');
+
+        return svg;
+    }
+
+    return {
+        drawChart: drawChart,
+        _formatChart: format_adapter_chart,
+        _roundToPowerOfTen: roundToPowerOfTen,
+    };
 });
 
