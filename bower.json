@@ -28,7 +28,7 @@
 
   "ignore": [
     "**/.*",
-    "bower_components",
+    "external",
     "test",
     "demo",
     "README.md"
