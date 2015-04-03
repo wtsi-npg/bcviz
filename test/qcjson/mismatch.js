@@ -1,6 +1,6 @@
 "use strict";
 define(
-    ['../src/qcjson/mismatch'],
+    ['../../src/qcjson/mismatch'],
     function(mismatch) {
         var run = function() {
             QUnit.test('mismatch graph tests', function() {
