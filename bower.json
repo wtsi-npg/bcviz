@@ -3,6 +3,7 @@
   "homepage": "https://github.com/wtsi-npg/bcviz",
   "moduleType": "amd",
   "private": true,
+  "license": "GPL-3.0",
 
   "repository": {
     "type": "git",

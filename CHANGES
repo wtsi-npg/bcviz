@@ -1,0 +1,6 @@
+CHANGES
+
+ - restructure project directories
+
+release 1.1
+ - package the project with bower
