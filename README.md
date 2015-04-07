@@ -31,14 +31,14 @@ Running demos:
    Follow the displayed prompt (test files are provided as part 
    of this package and are located in the demo folder, ../ when executing
    python). The script generates index.html and main.js files that are 
-   specific to your input. The visuals are displayed at
+   specific to your input. The visuals are displayed at:
 
     http://localhost:8888/demo/custom
 
 Running tests:
 --------------
 
-Install dependencies by runnign bower in the top level directory
+Install dependencies by runnign bower in the top level directory:
 
   bower install
 
