@@ -2,8 +2,8 @@ require.config({
     baseUrl: '/js',
 
     paths: {
-        jquery: 'lib/jquery-2.0.3',
-        d3: 'lib/d3'
+        jquery: 'lib/jquery/jquery',
+        d3: 'lib/d3/d3'
     },
     shim: {
         d3: {

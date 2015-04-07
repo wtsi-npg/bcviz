@@ -3,31 +3,48 @@
     <head>
         <meta charset="utf-8">
         <title>bcviz Test Suite</title>
-        <link rel="stylesheet" type="text/css" href="css/qunit-1.15.0.css">
+        <link rel="stylesheet" type="text/css" href="js/lib/qunit/qunit/qunit.css">
         <link rel="stylesheet" type="text/css" href="css/bcviz.css">
     </head>
     <body>
-		<div id="qunit"></div>
+		<div id="qunit"></div> 
 		<div id="qunit-fixture"></div>
 		<br/><br/>
 
 		<div class=bcviz_test>
 
-		<fieldset style='float:left;'><legend>Insert Size Histogram</legend>
-		<div class="insert_size"></div>
-		</fieldset>
-
-		<fieldset style='float:right;'><legend>Adapter</legend>
-		<div class="adapter"></div>
+		<fieldset><legend>Adapter</legend>
+        <div class='bcviz_adapter'></div>
+		<div style='float:left;' id="bcviz_adapter_fwd"></div>
+		<div style='float:right;' id="bcviz_adapter_rev"></div>
 		</fieldset>
 		<div style='clear:both;'></div>
 
+		<fieldset><legend>Empty Adapter</legend>
+        <div class='bcviz_adapter'></div>
+		<div style='float:left;' id="bcviz_adapter_fwd_empty"></div>
+		<div style='float:right;' id="bcviz_adapter_rev_empty"></div>
+		</fieldset>
+		<div style='clear:both;'></div>
+
+		<br />
 		<fieldset><legend>Sequence Mismatch</legend>
-		<div class="mismatch"></div>
+		<div data-width=650 class="bcviz_mismatch" data-title='Mismatches'></div>
+		<div style='float:left;' id="bcviz_mismatch_fwd"></div>
+		<div style='float:left;' id="bcviz_mismatch_legend"></div>
+		<div style='float:right;' id="bcviz_mismatch_rev"></div>
+		</fieldset>
+		<div style='clear:both;'></div>
+
+		<fieldset style='float:left;'><legend>Insert Size Histogram</legend>
+		<div id="insert_size"></div>
+		</fieldset>
+		<fieldset style='float:right;'><legend>Insert Size Histogram</legend>
+		<div id="insert_size2"></div>
 		</fieldset>
 
 		</div>
 
-		<script data-main="test/main" src="js/lib/require.js"></script>
+		<script data-main="test/main" src="js/lib/requirejs/require.js"></script>
     </body>
 </html>
