@@ -36,6 +36,10 @@ define(['jquery', 'd3'], function(jQuery, d3){
     if (data && typeof data === "object") {
       var mismatchData = {};
 
+      // force to numeric
+      data.forward_fasta_read_count = +data.forward_fasta_read_count;
+      data.reverse_fasta_read_count = +data.reverse_fasta_read_count;
+
       // create forward and reverse data objects
       var forwardData = Object.create(mismatchData);
       var reverseData = Object.create(mismatchData);
@@ -65,6 +69,7 @@ define(['jquery', 'd3'], function(jQuery, d3){
       svg_rev = new adapterChart(reverseData, xMin, xMax, yMin, yMax, width, height, 'Reverse ' + title);
       if (!data.forward_fasta_read_count) { svg_fwd = null; }
       if (!data.reverse_fasta_read_count) { svg_rev = null; }
+
     }
     return { 'svg_fwd': svg_fwd, 'svg_rev': svg_rev };
   };
