@@ -49,6 +49,10 @@ define(['jquery','d3'], function(jQuery, d3) {
             var mismatchData = {
                 quality_bin_values: data.quality_bin_values
             };
+            // force to numeric
+            data.forward_aligned_read_count = +data.forward_aligned_read_count;
+            data.reverse_aligned_read_count = +data.reverse_aligned_read_count;
+
             //create forward and reverse data objects
             var forwardData = Object.create(mismatchData);
             var reverseData = Object.create(mismatchData);
@@ -101,10 +105,15 @@ define(['jquery','d3'], function(jQuery, d3) {
 
             if (!data.forward_aligned_read_count) { svg_fwd = null; }
             if (!data.reverse_aligned_read_count) { svg_rev = null; }
+
         }
 
 
-        if (colour) { svg_legend = draw_legend(height,colour); }
+        if (colour) { 
+            // no point having a legend without graphs
+            if (svg_fwd == null && svg_rev == null) { svg_legend = null; }
+            else                                    { svg_legend = draw_legend(height,colour); }
+        }
 
         return { 'svg_fwd': svg_fwd, 'svg_rev': svg_rev, 'svg_legend': svg_legend };
     };
