@@ -27,8 +27,8 @@ htmlFile.write("""<!DOCTYPE html>
     <head>
         <meta charset="utf-8">
         <title>Bamcheck demo</title>
-        <link rel="stylesheet" type="text/css" href="/css/bcviz.css">
-        <script data-main="main" src="/js/lib/requirejs/require.js"></script>
+        <link rel="stylesheet" type="text/css" href="/src/css/bcviz.css">
+        <script data-main="main" src="/external/requirejs/require.js"></script>
     </head>
     <body>
         <div id="instructions">
@@ -44,11 +44,11 @@ htmlFile.write("""<!DOCTYPE html>
 htmlFile.close()
 mainJS = open('main.js', 'w')
 mainJS.write("""require.config({
-    baseUrl: '/js',
+    baseUrl: '../../',
 
     paths: {
-        jquery: 'lib/jquery/jquery',
-        d3: 'lib/d3/d3'
+        jquery: 'external/jquery/jquery',
+        d3: 'external/d3/d3'
     },
     shim: {
         d3: {
@@ -57,7 +57,7 @@ mainJS.write("""require.config({
         }
     }
 });
-require(['src/readBCfile', 'src/qualityChart', 'src/ICcharts', 'src/ISchart', 'src/gcChart', 'src/gccChart', 'src/indelDist', 'src/GCDepth', 'src/coverage'], function (read, quality, ic, is, gc, gcc, id, gcDepth, coverage) {
+require(['src/bamcheck/readBCfile', 'src/bamcheck/qualityChart', 'src/bamcheck/ICcharts', 'src/bamcheck/ISchart', 'src/bamcheck/gcChart', 'src/bamcheck/gccChart', 'src/bamcheck/indelDist', 'src/bamcheck/GCDepth', 'src/bamcheck/coverage'], function (read, quality, ic, is, gc, gcc, id, gcDepth, coverage) {
     var files = [""" + fileString)
 
 mainJS.write("""];
