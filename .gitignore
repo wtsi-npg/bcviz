@@ -1,3 +1,5 @@
 *~
 *.DS_Store
-js/lib
+external
+demo/custom/index.html
+demo/custom/main.js

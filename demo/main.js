@@ -1,9 +1,9 @@
 require.config({
-    baseUrl: '/js',
+    baseUrl: '../',
 
     paths: {
-        jquery: 'lib/jquery/jquery',
-        d3: 'lib/d3/d3'
+        jquery: 'external/jquery/jquery',
+        d3: 'external/d3/d3',
     },
     shim: {
         d3: {
@@ -12,8 +12,8 @@ require.config({
         }
     }
 });
-require(['src/readBCfile', 'src/qualityChart', 'src/ICcharts', 'src/ISchart', 'src/gcChart', 'src/gccChart', 'src/indelDist', 'src/GCDepth', 'src/coverage'], function (read, quality, ic, is, gc, gcc, id, gcDepth, coverage) {
-    var files = ["demo/sample_1.bc","demo/sample_2.bc","demo/sample_3.bc","demo/sample_4.bc"];
+require(['src/bamcheck/readBCfile', 'src/bamcheck/qualityChart', 'src/bamcheck/ICcharts', 'src/bamcheck/ISchart', 'src/bamcheck/gcChart', 'src/bamcheck/gccChart', 'src/bamcheck/indelDist', 'src/bamcheck/GCDepth', 'src/bamcheck/coverage'], function (read, quality, ic, is, gc, gcc, id, gcDepth, coverage) {
+    var files = ["sample_1.bc","sample_2.bc","sample_3.bc","sample_4.bc"];
     var initialNumberFiles = files.length;
     if(initialNumberFiles > 10){
         initialNumberFiles = 10;
