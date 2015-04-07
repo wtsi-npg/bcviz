@@ -1,5 +1,5 @@
 var chartIndex = 0;
-define(['d3', 'src/divSelections'], function(d3, checkDivSelection){
+define(['d3', 'src/bamcheck/divSelections'], function(d3, checkDivSelection){
     return function (data, direction, divID, legend, title, width, height) {
         if(direction === "r"){
             direction = 3;

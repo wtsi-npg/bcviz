@@ -1,4 +1,4 @@
-define(['src/dotPlot'], function(dotPlot){
+define(['src/bamcheck/dotPlot'], function(dotPlot){
     var keysGC = ["First_Fragments", "Last_Fragments"];
     return function (data, divID, legend, title, width, height) {
         if(title && data[9]){

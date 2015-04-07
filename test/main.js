@@ -3,9 +3,9 @@
 require.config({
   baseUrl: '../',
   paths: {
-    jquery: 'js/lib/jquery/jquery',
-    d3:     'js/lib/d3/d3',
-    QUnit:  'js/lib/qunit/qunit/qunit',
+    jquery: 'external/jquery/jquery',
+    d3:     'external/d3/d3',
+    QUnit:  'external/qunit/qunit/qunit',
   },
   shim: {
     d3: { exports: 'd3' },
@@ -19,7 +19,7 @@ require.config({
   }
 });
 
-require(['QUnit', 'test/insertSizeHistogram','test/adapter', 'test/mismatch'],  
+require(['QUnit', 'test/qcjson/insertSizeHistogram','test/qcjson/adapter', 'test/qcjson/mismatch'],  
   function(QUnit, insertSizeHistogram, adapter, mismatch) {
     // run the tests.
     adapter.run();

@@ -2,8 +2,8 @@
   "name": "bcviz",
   "homepage": "https://github.com/wtsi-npg/bcviz",
   "moduleType": "amd",
-  "licence": "GPL",
   "private": true,
+  "license": "GPL-3.0",
 
   "repository": {
     "type": "git",
@@ -29,7 +29,7 @@
 
   "ignore": [
     "**/.*",
-    "bower_components",
+    "external",
     "test",
     "demo",
     "README.md"

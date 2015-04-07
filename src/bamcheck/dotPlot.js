@@ -1,5 +1,5 @@
 var chartIndex = 0;
-define(['jquery', 'd3', 'src/divSelections'], function(jQuery, d3, checkDivSelection){
+define(['jquery', 'd3', 'src/bamcheck/divSelections'], function(jQuery, d3, checkDivSelection){
     return function (data, divID, legend, title, graphKeys, width, height, direction) {
         var w = 350;
         var h = 250;

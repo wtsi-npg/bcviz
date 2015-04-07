@@ -1,12 +1,13 @@
 bcviz
 =====
 
-D3 based JavaScript visualisation for bamcheck file format
+D3 based JavaScript visualisation for bamcheck and
+NPG autoqc json file formats.
 
-Requires bower to install package dependencies.
+Requires bower (http://bower.io) to install package dependencies.
 
-Creating and running demo:
---------------------------
+Running demos:
+--------------
 
 1. Navigate to bcviz directory in terminal
 
@@ -20,10 +21,21 @@ Creating and running demo:
 
 4. In your browser go to: 
 
-    http://localhost:8888/test/test.html
+    http://localhost:8888/demo
+
+5. To generate a demo for your own data, change to demo/custom
+   directory, execute demo.py script and follow the displayed
+   prompt. The script generates index.html and main.js files
+   that are specific to your input. The visuals are displayed at
+
+    http://localhost:8888/demo/custom
 
 Running tests:
 --------------
+
+Install dependencies by runnign bower in the top level directory
+
+  bower install
 
 In a browser: http://localhost:8888/test/test.html
 
