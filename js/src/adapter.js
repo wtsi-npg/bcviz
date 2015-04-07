@@ -36,6 +36,10 @@ define(['jquery', 'd3'], function(jQuery, d3){
         if (data && typeof data === "object") {
             var mismatchData = {};
 
+            // force to numeric
+            data.forward_fasta_read_count = +data.forward_fasta_read_count;
+            data.reverse_fasta_read_count = +data.reverse_fasta_read_count;
+
             // create forward and reverse data objects
             var forwardData = Object.create(mismatchData);
             var reverseData = Object.create(mismatchData);
