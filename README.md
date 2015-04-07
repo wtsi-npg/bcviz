@@ -28,9 +28,10 @@ Running demos:
 
     python demo.py
 
-   Follow the displayed prompt. The script generates index.html
-   and main.js files that are specific to your input. The visuals
-   are displayed at
+   Follow the displayed prompt (test files are provided as part 
+   of this package and are located in the demo folder, ../ when executing
+   python). The script generates index.html and main.js files that are 
+   specific to your input. The visuals are displayed at
 
     http://localhost:8888/demo/custom
 
