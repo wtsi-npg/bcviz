@@ -1,51 +1,51 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="utf-8">
-        <title>bcviz Test Suite</title>
-        <link rel="stylesheet" type="text/css" href="../external/qunit/qunit/qunit.css">
-        <link rel="stylesheet" type="text/css" href="../src/css/bcviz.css">
-        <link rel="stylesheet" type="text/css" href="css/bcviz_test.css">
-    </head>
-    <body>
-		<div id="qunit"></div> 
-		<div id="qunit-fixture"></div>
-		<br/><br/>
+  <head>
+    <meta charset="utf-8">
+    <title>bcviz Test Suite</title>
+    <link rel="stylesheet" type="text/css" href="../external/qunit/qunit/qunit.css">
+    <link rel="stylesheet" type="text/css" href="../src/css/bcviz.css">
+    <link rel="stylesheet" type="text/css" href="css/bcviz_test.css">
+  </head>
+  <body>
+    <div id="qunit"></div> 
+    <div id="qunit-fixture"></div>
+    <br/><br/>
 
-		<div class=bcviz_test>
+    <div class=bcviz_test>
 
-		<fieldset><legend>Adapter</legend>
-        <div class='bcviz_adapter'></div>
-		<div style='float:left;' id="bcviz_adapter_fwd"></div>
-		<div style='float:right;' id="bcviz_adapter_rev"></div>
-		</fieldset>
-		<div style='clear:both;'></div>
+    <fieldset><legend>Adapter</legend>
+    <div class='bcviz_adapter'></div>
+    <div style='float:left;' id="bcviz_adapter_fwd"></div>
+    <div style='float:right;' id="bcviz_adapter_rev"></div>
+    </fieldset>
+    <div style='clear:both;'></div>
 
-		<fieldset><legend>Empty Adapter</legend>
-        <div class='bcviz_adapter'></div>
-		<div style='float:left;' id="bcviz_adapter_fwd_empty"></div>
-		<div style='float:right;' id="bcviz_adapter_rev_empty"></div>
-		</fieldset>
-		<div style='clear:both;'></div>
+    <fieldset><legend>Empty Adapter</legend>
+    <div class='bcviz_adapter'></div>
+    <div style='float:left;' id="bcviz_adapter_fwd_empty"></div>
+    <div style='float:right;' id="bcviz_adapter_rev_empty"></div>
+    </fieldset>
+    <div style='clear:both;'></div>
 
-		<br />
-		<fieldset><legend>Sequence Mismatch</legend>
-		<div data-width=650 class="bcviz_mismatch" data-title='Mismatches'></div>
-		<div style='float:left;' id="bcviz_mismatch_fwd"></div>
-		<div style='float:left;' id="bcviz_mismatch_legend"></div>
-		<div style='float:right;' id="bcviz_mismatch_rev"></div>
-		</fieldset>
-		<div style='clear:both;'></div>
+    <br />
+    <fieldset><legend>Sequence Mismatch</legend>
+    <div data-width=650 class="bcviz_mismatch" data-title='Mismatches'></div>
+    <div style='float:left;' id="bcviz_mismatch_fwd"></div>
+    <div style='float:left;' id="bcviz_mismatch_legend"></div>
+    <div style='float:right;' id="bcviz_mismatch_rev"></div>
+    </fieldset>
+    <div style='clear:both;'></div>
 
-		<fieldset style='float:left;'><legend>Insert Size Histogram</legend>
-		<div id="insert_size"></div>
-		</fieldset>
-		<fieldset style='float:right;'><legend>Insert Size Histogram</legend>
-		<div id="insert_size2"></div>
-		</fieldset>
+    <fieldset style='float:left;'><legend>Insert Size Histogram</legend>
+    <div id="insert_size"></div>
+    </fieldset>
+    <fieldset style='float:right;'><legend>Insert Size Histogram</legend>
+    <div id="insert_size2"></div>
+    </fieldset>
 
-		</div>
+    </div>
 
-		<script data-main="main" src="../external/requirejs/require.js"></script>
-    </body>
+    <script data-main="main" src="../external/requirejs/require.js"></script>
+  </body>
 </html>
