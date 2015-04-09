@@ -44,6 +44,7 @@ define(['jquery','d3'], function(jQuery, d3) {
         var height = config.height || 350;
         var title = config.title || '';
         var colour;
+        var oldFormat = false;
 
         if (data && typeof data === "object") {
             var mismatchData = {
@@ -60,9 +61,19 @@ define(['jquery','d3'], function(jQuery, d3) {
             forwardData.n_count = data.forward_n_count;
             forwardData.quality_bins = data.forward_quality_bins;
             forwardData.count = data.forward_count;
+            forwardData.errors = data.forward_errors;
             reverseData.n_count = data.reverse_n_count;
             reverseData.quality_bins = data.reverse_quality_bins;
             reverseData.count = data.reverse_count;
+            reverseData.errors = data.reverse_errors;
+
+            if (!data.quality_bin_values) {
+                oldFormat = true;
+                forwardData.quality_bin_values = [0];
+                reverseData.quality_bin_values = [0];
+            }
+
+
             //format the data
             var forwardFormattedData = formatMismatch(forwardData);
             if (forwardFormattedData) {
@@ -86,8 +97,10 @@ define(['jquery','d3'], function(jQuery, d3) {
             }
 
             var xMin = 0;
-            var fwd_xMax = forwardData.quality_bins ? forwardData.quality_bins[0].length : 0;
-            var rev_xMax = reverseData.quality_bins ? reverseData.quality_bins[0].length : 0;
+            var fwd_xMax = forwardData.quality_bins ? forwardData.quality_bins[0].length 
+                                                    : (forwardData.count ? forwardData.count.length : 0);
+            var rev_xMax = reverseData.quality_bins ? reverseData.quality_bins[0].length 
+                                                    : (reverseData.count ? reverseData.count.length : 0);
             var xMax = d3.max([fwd_xMax, rev_xMax]);
             var yMin = 0;
             var yMax = d3.max([forwardFormattedData.yMax, reverseFormattedData.yMax]);
@@ -95,9 +108,15 @@ define(['jquery','d3'], function(jQuery, d3) {
             yMax = yMax || 50;
 
             data.quality_bin_values  = data.quality_bin_values || [];
-            colour = d3.scale.ordinal()
-                .range(["rgb(8, 18, 247)", "rgb(49, 246, 19)", "rgb(236, 242, 28)", "rgb(219, 68, 0)"])
-                .domain(data.quality_bin_values.concat('N'));
+            if (oldFormat) {
+                colour = d3.scale.ordinal()
+                    .range(["black","blue"])
+                    .domain(data.quality_bin_values.concat('N'));
+            } else {
+                colour = d3.scale.ordinal()
+                    .range(["rgb(8, 18, 247)", "rgb(49, 246, 19)", "rgb(236, 242, 28)", "rgb(219, 68, 0)"])
+                    .domain(data.quality_bin_values.concat('N'));
+            }
 
             //draw new plots
             svg_fwd = mismatchPlot(forwardData, xMin, xMax, yMin, yMax, width, height, 'Forward '+title, colour);
@@ -115,15 +134,25 @@ define(['jquery','d3'], function(jQuery, d3) {
             else                                    { svg_legend = draw_legend(height,colour); }
         }
 
+        if (oldFormat) { svg_legend = null; }
+
         return { 'svg_fwd': svg_fwd, 'svg_rev': svg_rev, 'svg_legend': svg_legend };
     };
 
     function formatMismatch (data) {
         var barData = data.quality_bins;
         var formattedData = [];
-        if (!barData) { return { formattedData: formattedData, yMax: 0 }; }
+
+        if (!barData) {
+            barData = [];
+            if (!data.errors) { return { formattedData: formattedData, yMax: 0 }; }
+            barData[0] = data.errors;
+            var arr = Array.apply(null, Array(data.errors.length));
+            data.n_count = arr.map(function (x, i) { return 0 });
+        }
 
         barData.push(data.n_count);
+
 
         var yMax = 0;
 
