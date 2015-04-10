@@ -1,8 +1,8 @@
-define(['jquery'], function(jQuery){
+define(['jquery'], function (jQuery) {
   function readFile(fileName) {
     var returnValue;
     //check if file name contians only whitespace
-    if(/\S/.test(fileName)){
+    if (/\S/.test(fileName)) {
       jQuery.ajax({
         type: "GET",
         dataType: "text",
@@ -27,11 +27,13 @@ define(['jquery'], function(jQuery){
   return function (fileName) {
     var formattedData = null;
     var fileString = readFile(fileName);
-    if(fileString && typeof fileString === "object" && fileString.length > 0){
+    if (fileString && typeof fileString === "object" && fileString.length > 0) {
       formattedData = [
           [
-          {xLabel: "Cycle",
-            yLabel: "Indel"},
+          {
+            xLabel: "Cycle",
+            yLabel: "Indel"
+          },
           {
             name: "insertions_fwd",
             values: []
@@ -50,8 +52,10 @@ define(['jquery'], function(jQuery){
           }
           ],
           [
-          {xLabel: "Insert Size",
-            yLabel: "Pairs"},
+          {
+            xLabel: "Insert Size",
+            yLabel: "Pairs"
+          },
           {
             name: "totalPairs",
             values: []
@@ -75,7 +79,7 @@ define(['jquery'], function(jQuery){
             yLabel: "Quality"
           },
           {
-            values:[]
+            values: []
           }
           ],
           [
@@ -84,7 +88,7 @@ define(['jquery'], function(jQuery){
             yLabel: "Quality"
           },
           {
-            values:[]
+            values: []
           }
           ],
           [
@@ -94,16 +98,18 @@ define(['jquery'], function(jQuery){
           },
           {
             name: "First_Fragments",
-            values:[]
+            values: []
           },
           {
             name: "Last_Fragments",
-            values:[]
+            values: []
           }
           ],
           [
-          {xLabel: "Read Cycle",
-            yLabel: "Base Content(%)"},
+          {
+            xLabel: "Read Cycle",
+            yLabel: "Base Content(%)"
+          },
           {
             name: "A",
             values: []
@@ -122,9 +128,11 @@ define(['jquery'], function(jQuery){
           }
           ],
           [
-          {xLabel: "Indel Length",
+          {
+            xLabel: "Indel Length",
             yLabelLeft: "Indel Count",
-            yLabelRight: "Insertions/Deltions Ratio"},
+            yLabelRight: "Insertions/Deltions Ratio"
+          },
           {
             name: "insertions",
             values: []
@@ -135,16 +143,20 @@ define(['jquery'], function(jQuery){
           }
           ],
           [
-          {xLabel: "Coverage",
-            yLabel: "Nummber of Mapped Bases"},
+          {
+            xLabel: "Coverage",
+            yLabel: "Nummber of Mapped Bases"
+          },
           {
             name: "Coverage",
             values: []
           }
           ],
           [
-          {xLabel: "Percentile of Mapped Sequence Ordered By GC Content",
-            yLabel: "Mapped Depth"},
+          {
+            xLabel: "Percentile of Mapped Sequence Ordered By GC Content",
+            yLabel: "Mapped Depth"
+          },
           {
             name: "10-90th Percentile",
             values: []
@@ -161,61 +173,156 @@ define(['jquery'], function(jQuery){
             values: []
           }
           ],
-        {title: fileString[0].replace('#', '').replace('%23', '#')}
+        {
+          title: fileString[0].replace('#', '').replace('%23', '#')
+        }
         ];
       for (var i = 0; i < fileString.length; i++) {
-        switch (fileString[i][0]){
-          case "IC":
-            formattedData[0][1].values.push({xVar: +fileString[i][1], yVar: +fileString[i][2], name: "insertions_fwd"});
-            formattedData[0][3].values.push({xVar: +fileString[i][1], yVar: +fileString[i][3], name: "insertions_rev"});
-            formattedData[0][2].values.push({xVar: +fileString[i][1], yVar: +fileString[i][4], name: "deletions_fwd"});
-            formattedData[0][4].values.push({xVar: +fileString[i][1], yVar: +fileString[i][5], name: "deletions_rev"});
-            break;
-          case "IS":
-            formattedData[1][1].values.push({xVar: +fileString[i][1], yVar: +fileString[i][2], name: "totalPairs"});
-            formattedData[1][2].values.push({xVar: +fileString[i][1], yVar: +fileString[i][3], name: "inwardPairs"});
-            formattedData[1][3].values.push({xVar: +fileString[i][1], yVar: +fileString[i][4], name: "outwardPairs"});
-            formattedData[1][4].values.push({xVar: +fileString[i][1], yVar: +fileString[i][5], name: "otherPairs"});
-            break;
-          case "FFQ":
-            formattedData[2][1].values.push({xVar: +fileString[i][1], yVar:getQualityVals(fileString[i])});
-            break;
-          case "LFQ":
-            formattedData[3][1].values.push({xVar: +fileString[i][1], yVar:getQualityVals(fileString[i])});
-            break;
-          case "GCF":
-            formattedData[4][1].values.push({xVar: +fileString[i][1], yVar: +fileString[i][2], name: "First_Fragments"});
-            break;
-          case "GCL":
-            formattedData[4][2].values.push({xVar: +fileString[i][1], yVar: +fileString[i][2], name: "Last_Fragments"});
-            break;
-          case "GCC":
-            formattedData[5][1].values.push({xVar: +fileString[i][1], yVar: +fileString[i][2], name: "A"});
-            formattedData[5][2].values.push({xVar: +fileString[i][1], yVar: +fileString[i][3], name: "C"});
-            formattedData[5][3].values.push({xVar: +fileString[i][1], yVar: +fileString[i][4], name: "G"});
-            formattedData[5][4].values.push({xVar: +fileString[i][1], yVar: +fileString[i][5], name: "T"});
-            break;
-          case "ID":
-            formattedData[6][1].values.push({xVar: +fileString[i][1], yVar: +fileString[i][2], name: "insertions"});
-            formattedData[6][2].values.push({xVar: +fileString[i][1], yVar: +fileString[i][3], name: "deletions"});
-            break;
-          case "COV":
-            formattedData[7][1].values.push({xVar: +fileString[i][2], yVar: +fileString[i][3], name: "Coverage"});
-            break;
-          case "GCD":
-            formattedData[8][1].values.push({xVar: +fileString[i][2], yVar: +fileString[i][3],yVar0: +fileString[i][7]});
-            formattedData[8][2].values.push({xVar: +fileString[i][2], yVar: +fileString[i][4],yVar0: +fileString[i][6]});
-            formattedData[8][3].values.push({xVar: +fileString[i][2], yVar: +fileString[i][5]});
-            formattedData[8][4].values.push({xVar: +fileString[i][2], yVar: +fileString[i][1], name: "50th Percentile"});
-            break;
+        switch (fileString[i][0]) {
+        case "IC":
+          formattedData[0][1].values.push({
+            xVar: +fileString[i][1],
+            yVar: +fileString[i][2],
+            name: "insertions_fwd"
+          });
+          formattedData[0][3].values.push({
+            xVar: +fileString[i][1],
+            yVar: +fileString[i][3],
+            name: "insertions_rev"
+          });
+          formattedData[0][2].values.push({
+            xVar: +fileString[i][1],
+            yVar: +fileString[i][4],
+            name: "deletions_fwd"
+          });
+          formattedData[0][4].values.push({
+            xVar: +fileString[i][1],
+            yVar: +fileString[i][5],
+            name: "deletions_rev"
+          });
+          break;
+        case "IS":
+          formattedData[1][1].values.push({
+            xVar: +fileString[i][1],
+            yVar: +fileString[i][2],
+            name: "totalPairs"
+          });
+          formattedData[1][2].values.push({
+            xVar: +fileString[i][1],
+            yVar: +fileString[i][3],
+            name: "inwardPairs"
+          });
+          formattedData[1][3].values.push({
+            xVar: +fileString[i][1],
+            yVar: +fileString[i][4],
+            name: "outwardPairs"
+          });
+          formattedData[1][4].values.push({
+            xVar: +fileString[i][1],
+            yVar: +fileString[i][5],
+            name: "otherPairs"
+          });
+          break;
+        case "FFQ":
+          formattedData[2][1].values.push({
+            xVar: +fileString[i][1],
+            yVar: getQualityVals(fileString[i])
+          });
+          break;
+        case "LFQ":
+          formattedData[3][1].values.push({
+            xVar: +fileString[i][1],
+            yVar: getQualityVals(fileString[i])
+          });
+          break;
+        case "GCF":
+          formattedData[4][1].values.push({
+            xVar: +fileString[i][1],
+            yVar: +fileString[i][2],
+            name: "First_Fragments"
+          });
+          break;
+        case "GCL":
+          formattedData[4][2].values.push({
+            xVar: +fileString[i][1],
+            yVar: +fileString[i][2],
+            name: "Last_Fragments"
+          });
+          break;
+        case "GCC":
+          formattedData[5][1].values.push({
+            xVar: +fileString[i][1],
+            yVar: +fileString[i][2],
+            name: "A"
+          });
+          formattedData[5][2].values.push({
+            xVar: +fileString[i][1],
+            yVar: +fileString[i][3],
+            name: "C"
+          });
+          formattedData[5][3].values.push({
+            xVar: +fileString[i][1],
+            yVar: +fileString[i][4],
+            name: "G"
+          });
+          formattedData[5][4].values.push({
+            xVar: +fileString[i][1],
+            yVar: +fileString[i][5],
+            name: "T"
+          });
+          break;
+        case "ID":
+          formattedData[6][1].values.push({
+            xVar: +fileString[i][1],
+            yVar: +fileString[i][2],
+            name: "insertions"
+          });
+          formattedData[6][2].values.push({
+            xVar: +fileString[i][1],
+            yVar: +fileString[i][3],
+            name: "deletions"
+          });
+          break;
+        case "COV":
+          formattedData[7][1].values.push({
+            xVar: +fileString[i][2],
+            yVar: +fileString[i][3],
+            name: "Coverage"
+          });
+          break;
+        case "GCD":
+          formattedData[8][1].values.push({
+            xVar: +fileString[i][2],
+            yVar: +fileString[i][3],
+            yVar0: +fileString[i][7]
+          });
+          formattedData[8][2].values.push({
+            xVar: +fileString[i][2],
+            yVar: +fileString[i][4],
+            yVar0: +fileString[i][6]
+          });
+          formattedData[8][3].values.push({
+            xVar: +fileString[i][2],
+            yVar: +fileString[i][5]
+          });
+          formattedData[8][4].values.push({
+            xVar: +fileString[i][2],
+            yVar: +fileString[i][1],
+            name: "50th Percentile"
+          });
+          break;
         }
       }
-      var maxGCF = d3.max(formattedData[4][1].values, function (d) {return d.yVar;});
-      var maxGCL = d3.max(formattedData[4][2].values, function (d) {return d.yVar;});
+      var maxGCF = d3.max(formattedData[4][1].values, function (d) {
+        return d.yVar;
+      });
+      var maxGCL = d3.max(formattedData[4][2].values, function (d) {
+        return d.yVar;
+      });
       var maxGC;
-      if(maxGCL > maxGCF){
+      if (maxGCL > maxGCF) {
         maxGC = maxGCL;
-      }else{
+      } else {
         maxGC = maxGCF;
       }
       for (i = 0; i < formattedData[4][1].values.length; i++) {
@@ -228,56 +335,58 @@ define(['jquery'], function(jQuery){
     return formattedData;
   };
   //get tags from a file
-  function getFileTags (fileString) {
+  function getFileTags(fileString) {
     tags = [];
-    for(var i = 0; i < fileString.length; i++){
-      if(($.inArray(fileString[i][0], tags) === -1) && fileString[i][0][0] !== "#"){
+    for (var i = 0; i < fileString.length; i++) {
+      if (($.inArray(fileString[i][0], tags) === -1) && fileString[i][0][0] !== "#") {
         tags.push(fileString[i][0]);
       }
     }
     return tags;
   }
-  function tagsToFunction (tags) {
+
+  function tagsToFunction(tags) {
     var map = {};
     for (var i = 0; i < tags.length; i++) {
-      switch(tags[i]){
-        case "IC":
-          map.IC = icChart;
-          break;
-        case "IS":
-          map.IS = isChart;
-          break;
-        case "FFQ":
-          map.FFQ = firstFragmentQuality;
-          break;
-        case "LFQ":
-          map.LFQ = lastFragmentQuality;
-          break;
-        case "GCF":
-          map.GCF = gcChart;
-          break;
-        case "GCL":
-          map.GCL = gcChart;
-          break;
-        case "GCC":
-          map.GCC = gccChart;
-          break;
-        case "ID":
-          map.ID = indelDist;
-          break;
-        case "COV":
-          map.COV = coverage;
-          break;
-        case "GCD":
-          map.GCD = gcDepth;
-          break;
-        default:
-          console.log('no function for tag: ' + tags[i]);
-          break;
+      switch (tags[i]) {
+      case "IC":
+        map.IC = icChart;
+        break;
+      case "IS":
+        map.IS = isChart;
+        break;
+      case "FFQ":
+        map.FFQ = firstFragmentQuality;
+        break;
+      case "LFQ":
+        map.LFQ = lastFragmentQuality;
+        break;
+      case "GCF":
+        map.GCF = gcChart;
+        break;
+      case "GCL":
+        map.GCL = gcChart;
+        break;
+      case "GCC":
+        map.GCC = gccChart;
+        break;
+      case "ID":
+        map.ID = indelDist;
+        break;
+      case "COV":
+        map.COV = coverage;
+        break;
+      case "GCD":
+        map.GCD = gcDepth;
+        break;
+      default:
+        console.log('no function for tag: ' + tags[i]);
+        break;
       }
     }
     return map;
   }
+
   function getQualityVals(data) {
     var returnValue = [];
     var fragments = 0;
