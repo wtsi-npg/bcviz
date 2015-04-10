@@ -96,29 +96,29 @@ define(['jquery', 'd3'], function(jQuery, d3){
 
     if (title) {
       svg.append('text')
-        .attr("transform", "translate(" + padding.left + ", " + padding.top / 4 + ")")
-        .style('font-size', padding.top / 4)
-        .text(title);
+      .attr("transform", "translate(" + padding.left + ", " + padding.top / 4 + ")")
+      .style('font-size', padding.top / 4)
+      .text(title);
     }
 
     var nodeWidth = (w-padding.left-padding.right) / xMax;
 
     // create scale functions
     var xScale = d3.scale.linear()
-         .nice()
-         .range([padding.left, w - (padding.right)])
-         .domain([xMin,xMax]);
+    .nice()
+    .range([padding.left, w - (padding.right)])
+    .domain([xMin,xMax]);
 
     var yScale = d3.scale.log()
-         .clamp(true)
-         .nice()
-         .range([h - padding.bottom, padding.top]);
+    .clamp(true)
+    .nice()
+    .range([h - padding.bottom, padding.top]);
 
     // Define X axis
     var xAxis = d3.svg.axis()
-         .scale(xScale)
-         .orient("bottom")
-         .ticks(10);
+    .scale(xScale)
+    .orient("bottom")
+    .ticks(10);
 
     // define Y axis
     var superscript = "⁰¹²³⁴⁵⁶⁷⁸⁹";
@@ -130,80 +130,80 @@ define(['jquery', 'd3'], function(jQuery, d3){
     vArray.push(Math.pow(10,n));
 
     var yAxis = d3.svg.axis()
-      .scale(yScale)
-      .orient("left")
-      .tickValues(vArray)
-      .ticks(5, function (d) {
-        if (d >= 1) { return "10"+superscript[Math.round(Math.log(d) / Math.LN10)]; }
-      });
+    .scale(yScale)
+    .orient("left")
+    .tickValues(vArray)
+    .ticks(5, function (d) {
+      if (d >= 1) { return "10"+superscript[Math.round(Math.log(d) / Math.LN10)]; }
+    });
 
     // Create X axis
     svg.append("g")
-      .attr("class", "axis")
-      .attr("transform", "translate(0," + (h-padding.bottom) + ")")
-      .call(xAxis);
+    .attr("class", "axis")
+    .attr("transform", "translate(0," + (h-padding.bottom) + ")")
+    .call(xAxis);
 
     // add X axis origin label
     svg.append("text")
-     .attr("transform", "translate(" + (padding.left - 5) + "," + (h - padding.bottom + 17) + ")")
-     .text(data.min_isize);
+    .attr("transform", "translate(" + (padding.left - 5) + "," + (h - padding.bottom + 17) + ")")
+    .text(data.min_isize);
 
     function make_x_grid() {
       return d3.svg.axis()
-          .scale(xScale)
-          .orient("bottom")
-          .ticks(10);
+      .scale(xScale)
+      .orient("bottom")
+      .ticks(10);
     }
 
     function make_y_grid() {
       return d3.svg.axis()
-          .scale(yScale)
-          .orient("left")
-          .ticks(10);
+      .scale(yScale)
+      .orient("left")
+      .ticks(10);
     }
 
     yScale.domain([yMin, yMax]);
 
     // Create Y axis
     svg.append("g")
-      .attr("class", "axis")
-      .attr("transform", "translate(" + padding.left + ", 0)")
-      .call(yAxis);
+    .attr("class", "axis")
+    .attr("transform", "translate(" + padding.left + ", 0)")
+    .call(yAxis);
 
     // make x grid
     svg.append("g")
-      .attr("class", "grid")
-      .attr("transform", "translate(0," + (h - padding.bottom) + ")")
-      .call(make_x_grid()
-          .tickSize(-h+(padding.top + padding.bottom), 0, 0)
-          .tickFormat("")
-      );
+    .attr("class", "grid")
+    .attr("transform", "translate(0," + (h - padding.bottom) + ")")
+    .call(make_x_grid()
+    .tickSize(-h+(padding.top + padding.bottom), 0, 0)
+    .tickFormat("")
+    );
     // make y grid
     svg.append("g")
-      .attr("class", "grid")
-      .attr("id","yGrid")
-      .attr("transform", "translate(" + padding.left + ",0)")
-      .call(make_y_grid()
-        .tickSize(-w+(padding.left + padding.right), 0,0)
-        .tickFormat("")
-      );
+    .attr("class", "grid")
+    .attr("id","yGrid")
+    .attr("transform", "translate(" + padding.left + ",0)")
+    .call(make_y_grid()
+    .tickSize(-w+(padding.left + padding.right), 0,0)
+    .tickFormat("")
+    );
 
     // group for the bars
     var bars = svg.append('g');
 
     // draw bars in group
     bars.selectAll('rect')
-      .data(data.formattedData)
-      .enter()
-      .append('rect')
-      .attr('x', function (d) { return xScale(d.xVar); })
-      .attr('y', function (d) { return yScale(d.yVar); })
-      .attr('width', nodeWidth)
-      .attr('height', function (d) { return h - padding.bottom - yScale(d.yVar); })
-      .attr('fill', 'blue')
-      .attr('opacity', 0.6)
-      .attr('stroke-width', '1px')
-      .attr('stroke', 'white');
+    .data(data.formattedData)
+    .enter()
+    .append('rect')
+    .attr('x', function (d) { return xScale(d.xVar); })
+    .attr('y', function (d) { return yScale(d.yVar); })
+    .attr('width', nodeWidth)
+    .attr('height', function (d) { return h - padding.bottom - yScale(d.yVar); })
+    .attr('fill', 'blue')
+    .attr('opacity', 0.6)
+    .attr('stroke-width', '1px')
+    .attr('stroke', 'white');
 
     return svg;
   }

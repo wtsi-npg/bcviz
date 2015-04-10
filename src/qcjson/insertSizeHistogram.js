@@ -54,9 +54,9 @@ define(['jquery', 'd3'], function(jQuery, d3){
 
     // add title
     svg.append('text')
-      .attr("transform", "translate(" + padding.left + ", " + padding.top / 4 + ")")
-      .style('font-size', padding.top / 4)
-      .text(title);
+    .attr("transform", "translate(" + padding.left + ", " + padding.top / 4 + ")")
+    .style('font-size', padding.top / 4)
+    .text(title);
 
     // every value is a string. Force to numeric.
     data.bin_width = +data.bin_width;
@@ -76,97 +76,97 @@ define(['jquery', 'd3'], function(jQuery, d3){
 
     //create scale functions
     xScale = d3.scale.linear()
-                 .nice()
-                 .range([padding.left, width - (padding.right)])
-                 .domain([xMin,xMax]);
+    .nice()
+    .range([padding.left, width - (padding.right)])
+    .domain([xMin,xMax]);
 
     yScale = d3.scale.linear()
-                 .nice()
-                 .range([height - padding.bottom, padding.top])
-                 .domain([yMin, yMax]);
+    .nice()
+    .range([height - padding.bottom, padding.top])
+    .domain([yMin, yMax]);
 
     //Define X axis
     var xAxis = d3.svg.axis()
-              .scale(xScale)
-              .orient("bottom")
-              .ticks(10)
-              .tickFormat(function(d) {
-                if (d==100 && xMin > 50) { return '' } else { return d; }
-              });
+    .scale(xScale)
+    .orient("bottom")
+    .ticks(10)
+    .tickFormat(function(d) {
+      if (d==100 && xMin > 50) { return '' } else { return d; }
+    });
 
     //define Y axis
     var yAxis = d3.svg.axis()
-              .scale(yScale)
-              .orient("left")
-              .ticks(10);
+    .scale(yScale)
+    .orient("left")
+    .ticks(10);
 
     //Create Y axis
     svg.append("g")
-           .attr("class", "axis")
-           .attr("transform", "translate(" + padding.left + ", 0)")
-           .call(yAxis);
+    .attr("class", "axis")
+    .attr("transform", "translate(" + padding.left + ", 0)")
+    .call(yAxis);
 
     //Create X axis
     svg.append("g")
-            .attr("class", "axis")
-            .attr("transform", "translate(0," + (height-padding.bottom) + ")")
-            .call(xAxis);
+    .attr("class", "axis")
+    .attr("transform", "translate(0," + (height-padding.bottom) + ")")
+    .call(xAxis);
 
     //add X axis origin label
     svg.append("text")
-          .attr("transform", "translate(" + (padding.left - 5) + "," + (height - padding.bottom + 17) + ")")
-          .text(data.min_isize);
+    .attr("transform", "translate(" + (padding.left - 5) + "," + (height - padding.bottom + 17) + ")")
+    .text(data.min_isize);
 
     function make_x_grid() {
       return d3.svg.axis()
-             .scale(xScale)
-             .orient("bottom")
-             .ticks(10);
+      .scale(xScale)
+      .orient("bottom")
+      .ticks(10);
     }
 
     function make_y_grid() {
       return d3.svg.axis()
-            .scale(yScale)
-            .orient("left")
-            .ticks(10);
+      .scale(yScale)
+      .orient("left")
+      .ticks(10);
     }
 
     //make x grid
     svg.append("g")
-        .attr("class", "grid")
-        .attr("id","xGrid")
-        .attr("transform", "translate(0," + (height - padding.bottom) + ")")
-        .call(make_x_grid()
-          .tickSize(-height+(padding.top + padding.bottom), 0, 0)
-          .tickFormat("")
-        );
+    .attr("class", "grid")
+    .attr("id","xGrid")
+    .attr("transform", "translate(0," + (height - padding.bottom) + ")")
+    .call(make_x_grid()
+    .tickSize(-height+(padding.top + padding.bottom), 0, 0)
+    .tickFormat("")
+    );
     //make y grid
     svg.append("g")
-        .attr("class", "grid")
-        .attr("id","yGrid")
-        .attr("transform", "translate(" + padding.left + ",0)")
-        .call(
-          make_y_grid()
-          .tickSize(-width+(padding.left + padding.right), 0,0)
-          .tickFormat("")
-        );
+    .attr("class", "grid")
+    .attr("id","yGrid")
+    .attr("transform", "translate(" + padding.left + ",0)")
+    .call(
+    make_y_grid()
+    .tickSize(-width+(padding.left + padding.right), 0,0)
+    .tickFormat("")
+    );
 
     //group for the bars
     var bars = svg.append('g');
 
     //draw bars in group
     bars.selectAll('rect')
-        .data(data.bins)
-        .enter()
-        .append('rect')
-        .attr('x', function (d, i) { return xScale((i * data.bin_width) + data.min_isize); })
-        .attr('y', function (d) { return yScale(d); })
-        .attr('width', nodeWidth)
-        .attr('height', function (d) { return height - padding.bottom - yScale(d); })
-        .attr('fill', data.paired_reads_direction_in ? "blue" : "orange")
-        .attr('opacity', 0.6)
-        .attr('stroke-width', '1px')
-        .attr('stroke', 'white');
+    .data(data.bins)
+    .enter()
+    .append('rect')
+    .attr('x', function (d, i) { return xScale((i * data.bin_width) + data.min_isize); })
+    .attr('y', function (d) { return yScale(d); })
+    .attr('width', nodeWidth)
+    .attr('height', function (d) { return height - padding.bottom - yScale(d); })
+    .attr('fill', data.paired_reads_direction_in ? "blue" : "orange")
+    .attr('opacity', 0.6)
+    .attr('stroke-width', '1px')
+    .attr('stroke', 'white');
 
     if (data.norm_fit_modes) {
       drawStandardDistribution(data,svg);
@@ -204,27 +204,27 @@ define(['jquery', 'd3'], function(jQuery, d3){
 
     // scale the normal distribution to fit the graph
     var max_norm = 0;
-    norm.forEach(function(v,i) { 
-      if (max_norm < v.y) { 
-        max_norm = v.y; 
-      } 
+    norm.forEach(function(v,i) {
+      if (max_norm < v.y) {
+        max_norm = v.y;
+      }
     });
     var max_height = Math.max.apply(null,data.bins);
     var scale = max_height / max_norm;
 
     // overlay it on the bar chart
     var lineFunc = d3.svg.line()
-      .x(function(d) { return xScale((d.x * data.bin_width) + data.min_isize); })
-      .y(function(d) { return yScale(d.y * scale); })
-      .interpolate('basis');
+    .x(function(d) { return xScale((d.x * data.bin_width) + data.min_isize); })
+    .y(function(d) { return yScale(d.y * scale); })
+    .interpolate('basis');
 
     svg.append('svg:path')
-      .attr('d', lineFunc(norm))
-      .attr('stroke', 'black')
-      .attr('stroke-width', 2)
-      .attr('fill', 'none');
+    .attr('d', lineFunc(norm))
+    .attr('stroke', 'black')
+    .attr('stroke-width', 2)
+    .attr('fill', 'none');
 
-    }
+  }
 
   return {
     drawChart: drawChart,
