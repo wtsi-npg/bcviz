@@ -18,9 +18,9 @@ define(
             "4":14,"40":4,"41":3,"42":1,"43":6,"44":8,"45":1,"46":9},
         };
         var chart;
-          chart=adapter.drawChart({'data': aJSON, 'width': 600, 'height': 300, 'title': 'Adapter Start Count'}); 
-          jQuery('#bcviz_adapter_fwd').append( function(){return chart.svg_fwd.node();} );
-          jQuery('#bcviz_adapter_rev').append( function(){return chart.svg_rev.node();} );
+        chart=adapter.drawChart({'data': aJSON, 'width': 600, 'height': 300, 'title': 'Adapter Start Count'}); 
+        jQuery('#bcviz_adapter_fwd').append( function(){return chart.svg_fwd.node();} );
+        jQuery('#bcviz_adapter_rev').append( function(){return chart.svg_rev.node();} );
         QUnit.ok(chart,"Created adapter ok");
         QUnit.equal(adapter._roundToPowerOfTen(0),0,"Rounding is ok");
         QUnit.equal(adapter._roundToPowerOfTen(1),1,"Rounding is ok");
