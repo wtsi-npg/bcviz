@@ -1,6 +1,9 @@
 CHANGES
 
+release 1.2.0
  - restructure project directories
+ - mismatch plots for old-style data (no breakdown by quality)
+ - qc json visualisation: return SVG objects, multiple objects if needed
 
-release 1.1
+release 1.1.0
  - package the project with bower
