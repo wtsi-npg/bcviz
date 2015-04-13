@@ -21,12 +21,12 @@ require.config({
 
 require(['QUnit', 'test/qcjson/insertSizeHistogram','test/qcjson/adapter', 'test/qcjson/mismatch'],  
   function(QUnit, insertSizeHistogram, adapter, mismatch) {
+    QUnit.load();
     // run the tests.
     adapter.run();
     insertSizeHistogram.run();
     mismatch.run();
     // start QUnit.
-    QUnit.load();
     QUnit.start();
   }
 );
