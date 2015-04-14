@@ -38,7 +38,7 @@ Running demos:
 Running tests:
 --------------
 
-Install dependencies by runnign bower in the top level directory:
+Install dependencies by running bower in the top level directory:
 
   bower install
 
