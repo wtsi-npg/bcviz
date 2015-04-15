@@ -4,7 +4,9 @@ bcviz
 D3 based JavaScript visualisation for bamcheck and
 NPG autoqc json file formats.
 
+Requires nodejs (https://nodejs.org)
 Requires bower (http://bower.io) to install package dependencies.
+Requires node-qunit-phantomjs to run headless tests.  
 
 Running demos:
 --------------
