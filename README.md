@@ -38,6 +38,10 @@ Running demos:
 Running tests:
 --------------
 
+Install node dependencies if they are not available.
+  - npm install -g bower
+  - npm install -g node-qunit-phantomjs
+
 Install dependencies by running bower in the top level directory:
 
   bower install
@@ -47,6 +51,5 @@ Start a localhost server in the directory using python:
   python -m SimpleHTTPServer 8888 &
 
 In a browser: http://localhost:8888/test/test.html
-
-Headless: phantomjs test/run-qunit.js test/test.html
+Headless:     node-qunit-phantomjs test/test.html --verbose
 
