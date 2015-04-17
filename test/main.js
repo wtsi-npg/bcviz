@@ -4,29 +4,19 @@ require.config({
   baseUrl: '../',
   paths: {
     jquery: 'external/jquery/jquery',
-    d3:     'external/d3/d3',
-    QUnit:  'external/qunit/qunit/qunit',
+    d3:     'external/d3/d3'
   },
   shim: {
-    d3: { exports: 'd3' },
-    QUnit: {
-      exports: 'QUnit',
-      init: function() {
-        QUnit.config.autoload = false;
-        QUnit.config.autostart = false;
-      }
-    }
+    d3: { exports: 'd3' }
   }
 });
 
-require(['QUnit', 'test/qcjson/insertSizeHistogram','test/qcjson/adapter', 'test/qcjson/mismatch'],  
-  function(QUnit, insertSizeHistogram, adapter, mismatch) {
+require(['test/qcjson/insertSizeHistogram','test/qcjson/adapter', 'test/qcjson/mismatch'],  
+  function(insertSizeHistogram, adapter, mismatch) {
     // run the tests.
     adapter.run();
     insertSizeHistogram.run();
     mismatch.run();
-    // start QUnit.
-    QUnit.load();
     QUnit.start();
   }
 );
