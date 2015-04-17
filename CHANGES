@@ -1,4 +1,10 @@
 CHANGES
+ 
+ - using node-qunit-phantomjs to run headless tests
+ - updating readme for changes in testing procedure
+ - removing dependency with run-qunit.js
+
+release 1.2.0
 
 release 1.2.0
  - restructure project directories
