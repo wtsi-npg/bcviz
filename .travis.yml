@@ -4,5 +4,6 @@ node_js :
 before_script:
  - npm install -g bower
  - bower install
-script: phantomjs test/run-qunit.js test/test.html
+ - npm install -g node-qunit-phantomjs
+script: node-qunit-phantomjs test/test.html --verbose
 
