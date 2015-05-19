@@ -53,5 +53,7 @@ Start a localhost server in the directory using python:
   python -m SimpleHTTPServer 8888 &
 
 In a browser: http://localhost:8888/test/test.html
+or            http://localhost:8888/test/multitest.html
+
 Headless:     node-qunit-phantomjs test/test.html --verbose
 

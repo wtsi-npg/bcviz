@@ -104,6 +104,7 @@ define(['jquery', 'd3'], function (jQuery, d3) {
     }
 
     svg.append("clipPath")
+//      .attr("id", "chart-area" + chartIndex)
       .append("rect")
       .attr("x", padding.left)
       .attr("y", padding.top)
@@ -111,6 +112,7 @@ define(['jquery', 'd3'], function (jQuery, d3) {
       .attr("height", h - (padding.top + padding.bottom));
 
     var points = [];
+
 
     points.push(makePoints(data.pc_us, data.pc_10, data.pc_90));
     points.push(makePoints(data.pc_us, data.pc_25, data.pc_75));
@@ -312,6 +314,7 @@ define(['jquery', 'd3'], function (jQuery, d3) {
       .data(median)
       .enter().append("g")
       .attr("id", "graphs");
+//      .attr("clip-path", "url(#chart-area" + chartIndex + ")");
 
     //draw lines in graphs
     aValue.append("path")

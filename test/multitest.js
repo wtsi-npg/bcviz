@@ -14,17 +14,42 @@ require.config({
 });
 
 var showCharts;
+var files;
+
+  function handleFileSelect(evt) {
+    files = evt.target.files; // FileList object
+
+    // files is a FileList of File objects. List some properties.
+    var output = [];
+    for (var i = 0, f; f = files[i]; i++) {
+      var button = "<input type='button' value='show' onClick='showCharts("+i+");'>";
+      output.push('<tr><td>', button, '</td><td>', escape(f.name), '</td></tr>');
+    }
+    document.getElementById('list').innerHTML = '<table>' + output.join('') + '</table>';
+  }
+
+  document.getElementById('statsfile').addEventListener('change', handleFileSelect, false);
+
 
 require(['src/bcviz'], function (bcviz) {
 
-  showCharts = function() {
-    var statsfile = $('#statsfile').val();
+  showCharts = function(n) {
+
+    // Check for the various File API support.
+    if (!(window.File && window.FileReader && window.FileList && window.Blob)) {
+        alert('The File APIs are not fully supported in this browser.');
+    }
+
+    statsfile = files[n].name;
     if (!statsfile) { return; }
-    jQuery('#filename').html('Charts for file <b>'+statsfile+'</b>');
+
+    var reader = new FileReader();
+    reader.onload = (function(theFile) {
+        var filedata=theFile.target.result.replace(/\r/g, "\n").split(/[\n]+/g);
     var d = jQuery('#charts');
     d.empty();
     try {
-    var charts = bcviz.draw_charts({filename: statsfile});
+        var charts = bcviz.draw_charts({rawData: filedata});
     }
     catch (msg) {
         d.html("<br><center><h2>"+msg+"</h2></center><br/>");
@@ -45,5 +70,12 @@ require(['src/bcviz'], function (bcviz) {
     d.append( function(){return charts.quality.graph_fwd.node();} );
     d.append( function(){return charts.quality.graph_rev.node();} );
     d.append( function(){return charts.quality.legend.node();} );
+
+    });
+    reader.readAsText(files[n]);
+
+
+    jQuery('#filename').html('Charts for file <b>'+statsfile+'</b>');
   };
+
 });

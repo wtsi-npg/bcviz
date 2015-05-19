@@ -11,12 +11,19 @@ require.config({
   }
 });
 
-require(['test/qcjson/insertSizeHistogram','test/qcjson/adapter', 'test/qcjson/mismatch'],  
-  function(insertSizeHistogram, adapter, mismatch) {
+require(['test/qcjson/insertSizeHistogram',
+         'test/qcjson/adapter', 
+         'test/qcjson/mismatch',
+         'test/qcjson/gcdepth',
+         'test/bcviz',
+],  
+  function(insertSizeHistogram, adapter, mismatch, gcdepth, bcviz) {
     // run the tests.
+    bcviz.run();
     adapter.run();
     insertSizeHistogram.run();
     mismatch.run();
+    gcdepth.run();
     QUnit.start();
   }
 );
