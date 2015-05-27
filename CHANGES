@@ -5,8 +5,6 @@ CHANGES
  - removing dependency with run-qunit.js
 
 release 1.2.0
-
-release 1.2.0
  - restructure project directories
  - mismatch plots for old-style data (no breakdown by quality)
  - qc json visualisation: return SVG objects, multiple objects if needed
