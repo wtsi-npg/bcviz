@@ -250,23 +250,28 @@ define(['jquery', 'd3'], function (jQuery, d3) {
         return "translate(" + xScale(i) + ",0)";
       });
 
+    var forY      = function(d) { return yScale(d.y1); };
+    var forHeight = function(d) { return yScale(d.y0) - yScale(d.y1); };
+    var forColour = function(d) { return colour(d.name) };
+    
     barGroup.selectAll('rect')
       .data(function (d) {
-        return d;
+        var temp = [];
+        for ( var j = 0 ; j < d.length; j++ ) {
+          var obj = d[j];
+          if (obj.y0 - obj.y1 != 0 ) {
+            temp.push(d[j]);
+          }
+        }
+        return temp;
       })
       .enter().append('rect')
       .attr('width', nodeWidth)
-      .attr('y', function (d) {
-        return yScale(d.y1);
-      })
-      .attr('height', function (d) {
-        return yScale(d.y0) - yScale(d.y1);
-      })
+      .attr('y', forY)
+      .attr('height', forHeight)
       .attr('stroke-width', 1)
       .attr('stroke', 'white')
-      .style("fill", function (d) {
-        return colour(d.name);
-      });
+      .style("fill", forColour);
 
     return svg;
   }
