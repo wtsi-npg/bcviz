@@ -1,5 +1,7 @@
 CHANGES
- 
+
+release 1.2.1
+ - removing empty rectangles when generating mismatch
  - using node-qunit-phantomjs to run headless tests
  - updating readme for changes in testing procedure
  - removing dependency with run-qunit.js
