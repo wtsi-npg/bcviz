@@ -1,3 +1,4 @@
+sudo: false
 language: node_js
 node_js :
  - "0.12"
@@ -6,4 +7,3 @@ before_script:
  - bower install
  - npm install -g node-qunit-phantomjs
 script: node-qunit-phantomjs test/test.html --verbose
-
