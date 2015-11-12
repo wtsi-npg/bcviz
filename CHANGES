@@ -1,5 +1,8 @@
 CHANGES
 
+ - Added multitest
+ - Implement 'all the charts' bcviz function
+
 release 1.2.1
  - removing empty rectangles when generating mismatch
  - using node-qunit-phantomjs to run headless tests

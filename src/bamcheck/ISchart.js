@@ -1,14 +1,34 @@
 define(['src/bamcheck/dotPlot'], function (dotPlot) {
-  var keysIS = ["totalPairs", "inwardPairs", "outwardPairs", "otherPairs"];
-  return function (data, divID, legend, title, width, height) {
-    if (title && data[9]) {
-      title = data[9].title;
-    }
-    if (data && data[1] && data[1][1] && data[1][1].values && data[1][1].values.length !== 0) {
-      return new dotPlot(data[1], divID, legend, title, keysIS, width, height);
+  var drawChart = function(config) {
+    var results = {};
+    var data = config.data;
+    var width = config.width || 350;
+    var height = config.height || 250;
+    var title = config.title || 'IS Chart';
+    var keys = ["totalPairs", "inwardPairs", "outwardPairs", "otherPairs"];
+    if (data && data.size && data.size.length !== 0) {
+      var points = [];
+      points.push(makePoints(data.size, data.total));
+      points.push(makePoints(data.size, data.inwards));
+      points.push(makePoints(data.size, data.outwards));
+      points.push(makePoints(data.size, data.other));
+      results =  dotPlot(points, 'Insert Size', 'Pairs',  1, title, keys, width, height);
     } else {
-      window.console.log('data does not exist; chart not created.');
-      return null;
+      results = { svg: null, legend: null };
     }
+    return results;
   };
+
+  function makePoints(a1, a2) {
+    var points = [];
+    for (n = 0; n < a1.length; n++) {
+      points.push({xVar: a1[n], yVar: a2[n]});
+    }
+    return points;
+  }
+
+  return {
+    drawChart: drawChart,
+  };
+
 });

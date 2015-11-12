@@ -1,14 +1,33 @@
 define(['src/bamcheck/dotPlot'], function (dotPlot) {
-  var keysGCC = ["A", "C", "G", "T"];
-  return function (data, divID, legend, title, width, height) {
-    if (title && data[9]) {
-      title = data[9].title;
-    }
-    if (data && data[5] && data[5][1] && data[5][1].values && data[5][1].values.length !== 0) {
-      return new dotPlot(data[5], divID, legend, title, keysGCC, width, height);
+  var drawChart = function(config) {
+    var results = {};
+    var data = config.data;
+    var width = config.width || 350;
+    var height = config.height || 250;
+    var title = config.title || 'gccChart';
+
+    if (data && data.cycle && data.cycle.length !== 0) {
+      var points = [];
+      points.push(makePoints(data.cycle, data.base_A));
+      points.push(makePoints(data.cycle, data.base_C));
+      points.push(makePoints(data.cycle, data.base_G));
+      points.push(makePoints(data.cycle, data.base_T));
+      results = dotPlot(points, 'Read Cycle', 'Base Content %', 1, title, ["A", "C", "G", "T"], width, height);
     } else {
-      window.console.log('data does not exist; chart not created.');
-      return null;
+      results = { svg: null, legend: null };
     }
+    return results;
+  };
+
+  function makePoints(a1, a2) {
+    var points = [];
+    for (n = 0; n < a1.length; n++) {
+      points.push({xVar: a1[n], yVar: a2[n]});
+    }
+    return points;
+  }
+
+  return {
+    drawChart: drawChart,
   };
 });
