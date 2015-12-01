@@ -2,7 +2,7 @@ require.config({
     baseUrl: '../',
 
     paths: {
-        jquery: 'external/jquery/jquery',
+        jquery: 'external/jquery/dist/jquery',
         d3: 'external/d3/d3',
     },
     shim: {
