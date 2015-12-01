@@ -11,7 +11,7 @@ require.config({
     baseUrl: '/base/js',
 
     paths: {
-        jquery: 'lib/jquery/jquery',
+        jquery: 'lib/jquery/dist/jquery',
         d3: 'lib/d3/d3',
         chai: '/base/test/chai-1.7.2'
     },
