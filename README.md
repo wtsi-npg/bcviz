@@ -6,7 +6,8 @@ NPG autoqc json file formats.
 
 Requires nodejs (https://nodejs.org)
 Requires bower (http://bower.io) to install package dependencies.
-Requires node-qunit-phantomjs to run headless tests.  
+Requires node-qunit-phantomjs to run headless tests.
+Requires grunt (http://gruntjs.com/) to automate tasks.
 
 Running demos:
 --------------
@@ -37,21 +38,40 @@ Running demos:
 
     http://localhost:8888/demo/custom
 
+Building:
+---------
+
+Install node dependencies if they are not available.
+  - npm install -g bower grunt-cli node-qunit-phantomjs
+  - npm install
+
+Install bower dependencies:
+  - bower install
+
+Build with Grunt
+  - grunt -v build
+
 Running tests:
 --------------
 
-Install node dependencies if they are not available.
-  - npm install -g bower
-  - npm install -g node-qunit-phantomjs
+Build the project then execute tests:
 
-Install dependencies by running bower in the top level directory:
+  In a browser:
+    Start a localhost server in the directory using python:
+      - python -m SimpleHTTPServer 8888 &
+    Open in a browser:
+      - http://localhost:8888/test/test.html
 
-  bower install
+  Headless:
+    - node-qunit-phantomjs test/test.html --verbose
+  
+  Using Grunt:
+    - grunt -v test
 
-Start a localhost server in the directory using python:
+Preparing release:
+------------------
 
-  python -m SimpleHTTPServer 8888 &
+Likely to be used in final stages of development cycle. Will build the project,
+prepare minified versions with headers and place code in **dist** folder. 
 
-In a browser: http://localhost:8888/test/test.html
-Headless:     node-qunit-phantomjs test/test.html --verbose
-
+  - grunt -v bump --setversion=X.Y.Z prepdist
