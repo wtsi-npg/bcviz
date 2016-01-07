@@ -8,4 +8,3 @@ before_script:
  - bower install
 script:
  - grunt -v
- - node-qunit-phantomjs test/test.html --verbose

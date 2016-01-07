@@ -157,6 +157,8 @@ define(['jquery', 'd3'], function(jQuery, d3) {
       barData = [];
       if (!data.errors) { return { formattedData: formattedData, yMax: 0 }; }
       barData[0] = data.errors;
+
+      // Create array of 0s with data.errors.length cardinality
       var arr = Array.apply(null, new Array(data.errors.length));
       data.n_count = arr.map(function() { return 0; });
     }
