@@ -22,7 +22,7 @@ Running demos:
 
     python -m SimpleHTTPServer 8888 &
 
-4. In your browser go to: 
+4. In your browser go to:
 
     http://localhost:8888/demo
 
@@ -31,9 +31,9 @@ Running demos:
 
     python demo.py
 
-   Follow the displayed prompt (test files are provided as part 
+   Follow the displayed prompt (test files are provided as part
    of this package and are located in the demo folder, ../ when executing
-   python). The script generates index.html and main.js files that are 
+   python). The script generates index.html and main.js files that are
    specific to your input. The visuals are displayed at:
 
     http://localhost:8888/demo/custom
@@ -41,15 +41,25 @@ Running demos:
 Building:
 ---------
 
+Examples below assume that all tools are on your PATH.
+If tools were installed locally, prepend their path to
+the commands or amend your PATH env. variable.
+
 Install node dependencies if they are not available.
-  - npm install -g bower grunt-cli node-qunit-phantomjs
-  - npm install
+Example for global install:
+  npm install -g bower grunt-cli node-qunit-phantomjs
 
-Install bower dependencies:
-  - bower install
+Install bcviz node dependencies (if grunt-cli is not installed
+globally, it will be installed locally by this step):
+  npm install
 
-Build with Grunt
-  - grunt -v build
+Install bcviz bower dependencies:
+  bower install
+
+If grunt was installed locally
+  export PATH=${PWD}/node_modules/grunt-cli/bin:$PATH
+Build with grunt:
+  grunt -v build
 
 Running tests:
 --------------
@@ -58,20 +68,20 @@ Build the project then execute tests:
 
   In a browser:
     Start a localhost server in the directory using python:
-      - python -m SimpleHTTPServer 8888 &
+      python -m SimpleHTTPServer 8888 &
     Open in a browser:
-      - http://localhost:8888/test/test.html
+      http://localhost:8888/test/test.html
 
   Headless:
-    - node-qunit-phantomjs test/test.html --verbose
-  
-  Using Grunt:
-    - grunt -v test
+    node-qunit-phantomjs test/test.html --verbose
+
+  Using grunt:
+    grunt -v test
 
 Preparing release:
 ------------------
 
 Likely to be used in final stages of development cycle. Will build the project,
-prepare minified versions with headers and place code in **dist** folder. 
+prepare minified versions with headers and place code in **dist** folder.
 
-  - grunt -v bump --setversion=X.Y.Z prepdist
+  grunt -v bump --setversion=X.Y.Z prepdist 
