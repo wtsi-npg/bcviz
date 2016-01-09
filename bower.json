@@ -32,7 +32,9 @@
     "external",
     "test",
     "demo",
-    "README.md"
+    "README.md",
+    "node_modules",
+    "build"
   ],
 
   "keywords": [

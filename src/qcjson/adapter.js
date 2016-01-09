@@ -17,15 +17,17 @@
  *
  *             title            is an option title for the graphs
  *
- * Returns : an chart object containing a SVGs svg_fwdm svg_rev for the forward and reverse graphs, which can be used thus:
+ * Returns : an chart object containing a SVGs svg_fwdm svg_rev for the forward
+ * and reverse graphs, which can be used thus:
  *
  * jQuery("#graph_fwd").append( function() { return chart.svg_fwd.node(); } );
  * jQuery("#graph_rev").append( function() { return chart.svg_rev.node(); } );
  *
  */
-
-define(['jquery', 'd3'], function (jQuery, d3) {
-  var drawChart = function (config) {
+/* globals document: false, define: false */
+define(['jquery', 'd3'], function(jQuery, d3) {
+  'use strict';
+  var drawChart = function(config) {
     var svg_fwd;
     var svg_rev;
     var data = config.data;
@@ -36,51 +38,51 @@ define(['jquery', 'd3'], function (jQuery, d3) {
     if (data && typeof data === "object") {
       var mismatchData = {};
 
-      // force to numeric
+      // Force to numeric
       data.forward_fasta_read_count = +data.forward_fasta_read_count;
       data.reverse_fasta_read_count = +data.reverse_fasta_read_count;
 
-      // create forward and reverse data objects
+      // Create forward and reverse data objects
       var forwardData = Object.create(mismatchData);
       var reverseData = Object.create(mismatchData);
 
-      // define individual data points for forward and reverse
+      // Define individual data points for forward and reverse
       forwardData.start_counts = data.forward_start_counts;
       reverseData.start_counts = data.reverse_start_counts;
 
-      // format the data
+      // Format the data
       forwardData.formattedData = format_adapter_chart(forwardData);
       reverseData.formattedData = format_adapter_chart(reverseData);
 
-      forwardData.yMax = roundToPowerOfTen(d3.max(forwardData.formattedData, function (d) {
+      forwardData.yMax = roundToPowerOfTen(d3.max(forwardData.formattedData, function(d) {
         return d.yVar;
       }));
       if (isNaN(forwardData.yMax)) {
         forwardData.yMax = 0;
       }
-      reverseData.yMax = roundToPowerOfTen(d3.max(reverseData.formattedData, function (d) {
+      reverseData.yMax = roundToPowerOfTen(d3.max(reverseData.formattedData, function(d) {
         return d.yVar;
       }));
       if (isNaN(reverseData.yMax)) {
         reverseData.yMax = 0;
       }
 
-      // set xMin and xMax to be the same for the two graphs
-      var xMin = d3.min(forwardData.formattedData.concat(reverseData.formattedData), function (d) {
+      // Set xMin and xMax to be the same for the two graphs
+      var xMin = d3.min(forwardData.formattedData.concat(reverseData.formattedData), function(d) {
         return d.xVar;
       });
-      var xMax = d3.max(forwardData.formattedData.concat(reverseData.formattedData), function (d) {
+      var xMax = d3.max(forwardData.formattedData.concat(reverseData.formattedData), function(d) {
         return d.xVar;
       });
       var yMin = 0.1;
-      var yMax = d3.max(forwardData.formattedData.concat(reverseData.formattedData), function (d) {
+      var yMax = d3.max(forwardData.formattedData.concat(reverseData.formattedData), function(d) {
         return d.yVar;
       });
       yMax = roundToPowerOfTen(yMax);
 
-      // draw new plots
-      svg_fwd = new adapterChart(forwardData, xMin, xMax, yMin, yMax, width, height, 'Forward ' + title);
-      svg_rev = new adapterChart(reverseData, xMin, xMax, yMin, yMax, width, height, 'Reverse ' + title);
+      // Draw new plots
+      svg_fwd = adapterChart(forwardData, xMin, xMax, yMin, yMax, width, height, 'Forward ' + title);
+      svg_rev = adapterChart(reverseData, xMin, xMax, yMin, yMax, width, height, 'Reverse ' + title);
       if (!data.forward_fasta_read_count) {
         svg_fwd = null;
       }
@@ -132,7 +134,7 @@ define(['jquery', 'd3'], function (jQuery, d3) {
 
     var nodeWidth = (w - padding.left - padding.right) / xMax;
 
-    // create scale functions
+    // Create scale functions
     var xScale = d3.scale.linear()
       .nice()
       .range([padding.left, w - (padding.right)])
@@ -149,7 +151,7 @@ define(['jquery', 'd3'], function (jQuery, d3) {
       .orient("bottom")
       .ticks(10);
 
-    // define Y axis
+    // Define Y axis
     var superscript = "⁰¹²³⁴⁵⁶⁷⁸⁹";
     var vArray = [];
     var n;
@@ -162,7 +164,7 @@ define(['jquery', 'd3'], function (jQuery, d3) {
       .scale(yScale)
       .orient("left")
       .tickValues(vArray)
-      .ticks(5, function (d) {
+      .ticks(5, function(d) {
         if (d >= 1) {
           return "10" + superscript[Math.round(Math.log(d) / Math.LN10)];
         }
@@ -174,7 +176,7 @@ define(['jquery', 'd3'], function (jQuery, d3) {
       .attr("transform", "translate(0," + (h - padding.bottom) + ")")
       .call(xAxis);
 
-    // add X axis origin label
+    // Add X axis origin label
     svg.append("text")
       .attr("transform", "translate(" + (padding.left - 5) + "," + (h - padding.bottom + 17) + ")")
       .text(data.min_isize);
@@ -201,7 +203,7 @@ define(['jquery', 'd3'], function (jQuery, d3) {
       .attr("transform", "translate(" + padding.left + ", 0)")
       .call(yAxis);
 
-    // make x grid
+    // Make x grid
     svg.append("g")
       .attr("class", "grid")
       .attr("transform", "translate(0," + (h - padding.bottom) + ")")
@@ -209,7 +211,8 @@ define(['jquery', 'd3'], function (jQuery, d3) {
         .tickSize(-h + (padding.top + padding.bottom), 0, 0)
         .tickFormat("")
       );
-    // make y grid
+
+    // Make y grid
     svg.append("g")
       .attr("class", "grid")
       .attr("id", "yGrid")
@@ -219,22 +222,22 @@ define(['jquery', 'd3'], function (jQuery, d3) {
         .tickFormat("")
       );
 
-    // group for the bars
+    // Group for the bars
     var bars = svg.append('g');
 
-    // draw bars in group
+    // Draw bars in group
     bars.selectAll('rect')
       .data(data.formattedData)
       .enter()
       .append('rect')
-      .attr('x', function (d) {
+      .attr('x', function(d) {
         return xScale(d.xVar);
       })
-      .attr('y', function (d) {
+      .attr('y', function(d) {
         return yScale(d.yVar);
       })
       .attr('width', nodeWidth)
-      .attr('height', function (d) {
+      .attr('height', function(d) {
         return h - padding.bottom - yScale(d.yVar);
       })
       .attr('fill', 'blue')

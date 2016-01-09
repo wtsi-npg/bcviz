@@ -27,12 +27,13 @@
  * jQuery("#graph").append( function() { return chart.svg.node(); } );
  *
  */
-
-define(['jquery', 'd3'], function (jQuery, d3) {
+/* globals document: false, define: false */
+define(['jquery', 'd3'], function(jQuery, d3) {
+  "use strict";
   var xScale;
   var yScale;
 
-  drawChart = function (config) {
+  var drawChart = function(config) {
     var data = config.data;
     var width = config.width;
     var height = config.height;
@@ -61,13 +62,13 @@ define(['jquery', 'd3'], function (jQuery, d3) {
     var bare_svg = document.createElementNS(d3.ns.prefix.svg, 'svg');
     var svg = d3.select(bare_svg).attr("width", width).attr("height", height);
 
-    // add title
+    // Add title
     svg.append('text')
       .attr("transform", "translate(" + padding.left + ", " + padding.top / 4 + ")")
       .style('font-size', padding.top / 4)
       .text(title);
 
-    // every value is a string. Force to numeric.
+    // Every value is a string. Force to numeric.
     data.bin_width = +data.bin_width;
     data.min_isize = +data.min_isize;
     data.mean = +data.mean;
@@ -75,7 +76,7 @@ define(['jquery', 'd3'], function (jQuery, d3) {
     data.paired_reads_direction_in = +data.paired_reads_direction_in;
     data.num_well_aligned_reads_opp_dir = +data.num_well_aligned_reads_opp_dir;
     data.num_well_aligned_reads = +data.num_well_aligned_reads;
-    data.bins.forEach(function (v, i, a) {
+    data.bins.forEach(function(v, i, a) {
       a[i] = +v;
     });
 
@@ -85,7 +86,7 @@ define(['jquery', 'd3'], function (jQuery, d3) {
     var yMax = d3.max(data.bins);
     var nodeWidth = (width - padding.left - padding.right) / data.bins.length;
 
-    //create scale functions
+    //Create scale functions
     xScale = d3.scale.linear()
       .nice()
       .range([padding.left, width - (padding.right)])
@@ -101,15 +102,15 @@ define(['jquery', 'd3'], function (jQuery, d3) {
       .scale(xScale)
       .orient("bottom")
       .ticks(10)
-      .tickFormat(function (d) {
+      .tickFormat(function(d) {
         if (d == 100 && xMin > 50) {
-          return ''
+          return '';
         } else {
           return d;
         }
       });
 
-    //define Y axis
+    //Define Y axis
     var yAxis = d3.svg.axis()
       .scale(yScale)
       .orient("left")
@@ -127,7 +128,7 @@ define(['jquery', 'd3'], function (jQuery, d3) {
       .attr("transform", "translate(0," + (height - padding.bottom) + ")")
       .call(xAxis);
 
-    //add X axis origin label
+    //Add X axis origin label
     svg.append("text")
       .attr("transform", "translate(" + (padding.left - 5) + "," + (height - padding.bottom + 17) + ")")
       .text(data.min_isize);
@@ -146,7 +147,7 @@ define(['jquery', 'd3'], function (jQuery, d3) {
         .ticks(10);
     }
 
-    //make x grid
+    //Make x grid
     svg.append("g")
       .attr("class", "grid")
       .attr("id", "xGrid")
@@ -155,7 +156,8 @@ define(['jquery', 'd3'], function (jQuery, d3) {
         .tickSize(-height + (padding.top + padding.bottom), 0, 0)
         .tickFormat("")
       );
-    //make y grid
+
+    //Make y grid
     svg.append("g")
       .attr("class", "grid")
       .attr("id", "yGrid")
@@ -166,22 +168,22 @@ define(['jquery', 'd3'], function (jQuery, d3) {
         .tickFormat("")
       );
 
-    //group for the bars
+    //Group for the bars
     var bars = svg.append('g');
 
-    //draw bars in group
+    //Draw bars in group
     bars.selectAll('rect')
       .data(data.bins)
       .enter()
       .append('rect')
-      .attr('x', function (d, i) {
+      .attr('x', function(d, i) {
         return xScale((i * data.bin_width) + data.min_isize);
       })
-      .attr('y', function (d) {
+      .attr('y', function(d) {
         return yScale(d);
       })
       .attr('width', nodeWidth)
-      .attr('height', function (d) {
+      .attr('height', function(d) {
         return height - padding.bottom - yScale(d);
       })
       .attr('fill', data.paired_reads_direction_in ? "blue" : "orange")
@@ -198,14 +200,13 @@ define(['jquery', 'd3'], function (jQuery, d3) {
   }
 
   function drawStandardDistribution(data, svg) {
-    //
-    // overlay a normal distribution curve
-    //
 
-    // first, look up the mean and standard deviation
+    // Overlay a normal distribution curve
+
+    // First, look up the mean and standard deviation
     var mean = data.mean;
     var std = data.std;
-    data.norm_fit_modes.forEach(function (d) {
+    data.norm_fit_modes.forEach(function(d) {
       if (d.length == 3) {
         mean = d[1];
         std = d[2];
@@ -214,9 +215,11 @@ define(['jquery', 'd3'], function (jQuery, d3) {
 
     // Calculate the normal distribution curve
     var norm = [];
-    data.bins.forEach(function (v, i) {
-      // standard deviation is data.std
-      // mu is data.mean
+    data.bins.forEach(function(v, i) {
+
+      /* Standard deviation is data.std
+         mu is data.mean
+      */
       var m = (std * Math.sqrt(2 * Math.PI));
       var x = (i * data.bin_width) + data.min_isize;
       var e = Math.exp(-(x - mean) * (x - mean) / (2 * std * std));
@@ -228,9 +231,9 @@ define(['jquery', 'd3'], function (jQuery, d3) {
       norm.push(point);
     });
 
-    // scale the normal distribution to fit the graph
+    // Scale the normal distribution to fit the graph
     var max_norm = 0;
-    norm.forEach(function (v, i) {
+    norm.forEach(function(v) {
       if (max_norm < v.y) {
         max_norm = v.y;
       }
@@ -238,12 +241,12 @@ define(['jquery', 'd3'], function (jQuery, d3) {
     var max_height = Math.max.apply(null, data.bins);
     var scale = max_height / max_norm;
 
-    // overlay it on the bar chart
+    // Overlay it on the bar chart
     var lineFunc = d3.svg.line()
-      .x(function (d) {
+      .x(function(d) {
         return xScale((d.x * data.bin_width) + data.min_isize);
       })
-      .y(function (d) {
+      .y(function(d) {
         return yScale(d.y * scale);
       })
       .interpolate('basis');

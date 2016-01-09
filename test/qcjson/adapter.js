@@ -1,6 +1,6 @@
 "use strict";
 define(
-  ['../../src/qcjson/adapter'],
+  ['../../build/adapter'],
   function(adapter) {
     var run = function() {
       QUnit.test('adapter graph tests', function() {
