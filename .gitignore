@@ -1,5 +1,7 @@
 *~
 *.DS_Store
 external
+node_modules
+build
 demo/custom/index.html
 demo/custom/main.js

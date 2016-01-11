@@ -32,10 +32,11 @@
  * jQuery("#graph_leg").append( function() { return chart.svg_legend.node(); } );
  *
  */
+/* globals document: false, define: false */
+define(['jquery', 'd3'], function(jQuery, d3) {
+  'use strict';
 
-define(['jquery', 'd3'], function (jQuery, d3) {
-
-  drawChart = function (config) {
+  var drawChart = function(config) {
     var svg_fwd;
     var svg_rev;
     var svg_legend;
@@ -50,13 +51,16 @@ define(['jquery', 'd3'], function (jQuery, d3) {
       var mismatchData = {
         quality_bin_values: data.quality_bin_values
       };
-      // force to numeric
+
+      // Force to numeric
       data.forward_aligned_read_count = +data.forward_aligned_read_count;
       data.reverse_aligned_read_count = +data.reverse_aligned_read_count;
-      //create forward and reverse data objects
+
+      // Create forward and reverse data objects
       var forwardData = Object.create(mismatchData);
       var reverseData = Object.create(mismatchData);
-      //define individual data points for forward and reverse
+
+      //Define individual data points for forward and reverse
       forwardData.n_count = data.forward_n_count;
       forwardData.quality_bins = data.forward_quality_bins;
       forwardData.count = data.forward_count;
@@ -72,8 +76,7 @@ define(['jquery', 'd3'], function (jQuery, d3) {
         reverseData.quality_bin_values = [0];
       }
 
-
-      //format the data
+      //Format the data
       var forwardFormattedData = formatMismatch(forwardData);
       if (forwardFormattedData) {
         forwardData.formattedData = forwardFormattedData.formattedData;
@@ -84,7 +87,8 @@ define(['jquery', 'd3'], function (jQuery, d3) {
         reverseData.formattedData = reverseFormattedData.formattedData;
         reverseData.yMax = reverseFormattedData.yMax;
       }
-      //change the yMax variable to be the larger of the two graphs
+
+      //Change the yMax variable to be the larger of the two graphs
       if (forwardFormattedData && reverseFormattedData) {
         if (forwardFormattedData.yMax > reverseFormattedData.yMax) {
           forwardData.yMax = forwardFormattedData.yMax;
@@ -96,9 +100,9 @@ define(['jquery', 'd3'], function (jQuery, d3) {
       }
 
       var xMin = 0;
-      var fwd_xMax = forwardData.quality_bins ? forwardData.quality_bins[0].length 
+      var fwd_xMax = forwardData.quality_bins ? forwardData.quality_bins[0].length
                                               : (forwardData.count ? forwardData.count.length : 0);
-      var rev_xMax = reverseData.quality_bins ? reverseData.quality_bins[0].length 
+      var rev_xMax = reverseData.quality_bins ? reverseData.quality_bins[0].length
                                               : (reverseData.count ? reverseData.count.length : 0);
       var xMax = d3.max([fwd_xMax, rev_xMax]);
       var yMin = 0;
@@ -109,7 +113,7 @@ define(['jquery', 'd3'], function (jQuery, d3) {
       data.quality_bin_values = data.quality_bin_values || [];
       if (oldFormat) {
         colour = d3.scale.ordinal()
-          .range(["black","blue"])
+          .range(["black", "blue"])
           .domain(data.quality_bin_values.concat('N'));
       } else {
         colour = d3.scale.ordinal()
@@ -117,7 +121,7 @@ define(['jquery', 'd3'], function (jQuery, d3) {
           .domain(data.quality_bin_values.concat('N'));
       }
 
-      //draw new plots
+      //Draw new plots
       svg_fwd = mismatchPlot(forwardData, xMin, xMax, yMin, yMax, width, height, 'Forward ' + title, colour);
       svg_rev = mismatchPlot(reverseData, xMin, xMax, yMin, yMax, width, height, 'Reverse ' + title, colour);
 
@@ -129,8 +133,7 @@ define(['jquery', 'd3'], function (jQuery, d3) {
       }
     }
 
-    if (colour) {
-      // no point having a legend without graphs
+    if (colour) { // No point having a legend without graphs
       if (svg_fwd == null && svg_rev == null) {
         svg_legend = null;
       } else {
@@ -154,8 +157,8 @@ define(['jquery', 'd3'], function (jQuery, d3) {
       barData = [];
       if (!data.errors) { return { formattedData: formattedData, yMax: 0 }; }
       barData[0] = data.errors;
-      var arr = Array.apply(null, Array(data.errors.length));
-      data.n_count = arr.map(function (x, i) { return 0 });
+      data.n_count = [];
+      for (var k = 0; k < data.errors.length; k++) { data.n_count[k] = 0; }
     }
 
     barData.push(data.n_count);
@@ -205,7 +208,7 @@ define(['jquery', 'd3'], function (jQuery, d3) {
 
     var nodeWidth = (w - padding.left - padding.right) / xMax;
 
-    //create scale functions
+    //Create scale functions
     var xScale = d3.scale.linear()
       .nice()
       .range([padding.left, w - (padding.right)])
@@ -222,7 +225,7 @@ define(['jquery', 'd3'], function (jQuery, d3) {
       .orient("bottom")
       .ticks(10);
 
-    //define Y axis
+    //Define Y axis
     var yAxis = d3.svg.axis()
       .scale(yScale)
       .orient("left")
@@ -246,20 +249,20 @@ define(['jquery', 'd3'], function (jQuery, d3) {
 
     var barGroup = svg.selectAll('.g')
       .data(data.formattedData)
-      .enter().append("g").attr("transform", function (d, i) {
+      .enter().append("g").attr("transform", function(d, i) {
         return "translate(" + xScale(i) + ",0)";
       });
 
     var forY      = function(d) { return yScale(d.y1); };
     var forHeight = function(d) { return yScale(d.y0) - yScale(d.y1); };
-    var forColour = function(d) { return colour(d.name) };
-    
+    var forColour = function(d) { return colour(d.name); };
+
     barGroup.selectAll('rect')
-      .data(function (d) {
+      .data(function(d) {
         var temp = [];
         for ( var j = 0 ; j < d.length; j++ ) {
           var obj = d[j];
-          if (obj.y0 - obj.y1 != 0 ) {
+          if (obj.y0 - obj.y1 !== 0 ) {
             temp.push(d[j]);
           }
         }
@@ -291,7 +294,7 @@ define(['jquery', 'd3'], function (jQuery, d3) {
       .attr('class', 'legend');
 
     legendPoints.append('rect')
-      .attr('y', function (d, i) {
+      .attr('y', function(d, i) {
         return i * 15 + (h / 2) - 30;
       })
       .attr('width', 10)
@@ -300,19 +303,19 @@ define(['jquery', 'd3'], function (jQuery, d3) {
 
     legendPoints.append('text')
       .attr('x', 25)
-      .attr('y', function (d, i) {
+      .attr('y', function(d, i) {
         return i * 15 + (h / 2) - 30;
       })
       .attr('dy', '10px')
       .style('text-anchor', 'middle')
-      .text(function (d, i) {
-        if (i == 0) {
+      .text(function(d, i) {
+        if (i === 0) {
           return ">=" + d;
         }
-        if (i == 1) {
+        if (i === 1) {
           return "=<" + d;
         }
-        if (i == 2) {
+        if (i === 2) {
           return "=<" + d;
         }
         return d;
