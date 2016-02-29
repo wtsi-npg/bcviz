@@ -1,5 +1,7 @@
 CHANGES
 
+ - fixing wrong repository url in package.json
+
 release 1.3.1
  - using grunt to automate tasks 
 

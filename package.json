@@ -8,7 +8,7 @@
   "private" : true,
   "repository": {
     "type": "git",
-    "url": "https://github.com/jmtcsngr/bcviz.git"
+    "url": "https://github.com/wtsi-npg/bcviz.git"
   },
   "keywords": [
     "visualisation",
