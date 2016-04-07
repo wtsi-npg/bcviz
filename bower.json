@@ -19,12 +19,12 @@
   ],
 
   "dependencies":{
-    "jquery":"2.1.4",
-    "d3":"3.5.9",
-    "requirejs":"2.1.20"
+    "jquery":"2.2.3",
+    "d3":"3.5.16",
+    "requirejs":"2.2.0"
   },
   "devDependencies":{
-    "qunit":"1.20.0"
+    "qunit":"1.23.0"
   },
 
   "ignore": [
