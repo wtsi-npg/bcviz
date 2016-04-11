@@ -1,6 +1,6 @@
 "use strict";
 define(
-  ['../../build/adapter'],
+  ['../../build/adapter.min'],
   function(adapter) {
     var run = function() {
       QUnit.test('adapter graph tests', function() {
