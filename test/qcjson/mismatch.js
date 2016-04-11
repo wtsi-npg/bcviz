@@ -1,6 +1,6 @@
 "use strict";
 define(
-  ['../../build/mismatch'],
+  ['../../build/mismatch.min'],
   function(mismatch) {
     var run = function() {
       QUnit.test('mismatch graph tests', function() {

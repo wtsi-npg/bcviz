@@ -1,14 +1,14 @@
 {
   "name"    : "bcviz",
   "title"   : "bcviz",
-  "version" : "1.3.1",
+  "version" : "1.3.2",
   "description" : "D3 based JavaScript visualisation for bamcheck and NPG autoqc json file formats.",
   "homepage": "https://github.com/wtsi-npg/bcviz",
   "license" : "SEE LICENSE IN LICENSE",
   "private" : true,
   "repository": {
     "type": "git",
-    "url": "https://github.com/jmtcsngr/bcviz.git"
+    "url": "https://github.com/wtsi-npg/bcviz.git"
   },
   "keywords": [
     "visualisation",
@@ -18,17 +18,17 @@
   ],
 
   "devDependencies" : {
-    "grunt"                : "~0.4.5",
-    "grunt-cli"            : "*",
-    "load-grunt-tasks"     : "*",
-    "grunt-bump"           : "*",
-    "grunt-contrib-copy"   : "*",
-    "grunt-contrib-clean"  : "*",
-    "grunt-contrib-watch"  : "*",
-    "grunt-contrib-jshint" : "*",
-    "grunt-contrib-uglify" : "*",
+    "grunt"                : "0.4.5",
+    "grunt-cli"            : "1.2.0",
+    "load-grunt-tasks"     : "3.4.1",
+    "grunt-bump"           : "0.7.0",
+    "grunt-contrib-copy"   : "1.0.0",
+    "grunt-contrib-clean"  : "1.0.0",
+    "grunt-contrib-watch"  : "1.0.0",
+    "grunt-contrib-jshint" : "1.0.0",
+    "grunt-contrib-uglify" : "1.0.1",
     "grunt-contrib-qunit"  : "0.5.2",
-    "grunt-jsonlint"       : "*",
-    "grunt-jscs"           : "*"
+    "grunt-jsonlint"       : "1.0.7",
+    "grunt-jscs"           : "2.8.0"
   }
 }

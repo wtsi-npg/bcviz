@@ -28,6 +28,7 @@
  *
  */
 /* globals document: false, define: false */
+/* jshint latedef: nofunc */
 define(['jquery', 'd3'], function(jQuery, d3) {
   "use strict";
   var xScale;
