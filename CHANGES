@@ -1,5 +1,7 @@
 CHANGES
 
+ - upgrading load-grunt-tasks to 3.5.0 from 3.4.1
+
 release 1.3.2
  - fixing wrong repository url in package.json
  - npm packages using specific versions
