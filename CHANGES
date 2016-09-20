@@ -1,6 +1,11 @@
 CHANGES
 
  - Implement 'all the samtools stats charts' bcviz function
+ - upgrade grunt-bump to 0.8.0 from 0.7.0 
+ - upgrade grunt-contrib-uglify to 2.0.0 from 1.0.1
+ - upgrade grunt-jscs to 3.0.1 from 2.8.0
+ - upgrade grunt-jsonlint to 1.1.0 from 1.0.7
+ - upgrade load-grunt-tasks to 3.5.2 from 3.5.0
  - Updating test configuration so it is compatible with
    grunt-contrib-qunit@1.2.0 and node-qunit-phantomjs@1.4.0
  - upgrading grunt to 1.0.1 from 0.4.5
