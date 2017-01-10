@@ -1,7 +1,6 @@
 CHANGES
 
- - Added multitest
- - Implement 'all the charts' bcviz function
+ - Implement 'all the samtools stats charts' bcviz function
  - Updating test configuration so it is compatible with
    grunt-contrib-qunit@1.2.0 and node-qunit-phantomjs@1.4.0
  - upgrading grunt to 1.0.1 from 0.4.5

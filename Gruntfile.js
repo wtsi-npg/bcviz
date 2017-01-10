@@ -87,7 +87,7 @@ module.exports = function(grunt) {
         timeout: 5000,
         console: true
       },
-      all: ['test/test.html']
+      all: ['test/*.html']
     },
     watch: {
       js: {
