@@ -3,16 +3,25 @@
         <meta charset="utf-8">
         <title>bcviz demo</title>
         <link rel="stylesheet" type="text/css" href="/src/css/bcviz.css">
+        <style>
+          fieldset { 
+            border-radius: 15px 15px 15px 15px; 
+            overflow: hidden; 
+            font-size: 14px; 
+          } 
+        </style>
         <script data-main="main" src="/external/requirejs/require.js"></script>
     </head>
     <body>
-        <div id="instructions">
-            <p>To switch to another set of graphs, use the &quot;.&quot; key to move forward and the &quot;,&quot; key to move backwards.</p>
-        </div>
-        <div id="fileName">
-        </div>
-        <div id="aDiv">
-        </div>
+        <form>
+            <input type='file' accept='.stats' name=statsfile id=statsfile>
+            <input type='button' value='Display Charts' onClick='showCharts();'>
+        </form>
+        <br />
+        <fieldset>
+          <legend><div id='filename'></div></legend>
+          <div id="charts"></div>
+        </fieldset>
     </body>
 </html>
 

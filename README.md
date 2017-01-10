@@ -71,6 +71,7 @@ Build the project then execute tests:
       python -m SimpleHTTPServer 8888 &
     Open in a browser:
       http://localhost:8888/test/test.html
+      http://localhost:8888/test/multitest.html
 
   Headless:
     node-qunit-phantomjs test/test.html --verbose

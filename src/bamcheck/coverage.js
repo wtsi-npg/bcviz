@@ -1,66 +1,76 @@
-var chartIndex = 0;
-define(['jquery', 'd3', 'src/bamcheck/divSelections'], function (jQuery, d3, checkDivSelection) {
-  return function (data, divID, title, width, height) {
-    if (title && data[9]) {
-      title = data[9].title;
-    }
-    if (data && data[7] && data[7][1] && data[7][1].values && data[7][1].values.length !== 0) {
-      if (width && height) {
-        return new coverageGraph(data[7], divID, title, width, height);
-      } else {
-        return new coverageGraph(data[7], divID, title);
-      }
+/*
+ * Author: David Bryson and Jennifer Liddle <js10@sanger.ac.uk>
+ *
+ * Create a coverage graph
+ *
+ * Use:
+ *
+ * chart = coverage.drawChart({data: data, width: 350, height: 250, title: 'coverage chart'});
+ *
+ * where width, height, and title are optional and have the default values shown above
+ *       data   is an object containing two arrays:
+ *             bases      array of X values 
+ *             coverage   array of Y values 
+ *
+ * Returns : an chart object containing svg to be used thus:
+ *
+ * jQuery("#graph").append( function() { return chart.svg.node(); } );
+ *
+ */
+
+define(['jquery', 'd3'], function (jQuery, d3) {
+  var drawChart = function(config) {
+    var results;
+    var data = config.data;
+    var width = config.width || 350;
+    var height = config.height || 250;
+    var title = config.title || 'Coverage';
+
+    if (data && data.bases && data.bases.length) {
+      results = new coverageGraph(data, title, width, height);
     } else {
-      window.console.log('data does not exist; chart not created.');
-      return null;
+      results = { svg: null };
     }
+    return results;
   };
 
-  function coverageGraph(data, divID, title, width, height) {
-    var w = 350;
-    var h = 250;
+  function coverageGraph(data, title, w, h) {
     var padding = {
       top: 50,
       right: 25,
       bottom: 50,
       left: 65
     };
-    var xLabel = data[0].xLabel + " (log)";
-    var yLabel = data[0].yLabel + "(x1000)";
+    var xLabel = 'Coverage (log)';
+    var yLabel = 'Mapped bases (x 10⁶)';
 
-    if (width && height) {
-      w = width;
-      h = height;
-    }
+    var points = makePoints(data.bases, data.cov);
 
-    var graphKeys = ["Coverage"];
-
-    chartIndex++;
-
-    divID = checkDivSelection(divID);
+    var xMin = 1;
+    var xMax = d3.max(points, function (p) { return +p.xVar; });
+    var yMin = 0;
+    var yMax = d3.max(points, function (p) { return +p.yVar; });
 
     //Create SVG element
-    var svg = d3.select(divID).append('svg')
-      .attr("width", w)
-      .attr("height", h);
+    var bare_svg = document.createElementNS(d3.ns.prefix.svg, 'svg');
+    var svg = d3.select(bare_svg).attr("width", w).attr("height", h);
 
     //create scale functions
     var xScale = d3.scale.log()
       .nice()
+      .domain([xMin, xMax])
       .range([padding.left, w - (padding.right)]);
 
     var yScale = d3.scale.linear()
       .nice()
+      .domain([yMin, yMax])
       .range([h - padding.bottom, padding.top]);
-
-    var color = d3.scale.category10()
-      .domain(graphKeys);
 
     //Define X axis
     var xAxis = d3.svg.axis()
       .scale(xScale)
       .orient("bottom")
-      .ticks(10, function (d) {
+      .ticks(8, function (d) {
         return d;
       });
 
@@ -70,7 +80,7 @@ define(['jquery', 'd3', 'src/bamcheck/divSelections'], function (jQuery, d3, che
       .orient("left")
       .ticks(10)
       .tickFormat(function (d) {
-        return d / 1000;
+        return d / 1000000;
       });
 
     function make_x_grid() {
@@ -88,39 +98,11 @@ define(['jquery', 'd3', 'src/bamcheck/divSelections'], function (jQuery, d3, che
     }
 
     svg.append("clipPath")
-      .attr("id", "chart-area" + chartIndex)
       .append("rect")
       .attr("x", padding.left)
       .attr("y", padding.top)
       .attr("width", w - (padding.right + padding.left))
       .attr("height", h - (padding.top + padding.bottom));
-
-    var points = [];
-
-    for (var i in data) {
-      if (jQuery.inArray(data[i].name, graphKeys) !== -1) {
-        points.push(data[i]);
-      }
-    }
-
-    var xMin = 1;
-    var xMax = d3.max(points, function (d) {
-      return d3.max(d.values, function (v) {
-        return v.xVar;
-      });
-    });
-
-    var yMin = 0;
-    var yMax = d3.max(points, function (d) {
-      return d3.max(d.values, function (v) {
-        return v.yVar;
-      });
-    });
-
-    xScale.domain([xMin, xMax]);
-
-    //set yScale domain
-    yScale.domain([yMin, yMax]);
 
     //Create X axis
     svg.append("g")
@@ -175,38 +157,21 @@ define(['jquery', 'd3', 'src/bamcheck/divSelections'], function (jQuery, d3, che
       .attr('font-size', h / 25 + 'px')
       .text(title);
 
+    // draw the lines
     var line = d3.svg.line()
       .interpolate("linear")
-      .x(function (d) {
-        return xScale(d.xVar);
-      })
-      .y(function (d) {
-        return yScale(d.yVar);
-      });
+      .x(function (d) { return xScale(d.xVar); })
+      .y(function (d) { return yScale(d.yVar); });
 
-    //create graphs for the different data
-    var aValue = svg.selectAll(".points")
+    svg.append('svg:path')
+      .attr('d', line(points))
+      .attr('fill','none')
+      .attr('stroke','#1f77b4');
+      
+    // add the data points
+    svg.selectAll("circles")
       .data(points)
-      .enter().append("g")
-      .attr("id", "graphs")
-      .attr("clip-path", "url(#chart-area" + chartIndex + ")");
-
-    //draw lines in graphs
-    aValue.append("path")
-      .attr("class", "line1")
-      .attr("d", function (d) {
-        return line(d.values);
-      })
-      .style("stroke", function (d) {
-        return color(d.name);
-      });
-
-    //draw lines in graphs
-    aValue.selectAll("circle")
-      .data(function (d) {
-        return d.values;
-      }).enter()
-      .append("circle")
+      .enter().append('circle')
       .attr("class", "circles")
       .attr("cx", function (d) {
         return xScale(d.xVar);
@@ -215,16 +180,21 @@ define(['jquery', 'd3', 'src/bamcheck/divSelections'], function (jQuery, d3, che
         return yScale(d.yVar);
       })
       .attr("r", 2)
-      .attr("fill", function (d) {
-        return color(d.name);
-      });
+      .attr("fill", '#1f77b4');
 
-    function cx(d) {
-      return xScale(d);
-    }
-
-    function cy(d) {
-      return yScale(d);
-    }
+    return { svg: svg };
   }
+
+  function makePoints(a1, a2) {
+    var points = [];
+    for (n = 0; n < a1.length; n++) {
+      points.push({xVar: a1[n], yVar: a2[n]});
+    }
+    return points;
+  }
+
+  return {
+    drawChart: drawChart,
+  };
+
 });
