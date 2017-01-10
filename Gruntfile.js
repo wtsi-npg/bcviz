@@ -97,8 +97,10 @@ module.exports = function(grunt) {
           '.jshintrc',
           '.jscsrc',
           'src/qcjson/**/*.js',
-          'test/main.js',
+          'src/bamcheck/**/*.js',
+          'test/*.js',
           'test/qcjson/*.js',
+          'test/bamcheck/*.js',
           'test/test.html'
         ],
         tasks: [

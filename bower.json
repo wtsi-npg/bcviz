@@ -24,7 +24,8 @@
     "requirejs":"2.2.0"
   },
   "devDependencies":{
-    "qunit":"1.23.0"
+    "qunit":"1.23.0",
+    "chai":"3.5.0"
   },
 
   "ignore": [
