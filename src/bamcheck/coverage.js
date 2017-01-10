@@ -9,8 +9,8 @@
  *
  * where width, height, and title are optional and have the default values shown above
  *       data   is an object containing two arrays:
- *             bases      array of X values 
- *             coverage   array of Y values 
+ *             bases      array of X values
+ *             coverage   array of Y values
  *
  * Returns : an chart object containing svg to be used thus:
  *
@@ -18,7 +18,12 @@
  *
  */
 
-define(['jquery', 'd3'], function (jQuery, d3) {
+/* globals document:false, define: false */
+/* jshint latedef: nofunc */
+
+'use strict';
+
+define(['jquery', 'd3'], function(jQuery, d3) {
   var drawChart = function(config) {
     var results;
     var data = config.data;
@@ -27,7 +32,11 @@ define(['jquery', 'd3'], function (jQuery, d3) {
     var title = config.title || 'Coverage';
 
     if (data && data.bases && data.bases.length) {
+
+      // jshint -W055
       results = new coverageGraph(data, title, width, height);
+
+      // jshint +W055
     } else {
       results = { svg: null };
     }
@@ -47,15 +56,15 @@ define(['jquery', 'd3'], function (jQuery, d3) {
     var points = makePoints(data.bases, data.cov);
 
     var xMin = 1;
-    var xMax = d3.max(points, function (p) { return +p.xVar; });
+    var xMax = d3.max(points, function(p) { return +p.xVar; });
     var yMin = 0;
-    var yMax = d3.max(points, function (p) { return +p.yVar; });
+    var yMax = d3.max(points, function(p) { return +p.yVar; });
 
     //Create SVG element
     var bare_svg = document.createElementNS(d3.ns.prefix.svg, 'svg');
     var svg = d3.select(bare_svg).attr("width", w).attr("height", h);
 
-    //create scale functions
+    //Create scale functions
     var xScale = d3.scale.log()
       .nice()
       .domain([xMin, xMax])
@@ -70,16 +79,16 @@ define(['jquery', 'd3'], function (jQuery, d3) {
     var xAxis = d3.svg.axis()
       .scale(xScale)
       .orient("bottom")
-      .ticks(8, function (d) {
+      .ticks(8, function(d) {
         return d;
       });
 
-    //define Y axis
+    //Define Y axis
     var yAxis = d3.svg.axis()
       .scale(yScale)
       .orient("left")
       .ticks(10)
-      .tickFormat(function (d) {
+      .tickFormat(function(d) {
         return d / 1000000;
       });
 
@@ -130,7 +139,7 @@ define(['jquery', 'd3'], function (jQuery, d3) {
       .style("text-anchor", "middle")
       .text(yLabel);
 
-    //make x grid
+    //Make x grid
     svg.append("g")
       .attr("class", "grid")
       .attr("id", "xGrid")
@@ -140,7 +149,7 @@ define(['jquery', 'd3'], function (jQuery, d3) {
         .tickFormat("")
       );
 
-    //make y grid
+    //Make y grid
     svg.append("g")
       .attr("class", "grid")
       .attr("id", "yGrid")
@@ -150,33 +159,33 @@ define(['jquery', 'd3'], function (jQuery, d3) {
         .tickFormat("")
       );
 
-    //append title
+    //Append title
     svg.append('text')
       .attr('x', padding.left)
       .attr('y', padding.top / 2)
       .attr('font-size', h / 25 + 'px')
       .text(title);
 
-    // draw the lines
+    //Draw the lines
     var line = d3.svg.line()
       .interpolate("linear")
-      .x(function (d) { return xScale(d.xVar); })
-      .y(function (d) { return yScale(d.yVar); });
+      .x(function(d) { return xScale(d.xVar); })
+      .y(function(d) { return yScale(d.yVar); });
 
     svg.append('svg:path')
       .attr('d', line(points))
-      .attr('fill','none')
-      .attr('stroke','#1f77b4');
-      
-    // add the data points
+      .attr('fill', 'none')
+      .attr('stroke', '#1f77b4');
+
+    //Add the data points
     svg.selectAll("circles")
       .data(points)
       .enter().append('circle')
       .attr("class", "circles")
-      .attr("cx", function (d) {
+      .attr("cx", function(d) {
         return xScale(d.xVar);
       })
-      .attr("cy", function (d) {
+      .attr("cy", function(d) {
         return yScale(d.yVar);
       })
       .attr("r", 2)
@@ -187,8 +196,8 @@ define(['jquery', 'd3'], function (jQuery, d3) {
 
   function makePoints(a1, a2) {
     var points = [];
-    for (n = 0; n < a1.length; n++) {
-      points.push({xVar: a1[n], yVar: a2[n]});
+    for (var n = 0; n < a1.length; n++) {
+      points.push({ xVar: a1[n], yVar: a2[n] });
     }
     return points;
   }

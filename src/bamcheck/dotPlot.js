@@ -1,9 +1,10 @@
+/* globals document:false, define: false */
+/* jshint latedef: nofunc */
 
+'use strict';
 
-
-
-define(['jquery', 'd3'], function (jQuery, d3) {
-  return function (points, xLabel, yLabel, legend, title, graphKeys, w, h, direction) {
+define(['jquery', 'd3'], function(jQuery, d3) {
+  return function(points, xLabel, yLabel, legend, title, graphKeys, w, h, direction) {
     var padding = {
       top: 50,
       right: 25,
@@ -19,17 +20,13 @@ define(['jquery', 'd3'], function (jQuery, d3) {
     var bare_svg = document.createElementNS(d3.ns.prefix.svg, 'svg');
     var svg = d3.select(bare_svg).attr("width", w).attr("height", h);
 
-    //create scale functions
-    this.x = d3.scale.linear()
+    //Create scale functions
+    var xScale = d3.scale.linear()
       .nice()
       .range([padding.left, w - (padding.right)]);
-
-    var xScale = this.x;
-
-    this.y = d3.scale.linear()
+    var yScale = d3.scale.linear()
       .nice()
       .range([h - padding.bottom, padding.top]);
-    var yScale = this.y;
 
     //Define X axis
     var xAxis = d3.svg.axis()
@@ -37,7 +34,7 @@ define(['jquery', 'd3'], function (jQuery, d3) {
       .orient("bottom")
       .ticks(5);
 
-    //define Y axis
+    //Define Y axis
     var yAxis = d3.svg.axis()
       .scale(yScale)
       .orient("left")
@@ -47,10 +44,10 @@ define(['jquery', 'd3'], function (jQuery, d3) {
 
     var line = d3.svg.line()
       .interpolate("linear")
-      .x(function (d) {
+      .x(function(d) {
         return xScale(d.xVar);
       })
-      .y(function (d) {
+      .y(function(d) {
         return yScale(d.yVar);
       });
 
@@ -75,33 +72,33 @@ define(['jquery', 'd3'], function (jQuery, d3) {
       .attr("width", (w - padding.right - padding.left))
       .attr("height", (h - padding.bottom - padding.top));
 
-    var rect = svg.append("rect")
+    svg.append("rect")
       .attr("opacity", 0)
       .attr("x", padding.left)
       .attr("y", padding.top)
       .attr("width", (w - padding.right - padding.left))
       .attr("height", (h - padding.bottom - padding.top));
 
-    //set keys on colour scale
+    //Set keys on colour scale
     color.domain(graphKeys);
 
-    var xMin = d3.min(points, function (p) {
-      return d3.min(p, function (v) {
+    var xMin = d3.min(points, function(p) {
+      return d3.min(p, function(v) {
         return v.xVar;
       });
     });
-    var xMax = d3.max(points, function (p) {
-      return d3.max(p, function (v) {
+    var xMax = d3.max(points, function(p) {
+      return d3.max(p, function(v) {
         return v.xVar;
       });
     });
-    var yMin = d3.min(points, function (p) {
-      return d3.min(p, function (v) {
+    var yMin = d3.min(points, function(p) {
+      return d3.min(p, function(v) {
         return v.yVar;
       });
     });
-    var yMax = d3.max(points, function (p) {
-      return d3.max(p, function (v) {
+    var yMax = d3.max(points, function(p) {
+      return d3.max(p, function(v) {
         return v.yVar;
       });
     });
@@ -113,10 +110,10 @@ define(['jquery', 'd3'], function (jQuery, d3) {
 
     xScale.domain([xMin, xMax]);
 
-    //set yScale domain
+    //Set yScale domain
     yScale.domain([yMin, yMax]);
 
-    //append title
+    //Append title
     if (title) {
       svg.append('text')
         .attr('x', padding.left)
@@ -151,7 +148,7 @@ define(['jquery', 'd3'], function (jQuery, d3) {
       .attr("text-anchor", "middle")
       .text(yLabel);
 
-    //make x grid
+    //Make x grid
     svg.append("g")
       .attr("class", "grid")
       .attr("id", "xGrid")
@@ -161,7 +158,7 @@ define(['jquery', 'd3'], function (jQuery, d3) {
         .tickFormat("")
       );
 
-    //make y grid
+    //Make y grid
     svg.append("g")
       .attr("class", "grid")
       .attr("id", "yGrid")
@@ -171,49 +168,41 @@ define(['jquery', 'd3'], function (jQuery, d3) {
         .tickFormat("")
       );
 
-    //create graphs for the different data
+    //Create graphs for the different data
     var aValue = svg.selectAll(".points")
       .data(points)
-      .enter().append("g").attr("title", function (d,i) {
+      .enter().append("g").attr("title", function(d, i) {
         return graphKeys[i];
       })
       .attr("id", "graphs");
 
-    //draw lines in graphs
+    //Draw lines in graphs
     aValue.append("path")
       .attr("class", "line1")
-      .attr("d", function (d) {
+      .attr("d", function(d) {
         return line(d);
       })
-      .style("stroke", function (d,i,j) {
+      .style("stroke", function(d, i, j) {
         return color(graphKeys[j]);
       });
 
-    //draw data points on graphs
+    //Draw data points on graphs
     aValue.selectAll("circle")
-      .data(function (d) {
+      .data(function(d) {
         return d;
       }).enter()
       .append("circle")
       .attr("class", "circles")
-      .attr("cx", function (d) {
+      .attr("cx", function(d) {
         return xScale(d.xVar);
       })
-      .attr("cy", function (d) {
+      .attr("cy", function(d) {
         return yScale(d.yVar);
       })
       .attr("r", 2)
-      .attr("fill", function (d,i,j) {
+      .attr("fill", function(d, i, j) {
         return color(graphKeys[j]);
       });
-
-    function cx(d) {
-      return xScale(d);
-    }
-
-    function cy(d) {
-      return yScale(d);
-    }
 
     var svg_legend = null;
     if (legend) {
@@ -281,31 +270,31 @@ define(['jquery', 'd3'], function (jQuery, d3) {
     var bare_svg = document.createElementNS(d3.ns.prefix.svg, 'svg');
     var svg = d3.select(bare_svg).attr("width", h * 0.4).attr("height", h);
 
-    //create the legend
+    //Create the legend
     var legend = svg.selectAll('g')
       .data(graphKeys).enter()
       .append('g')
       .attr('class', 'legend');
 
-    //draw colours in legend    
+    //Draw colours in legend
     legend.append('rect')
       .attr('x', 1)
-      .attr('y', function (d, i) {
+      .attr('y', function(d, i) {
         return padding.top + i * 20;
       })
       .attr('width', 10)
       .attr('height', 10)
-      .style('fill', function (d) {
+      .style('fill', function(d) {
         return color(d);
       });
 
-    //draw text in legend
+    //Draw text in legend
     legend.append('text')
       .attr('x', 15)
-      .attr('y', function (d, i) {
+      .attr('y', function(d, i) {
         return padding.top + (i * 20) + 9;
       })
-      .text(function (d) {
+      .text(function(d) {
         return d.substring(0, d.lastIndexOf(direction));
       });
 

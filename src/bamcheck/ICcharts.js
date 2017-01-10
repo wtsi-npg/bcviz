@@ -1,4 +1,9 @@
-define(['src/bamcheck/dotPlot'], function (dotPlot) {
+/* globals define: false */
+/* jshint latedef: nofunc */
+
+'use strict';
+
+define(['src/bamcheck/dotPlot'], function(dotPlot) {
 
   var drawChart = function(config) {
     var results = {};
@@ -24,12 +29,12 @@ define(['src/bamcheck/dotPlot'], function (dotPlot) {
 
   function makePoints(a1, a2) {
     var points = [];
-    for (n = 0; n < a1.length; n++) {
-      points.push({xVar: a1[n], yVar: a2[n]});
-    }   
+    for (var n = 0; n < a1.length; n++) {
+      points.push({ xVar: a1[n], yVar: a2[n] });
+    }
     return points;
-  }   
-      
+  }
+
   return {
     drawChart: drawChart,
   };

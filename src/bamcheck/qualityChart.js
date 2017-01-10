@@ -1,4 +1,9 @@
-define(['d3'], function (d3) {
+/* globals document:false, define: false */
+/* jshint latedef: nofunc */
+
+'use strict';
+
+define(['d3'], function(d3) {
     var padding = {
       top: 5,
       right: 10,
@@ -7,7 +12,7 @@ define(['d3'], function (d3) {
     };
     var dir = 1;
 
-  drawChart = function (config) {
+  var drawChart = function(config) {
     var data = config.data;
     var width = config.width || 350;
     var height = config.height || 250;
@@ -19,14 +24,15 @@ define(['d3'], function (d3) {
       legend: null,
     };
 
-
     if (data && data.cycle && data.cycle.length !== 0) {
-      if (data.qual_first && data.qual_first.length != 0) {
-        results.svg_fwd = qualityChart(makeQualPoints(data.cycle,data.qual_first), title+' (Fwd)', width, height);
+      if (data.qual_first && data.qual_first.length !== 0) {
+        results.svg_fwd = qualityChart(makeQualPoints(data.cycle, data.qual_first),
+                                       title + ' (Fwd)', width, height);
       }
-      dir=2;    // *very* hacky :-(
-      if (data.qual_last && data.qual_last.length != 0) {
-        results.svg_rev = qualityChart(makeQualPoints(data.cycle,data.qual_last), title+' (Rev)', width, height);
+      dir = 2;    // Very hacky :-(
+      if (data.qual_last && data.qual_last.length !== 0) {
+        results.svg_rev = qualityChart(makeQualPoints(data.cycle, data.qual_last),
+                                       title + ' (Rev)', width, height);
       }
       if (results.svg_fwd || results.svg_rev) {
         results.legend = makeLegend(height, padding);
@@ -39,13 +45,14 @@ define(['d3'], function (d3) {
     var xLabel = 'Cycle Number';
     var yLabel = 'Quality';
 
-    // Create SVG element
+    //Create SVG element
     var bare_svg = document.createElementNS(d3.ns.prefix.svg, 'svg');
     var svg = d3.select(bare_svg).attr("width", w).attr("height", h);
 
     if (title) {
       padding.top = 50;
-      //append title
+
+      //Append title
       svg.append('text')
         .attr('x', padding.left)
         .attr('y', padding.top / 2)
@@ -60,13 +67,12 @@ define(['d3'], function (d3) {
     var yMax = data[0].yVar.length;
 
     var nodeWidth = (w - padding.left - padding.right) / xMax;
-    var nodeHeight = (h - padding.top - padding.bottom) / 50;
 
     var colours = d3.scale.linear()
       .domain([1, 5, 10, 15, 20])
       .range(['lime', 'blue', 'yellow', 'red', 'black']);
 
-    //create scale functions
+    //Create scale functions
     var xScale = d3.scale.linear()
       .nice()
       .range([padding.left, w - (padding.right)])
@@ -83,7 +89,7 @@ define(['d3'], function (d3) {
       .orient("bottom")
       .ticks(10);
 
-    //define Y axis
+    //Define Y axis
     var yAxis = d3.svg.axis()
       .scale(yScale)
       .orient("left")
@@ -120,8 +126,8 @@ define(['d3'], function (d3) {
       .style("text-anchor", "middle")
       .text(yLabel);
 
-    // have object in higher scope and change it when drawing.
-    // must be set to the percents for each rect. 
+    /* Have object in higher scope and change it when drawing.
+       Must be set to the percents for each rect. */
     var gradiantData;
 
     function clearGradiantArray() {
@@ -143,7 +149,8 @@ define(['d3'], function (d3) {
     function setGradiantData(point, count) {
       gradiantData = clearGradiantArray();
       var i = 0;
-      //find the first value over a percentage in yVars and find its percentage out of yMax and change gradientData[i].offset to match the new percentage.
+      /* Find the first value over a percentage in yVars and find its percentage
+         out of yMax and change gradientData[i].offset to match the new percentage. */
       while (i < yMax) {
         var change = 0;
         var x = point.yVar[i];
@@ -249,7 +256,7 @@ define(['d3'], function (d3) {
         i++;
       }
 
-      //create new gradient with individual ID
+      //Create new gradient with individual ID
       svg.append("linearGradient")
         .attr("id", "temperature-gradient" + dir + "-" + count)
         .attr("gradientUnits", "userSpaceOnUse")
@@ -258,17 +265,17 @@ define(['d3'], function (d3) {
         .selectAll("stop")
         .data(gradiantData)
         .enter().append("stop")
-        .attr("offset", function (d) {
+        .attr("offset", function(d) {
           return d.offset;
         })
-        .attr("stop-color", function (d) {
+        .attr("stop-color", function(d) {
           return d.color;
         });
     }
 
-    var grid = svg.selectAll(".qualLine")
+    svg.selectAll(".qualLine")
       .data(data).enter().append('rect')
-      .attr("x", function (d, i) {
+      .attr("x", function(d, i) {
         setGradiantData(d, i);
         return xScale(d.xVar);
       })
@@ -276,18 +283,18 @@ define(['d3'], function (d3) {
       .attr("width", nodeWidth)
       .attr("height", (h - padding.top - padding.bottom))
       .attr("class", "qualLine")
-      .attr("fill", function (d, i) {
+      .attr("fill", function(d, i) {
         return "url(#temperature-gradient" + dir + "-" + i + ")";
       })
-      .attr("stroke", function (d, i) {
+      .attr("stroke", function(d, i) {
         return "url(#temperature-gradient" + dir + "-" + i + ")";
       })
       .attr("clip-path", "url(#chart-area" + 1 + ")")
-      .append('title').text(function (d) {
+      .append('title').text(function(d) {
         return "cycle " + d.xVar;
       });
 
-/*
+  /*  Resize
     this.resize = function (height, width) {
       h = 350;
       w = (window.innerWidth - 100) / 2;
@@ -331,8 +338,8 @@ define(['d3'], function (d3) {
       svg.select("#xAxisText" + thisChartIndex).transition().duration(1000)
         .attr("transform", "translate(" + (w / 2) + "," + padding.bottom / 2 + ")");
 
-    };
-*/
+    }; */
+
     return svg;
   }
 
@@ -345,7 +352,7 @@ define(['d3'], function (d3) {
       .range(['lime', 'blue', 'yellow', 'red', 'black']);
 
     for (var i = 1; i <= 20; i++) {
-      aColor = colours(i);
+      var aColor = colours(i);
       gradiantData.push({
         offset: (5 * i) - 5 + '%',
         color: aColor
@@ -356,7 +363,7 @@ define(['d3'], function (d3) {
       });
     }
 
-    // Create SVG element
+    //Create SVG element
     var bare_svg = document.createElementNS(d3.ns.prefix.svg, 'svg');
     var svg = d3.select(bare_svg).attr("width", w).attr("height", h);
 
@@ -368,10 +375,10 @@ define(['d3'], function (d3) {
       .selectAll("stop")
       .data(gradiantData)
       .enter().append("stop")
-      .attr("offset", function (d) {
+      .attr("offset", function(d) {
         return d.offset;
       })
-      .attr("stop-color", function (d) {
+      .attr("stop-color", function(d) {
         return d.color;
       });
 
@@ -405,8 +412,8 @@ define(['d3'], function (d3) {
 
   function makeQualPoints(a1, a2) {
     var points = [];
-    for (n = 0; n < a1.length; n++) {
-      points.push({xVar: a1[n], yVar: makeQualValues(a2[n])});
+    for (var n = 0; n < a1.length; n++) {
+      points.push({ xVar: a1[n], yVar: makeQualValues(a2[n]) });
     }
     return points;
   }
@@ -425,7 +432,6 @@ define(['d3'], function (d3) {
     }
     return returnValue;
   }
-
 
   return {
     drawChart: drawChart,

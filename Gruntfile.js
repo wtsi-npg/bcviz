@@ -68,7 +68,8 @@ module.exports = function(grunt) {
     jshint: {
       all: [
         'Gruntfile.js',
-        'src/qcjson/**/*.js'
+        'src/qcjson/**/*.js',
+        'src/bamcheck/**/*.js'
       ],
       options: {
         jshintrc: '.jshintrc'
@@ -76,7 +77,8 @@ module.exports = function(grunt) {
     },
     jscs: {
       main: [ 'Gruntfile.js',
-              'src/qcjson/**/*.js'
+              'src/qcjson/**/*.js',
+              'src/bamcheck/**/*.js'
       ],
       options: {
         config: '.jscsrc'
