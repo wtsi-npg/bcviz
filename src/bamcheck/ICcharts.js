@@ -1,32 +1,42 @@
-define(['src/bamcheck/dotPlot'], function (dotPlot) {
-  var keysIC = {
-    all: ["insertions_fwd", "deletions_fwd", "insertions_rev", "deletions_rev"],
-    fwd: ["insertions_fwd", "deletions_fwd"],
-    reverse: ["insertions_rev", "deletions_rev"]
-  };
-  return function (data, split, divID, legend, title, width, height) {
-    if (title && data[9]) {
-      title = data[9].title;
-    }
-    if (data && data[0] && data[0][1] && data[0][1].values && data[0][1].values.length !== 0) {
-      if (split) {
-        var returnValue;
-        returnValue = [new dotPlot(data[0], divID, false, "Indels per cycle(forward)", keysIC.fwd, width, height, "_fwd"), new dotPlot(data[0], divID, true, "Indels per cycle(reverse)", keysIC.reverse, width, height, "_rev")];
-        //check to which graph has the larger domain and change them to be equal.
-        if (returnValue[0].y.domain()[1] < returnValue[1].y.domain()[1]) {
-          returnValue[0].y.domain(returnValue[1].y.domain());
-          returnValue[0].resetDomain();
-        } else if (returnValue[0].y.domain()[1] > returnValue[1].y.domain()[1]) {
-          returnValue[1].y.domain(returnValue[0].y.domain());
-          returnValue[1].resetDomain();
-        }
-        return returnValue;
-      } else {
-        return new dotPlot(data[0], divID, legend, title, keysIC.all, width, height);
-      }
+/* globals define: false */
+/* jshint latedef: nofunc */
+
+'use strict';
+
+define(['src/bamcheck/dotPlot'], function(dotPlot) {
+
+  var drawChart = function(config) {
+    var results = {};
+    var data = config.data;
+    var width = config.width || 350;
+    var height = config.height || 250;
+    var title = config.title || 'IC Chart';
+    var keys = ["insertions_fwd", "deletions_fwd", "insertions_rev", "deletions_rev"];
+
+    var points = [];
+    points.push(makePoints(data.cycle, data.ins_fwd));
+    points.push(makePoints(data.cycle, data.del_fwd));
+    points.push(makePoints(data.cycle, data.ins_rev));
+    points.push(makePoints(data.cycle, data.del_rev));
+
+    if (data && data.cycle && data.cycle.length !== 0) {
+      results = dotPlot(points, 'Cycle', 'Indel', 1, title, keys, width, height);
     } else {
-      window.console.log('data does not exist; chart not created.');
-      return null;
+      results = { svg: null, legend: null };
     }
+    return results;
   };
+
+  function makePoints(a1, a2) {
+    var points = [];
+    for (var n = 0; n < a1.length; n++) {
+      points.push({ xVar: a1[n], yVar: a2[n] });
+    }
+    return points;
+  }
+
+  return {
+    drawChart: drawChart,
+  };
+
 });

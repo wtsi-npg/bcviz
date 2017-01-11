@@ -1,5 +1,6 @@
 CHANGES
 
+ - Implement 'all the samtools stats charts' bcviz function
  - Updating test configuration so it is compatible with
    grunt-contrib-qunit@1.2.0 and node-qunit-phantomjs@1.4.0
  - upgrading grunt to 1.0.1 from 0.4.5
@@ -23,6 +24,8 @@ release 1.3.0
  - upgrading d3 to 3.5.9 from 3.2.8
  - upgrading requirejs to 2.1.20 from 2.1.8
  - upgrading qunit to 1.20.0 from 1.15.0
+ - Added multitest
+ - Implement 'all the charts' bcviz function
 
 release 1.2.1
  - removing empty rectangles when generating mismatch

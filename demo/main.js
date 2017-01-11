@@ -12,86 +12,38 @@ require.config({
         }
     }
 });
-require(['src/bamcheck/readBCfile', 'src/bamcheck/qualityChart', 'src/bamcheck/ICcharts', 'src/bamcheck/ISchart', 'src/bamcheck/gcChart', 'src/bamcheck/gccChart', 'src/bamcheck/indelDist', 'src/bamcheck/GCDepth', 'src/bamcheck/coverage'], function (read, quality, ic, is, gc, gcc, id, gcDepth, coverage) {
-    var files = ["sample_1.bc","sample_2.bc","sample_3.bc","sample_4.bc"];
-    var initialNumberFiles = files.length;
-    if(initialNumberFiles > 10){
-        initialNumberFiles = 10;
+
+var showCharts;
+
+require(['src/bcviz'], function (bcviz) {
+
+  showCharts = function() {
+    var statsfile = $('#statsfile').val();
+    if (!statsfile) { return; }
+    jQuery('#filename').html('Charts for file <b>'+statsfile+'</b>');
+    var d = jQuery('#charts');
+    d.empty();
+    try {
+    var charts = bcviz.draw_charts({filename: statsfile});
     }
-    var charts = [];
-    var i = 0;
-    var formattedData = [];
-    function loadGraph (i) {
-        if (formattedData[i] == null) {
-            formattedData[i] = read(files[i]);
-        }
+    catch (msg) {
+        d.html("<br><center><h2>"+msg+"</h2></center><br/>");
+        return;
     }
-    function unloadGraph (i) {
-        if (formattedData[i] != null) {
-            formattedData[i] = null;
-        }
-    }
-    function drawGraph (i) {
-        charts = [];
-        loadGraph(i);
-        d3.selectAll("svg").remove();
-        document.getElementById("fileName").innerHTML = "<h2>" + files[i].replace("%23", "#") + "</h2>";
-        ic(formattedData[i], false, false, true);
-        ic(formattedData[i], true, false, true);
-        charts.push(quality(formattedData[i], "f", "      ", false, false));
-        charts.push(quality(formattedData[i], "r", "      ", true, false));
-        is(formattedData[i], false, true);
-        gc(formattedData[i], false, true);
-        gcc(formattedData[i], false, true);
-        id(formattedData[i]);
-        gcDepth(formattedData[i]);
-        coverage(formattedData[i]);
-    }
-    function nextGraph() {
-        i++;
-        if(i >= files.length){
-            i = files.length-1;
-        }
-        drawGraph(i);
-        if (i - initialNumberFiles >= 0) {
-            unloadGraph(i - initialNumberFiles);
-        }
-        if (i + initialNumberFiles < files.length) {
-            loadGraph(i + initialNumberFiles + 1);
-        }
-    }
-    function prevGraph() {
-        i--;
-        if(i < 0){
-            i = 0;
-        }
-        drawGraph(i);
-        if (i + initialNumberFiles < files.length) {
-          unloadGraph(i + initialNumberFiles + 1);
-        }
-        if (i - initialNumberFiles >= 0) {
-          loadGraph(i- initialNumberFiles);
-        }
-    }
-    $(window).keydown(function (e) {
-        if(e.which === 188){
-            prevGraph();
-        }
-        if(e.which === 190){
-            nextGraph();
-        }
-    });
-    // draw (and load) the first graph
-    drawGraph(0);
-    // load the rest of the first 10 graphs as well
-    for (var i = 1; i <= initialNumberFiles - 1; i++) {
-        loadGraph(i);
-    }
-    i = 0;
-    window.onresize = function () {
-        for(var i = 0; i < charts.length; i++){
-            if(charts[i])
-                charts[i].resize();
-        }
-    };
+    d.append( function(){return charts.gcdepth.graph.node();} );
+    d.append( function(){return charts.gcdepth.legend.node();} );
+    d.append( function(){return charts.coverage.graph.node();} );
+    d.append( function(){return charts.gccchart.graph.node();} );
+    d.append( function(){return charts.gccchart.legend.node();} );
+    d.append( function(){return charts.gcchart.graph.node();} );
+    d.append( function(){return charts.gcchart.legend.node();} );
+    d.append( function(){return charts.icchart.graph.node();} );
+    d.append( function(){return charts.icchart.legend.node();} );
+    d.append( function(){return charts.indeldist.graph.node();} );
+    d.append( function(){return charts.ischart.graph.node();} );
+    d.append( function(){return charts.ischart.legend.node();} );
+    d.append( function(){return charts.quality.graph_fwd.node();} );
+    d.append( function(){return charts.quality.graph_rev.node();} );
+    d.append( function(){return charts.quality.legend.node();} );
+  };
 });

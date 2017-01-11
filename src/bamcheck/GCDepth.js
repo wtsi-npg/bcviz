@@ -1,60 +1,73 @@
-var chartIndex = 0;
-define(['jquery', 'd3', 'src/bamcheck/divSelections'], function (jQuery, d3, checkDivSelection) {
-  return function (data, divID, title, width, height) {
-    if (title && data[9]) {
-      title = data[9].title;
-    }
-    if (data && data[8] && data[8][1] && data[8][1].values && data[8][1].values.length > 1) {
-      if (width && height) {
-        return new gcDepthGraph(data[8], divID, title, width, height);
-      } else {
-        return new gcDepthGraph(data[8], divID, title);
-      }
+/*
+ * Author: David Bryson and Jennifer Liddle <js10@sanger.ac.uk>
+ *
+ * Create a GC Depth chart
+ *
+ * Use:
+ *
+ * <div class='bcviz_gcdepth' data-check='data' data-width=500 data-height=200 data-title='GC Depth'></div>
+ *
+ * where width, height, and title are optional and have the default values shown above
+ *       data             is a json formatted string which containing a set of arrays:
+ *             gcpercent    GC%
+ *             pc_us        unique sequence percentiles
+ *             pc_10        10th depth percentile
+ *             pc_25        25th depth percentile
+ *             pc_50        50th depth percentile
+ *             pc_75        75th depth percentile
+ *             pc_90        90th depth percentile
+ *
+ *
+ * Returns : an chart object containing svg to be used thus:
+ *
+ * jQuery("#graph").append( function() { return chart.svg.node(); } );
+ *
+ */
+
+/* globals document:false, define: false */
+/* jshint latedef: nofunc */
+
+'use strict';
+
+define(['jquery', 'd3'], function(jQuery, d3) {
+  var drawChart = function(config) {
+    var results;
+    var data = config.data;
+    var width = config.width || 350;
+    var height = config.height || 250;
+    var title = config.title || 'GC Depth';
+
+    if (data && data.gcpercent && data.gcpercent.length) {
+
+      // jshint -W055
+      results = new gcDepthGraph(data, title, width, height);
+
+      // jshint +W055
     } else {
-      window.console.log('data does not exist; chart not created.');
-      return null;
+      results = { 'svg': null, 'legend': null };
     }
+    return results;
   };
 
-  function gcDepthGraph(data, divID, title, width, height) {
-    var w = 350;
-    var h = 250;
+  function gcDepthGraph(data, title, w, h) {
     var padding = {
       top: 40,
       right: 25,
       bottom: 50,
       left: 65
     };
-    var xLabel = data[0].xLabel;
-    var yLabel = data[0].yLabel;
-
-    if (width && height) {
-      w = width;
-      h = height;
-    }
+    var xLabel = 'Percentile of Mapped Sequence Ordered By GC Content';
+    var yLabel = 'Mapped Depth';
 
     if (title) {
       padding.top = 60;
     }
 
-    var gcContent = [0];
-    var percentile = [];
-
-    divID = checkDivSelection(divID);
-
-    chartIndex++;
-
-    for (var i in data[4].values) {
-      gcContent.push(data[4].values[i].yVar);
-      percentile.push(data[4].values[i].xVar);
-    }
-
     //Create SVG element
-    var svg = d3.select(divID).append('svg')
-      .attr("width", w)
-      .attr("height", h);
+    var bare_svg = document.createElementNS(d3.ns.prefix.svg, 'svg');
+    var svg = d3.select(bare_svg).attr("width", w).attr("height", h);
 
-    //create scale functions
+    //Create scale functions
     var xScale = d3.scale.linear()
       .nice()
       .range([padding.left, w - (padding.right)]);
@@ -64,8 +77,8 @@ define(['jquery', 'd3', 'src/bamcheck/divSelections'], function (jQuery, d3, che
       .range([h - padding.bottom, padding.top]);
 
     var gcContentScale = d3.scale.threshold()
-      .domain(percentile)
-      .range(gcContent);
+      .domain(data.pc_us)
+      .range(data.gcpercent);
 
     //Define X axis
     var xAxis = d3.svg.axis()
@@ -73,13 +86,15 @@ define(['jquery', 'd3', 'src/bamcheck/divSelections'], function (jQuery, d3, che
       .orient("bottom")
       .ticks(10);
 
-    //define Y axis
+    //Define Y axis
     var yAxis = d3.svg.axis()
       .scale(yScale)
       .orient("left")
       .ticks(10);
 
-    var color = d3.scale.category10();
+    var color = d3.scale.ordinal()
+      .domain([1, 2, 3])
+      .range(["#dedede", "#bbdeff", "#0084ff"]);
 
     function make_x_grid() {
       return d3.svg.axis()
@@ -96,7 +111,6 @@ define(['jquery', 'd3', 'src/bamcheck/divSelections'], function (jQuery, d3, che
     }
 
     svg.append("clipPath")
-      .attr("id", "chart-area" + chartIndex)
       .append("rect")
       .attr("x", padding.left)
       .attr("y", padding.top)
@@ -105,45 +119,39 @@ define(['jquery', 'd3', 'src/bamcheck/divSelections'], function (jQuery, d3, che
 
     var points = [];
 
+    points.push(makePoints(data.pc_us, data.pc_10, data.pc_90));
+    points.push(makePoints(data.pc_us, data.pc_25, data.pc_75));
+    points.push(makePoints(data.pc_us, data.pc_50));
+    points.push(makePoints(data.pc_us, data.gcpercent));
+
+    //Set keys on colour scale
     var graphKeys = ["10-90th Percentile", "25-75th Percentile", "50th Percentile"];
-
-    for (i in data) {
-      if (jQuery.inArray(data[i].name, graphKeys) !== -1) {
-        points.push(data[i]);
-      }
-    }
-
-    //set keys on colour scale
     color.domain(graphKeys);
 
-    var xMin = d3.min(points, function (p) {
-      return d3.min(p.values, function (v) {
+    var xMin = d3.min(points, function(p) {
+      return d3.min(p, function(v) {
         return v.xVar;
       });
     });
-    var xMax = d3.max(points, function (p) {
-      return d3.max(p.values, function (v) {
+    var xMax = d3.max(points, function(p) {
+      return d3.max(p, function(v) {
         return v.xVar;
       });
     });
 
-    var yMin = d3.min(points, function (p) {
-      return d3.min(p.values, function (v) {
-        return v.yVar0;
-      });
-    });
-    var yMax = d3.max(points, function (p) {
-      return d3.max(p.values, function (v) {
+    var yMin = 0;
+    var yMax = d3.max(points, function(p) {
+      return d3.max(p, function(v) {
         return v.yVar0;
       });
     });
 
     xScale.domain([xMin, xMax]);
 
-    //set yScale domain
+    //Set yScale domain
     yScale.domain([yMin, yMax]);
 
-    //create top axis and labels
+    //Create top axis and labels
     var topAxis = svg.append('g').style("font-size", "10px");
 
     topAxis.append("rect")
@@ -201,7 +209,8 @@ define(['jquery', 'd3', 'src/bamcheck/divSelections'], function (jQuery, d3, che
       .text(gcContentScale(100));
 
     if (title) {
-      //append title
+
+      //Append title
       svg.append('text')
         .attr('x', padding.left)
         .attr('y', padding.top / 4)
@@ -235,7 +244,7 @@ define(['jquery', 'd3', 'src/bamcheck/divSelections'], function (jQuery, d3, che
       .attr("text-anchor", "middle")
       .text(yLabel);
 
-    //make x grid
+    //Make x grid
     svg.append("g")
       .attr("class", "grid")
       .attr("id", "xGrid")
@@ -245,7 +254,7 @@ define(['jquery', 'd3', 'src/bamcheck/divSelections'], function (jQuery, d3, che
         .tickFormat("")
       );
 
-    //make y grid
+    //Make y grid
     svg.append("g")
       .attr("class", "grid")
       .attr("id", "yGrid")
@@ -255,110 +264,128 @@ define(['jquery', 'd3', 'src/bamcheck/divSelections'], function (jQuery, d3, che
         .tickFormat("")
       );
 
-    //seperate the areas
+    //Seperate the areas
     var layers0 = [points[0]];
 
     var layers1 = [points[1]];
 
     var median = [points[2]];
 
-    //draw the areas
+    //Draw the areas
     var area = d3.svg.area()
-      .x(function (d) {
+      .x(function(d) {
         return xScale(d.xVar);
       })
-      .y0(function (d, i) {
+      .y0(function(d) {
         return yScale(d.yVar0);
       })
-      .y1(function (d, i) {
+      .y1(function(d) {
         return yScale(d.yVar);
       });
 
-    //draw the first area
+    //Draw the first area
     svg.selectAll(".layers0")
       .data(layers0)
       .enter().append("path")
-      .attr("d", function (d) {
-        return area(d.values);
+      .attr("d", function(d) {
+        return area(d);
       })
-      .style("fill", function (d) {
-        return color(d.name);
+      .style("fill", function() {
+        return color(graphKeys[0]);
       });
 
-    //draw the second area
+    //Draw the second area
     svg.selectAll(".layers1")
       .data(layers1)
       .enter().append("path")
-      .attr("d", function (d) {
-        return area(d.values);
+      .attr("d", function(d) {
+        return area(d);
       })
-      .style("fill", function (d) {
-        return color(d.name);
+      .style("fill", function() {
+        return color(graphKeys[1]);
       });
 
-    //line generator
+    //Line generator
     var line = d3.svg.line()
       .interpolate("linear")
-      .x(function (d) {
+      .x(function(d) {
         return xScale(d.xVar);
       })
-      .y(function (d) {
+      .y(function(d) {
         return yScale(d.yVar);
       });
 
-    //create graphs for the median data
+    //Create graphs for the median data
     var aValue = svg.selectAll(".median")
       .data(median)
       .enter().append("g")
-      .attr("id", "graphs")
-      .attr("clip-path", "url(#chart-area" + chartIndex + ")");
+      .attr("id", "graphs");
 
-    //draw lines in graphs
+    //Draw lines in graphs
     aValue.append("path")
       .attr("class", "line1")
-      .attr("d", function (d) {
-        return line(d.values);
+      .attr("d", function(d) {
+        return line(d);
       })
-      .style("stroke", function (d) {
-        return color(d.name);
+      .style("stroke", function() {
+        return color(graphKeys[2]);
       });
 
-    gcLegend(h, padding, points, divID, color);
+    var legend = null;
+    if (svg) {
+      legend = gcLegend(h, padding, [layers0, layers1, median], color, graphKeys);
+    }
+    return { 'svg': svg, 'legend': legend };
   }
 
-  function gcLegend(h, padding, points, divID, color) {
+  function gcLegend(h, padding, points, color, graphKeys) {
+    var bare_svg = document.createElementNS(d3.ns.prefix.svg, 'svg');
+    var svg = d3.select(bare_svg).attr("width", h * 0.4).attr("height", h);
 
-    var svg = d3.select(divID).append('svg')
-      .attr("width", h * 0.4)
-      .attr("height", h);
-
-    //create the legend
+    //Create the legend
     var legend = svg.selectAll('g')
       .data(points).enter()
       .append('g')
       .attr('class', 'legend');
 
-    //draw colours in legend  
+    //Draw colours in legend
     legend.append('rect')
       .attr('x', 1)
-      .attr('y', function (d, i) {
+      .attr('y', function(d, i) {
         return padding.top + i * 20;
       })
       .attr('width', 10)
       .attr('height', 10)
-      .style('fill', function (d) {
-        return color(d.name);
+      .style('fill', function(d, i) {
+        return color(graphKeys[i]);
       });
 
-    //draw text in legend
+    //Draw text in legend
     legend.append('text')
       .attr('x', 15)
-      .attr('y', function (d, i) {
+      .attr('y', function(d, i) {
         return padding.top + i * 20 + 9;
       })
       .style('font-size', '10px')
-      .text(function (d) {
-        return d.name;
+      .text(function(d, i) {
+        return graphKeys[i];
       });
+
+    return svg;
   }
+
+  function makePoints(a1, a2, a3) {
+    var points = [];
+    for (var n = 0; n < a1.length; n++) {
+      if (a1[n] > 0.1 && a1[n] < 99.9) {
+        points.push({ xVar: a1[n], yVar: a2[n], yVar0: a3 ? a3[n] : 0 });
+      }
+    }
+    return points;
+  }
+
+  return {
+    drawChart: drawChart,
+  };
+
 });

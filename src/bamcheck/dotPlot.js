@@ -1,45 +1,32 @@
-var chartIndex = 0;
-define(['jquery', 'd3', 'src/bamcheck/divSelections'], function (jQuery, d3, checkDivSelection) {
-  return function (data, divID, legend, title, graphKeys, width, height, direction) {
-    var w = 350;
-    var h = 250;
-    if (width && height) {
-      w = width;
-      h = height;
-    }
+/* globals document:false, define: false */
+/* jshint latedef: nofunc */
+
+'use strict';
+
+define(['jquery', 'd3'], function(jQuery, d3) {
+  return function(points, xLabel, yLabel, legend, title, graphKeys, w, h, direction) {
     var padding = {
       top: 50,
       right: 25,
       bottom: 50,
       left: 65
     };
-    var xLabel = data[0].xLabel;
-    var yLabel = data[0].yLabel;
 
     if (!title) {
       padding.top = 25;
     }
 
-    divID = checkDivSelection(divID);
-
-    chartIndex++;
-
     //Create SVG element
-    var svg = d3.select(divID).append('svg')
-      .attr("width", w)
-      .attr("height", h);
+    var bare_svg = document.createElementNS(d3.ns.prefix.svg, 'svg');
+    var svg = d3.select(bare_svg).attr("width", w).attr("height", h);
 
-    //create scale functions
-    this.x = d3.scale.linear()
+    //Create scale functions
+    var xScale = d3.scale.linear()
       .nice()
       .range([padding.left, w - (padding.right)]);
-
-    var xScale = this.x;
-
-    this.y = d3.scale.linear()
+    var yScale = d3.scale.linear()
       .nice()
       .range([h - padding.bottom, padding.top]);
-    var yScale = this.y;
 
     //Define X axis
     var xAxis = d3.svg.axis()
@@ -47,7 +34,7 @@ define(['jquery', 'd3', 'src/bamcheck/divSelections'], function (jQuery, d3, che
       .orient("bottom")
       .ticks(5);
 
-    //define Y axis
+    //Define Y axis
     var yAxis = d3.svg.axis()
       .scale(yScale)
       .orient("left")
@@ -57,10 +44,10 @@ define(['jquery', 'd3', 'src/bamcheck/divSelections'], function (jQuery, d3, che
 
     var line = d3.svg.line()
       .interpolate("linear")
-      .x(function (d) {
+      .x(function(d) {
         return xScale(d.xVar);
       })
-      .y(function (d) {
+      .y(function(d) {
         return yScale(d.yVar);
       });
 
@@ -79,48 +66,39 @@ define(['jquery', 'd3', 'src/bamcheck/divSelections'], function (jQuery, d3, che
     }
 
     svg.append("clipPath")
-      .attr("id", "chart-area" + chartIndex)
       .append("rect")
       .attr("x", padding.left)
       .attr("y", padding.top)
       .attr("width", (w - padding.right - padding.left))
       .attr("height", (h - padding.bottom - padding.top));
 
-    var rect = svg.append("rect")
+    svg.append("rect")
       .attr("opacity", 0)
       .attr("x", padding.left)
       .attr("y", padding.top)
       .attr("width", (w - padding.right - padding.left))
       .attr("height", (h - padding.bottom - padding.top));
 
-    var points = [];
-
-    for (var i in data) {
-      if (jQuery.inArray(data[i].name, graphKeys) !== -1) {
-        points.push(data[i]);
-      }
-    }
-
-    //set keys on colour scale
+    //Set keys on colour scale
     color.domain(graphKeys);
 
-    var xMin = d3.min(points, function (p) {
-      return d3.min(p.values, function (v) {
+    var xMin = d3.min(points, function(p) {
+      return d3.min(p, function(v) {
         return v.xVar;
       });
     });
-    var xMax = d3.max(points, function (p) {
-      return d3.max(p.values, function (v) {
+    var xMax = d3.max(points, function(p) {
+      return d3.max(p, function(v) {
         return v.xVar;
       });
     });
-    var yMin = d3.min(points, function (p) {
-      return d3.min(p.values, function (v) {
+    var yMin = d3.min(points, function(p) {
+      return d3.min(p, function(v) {
         return v.yVar;
       });
     });
-    var yMax = d3.max(points, function (p) {
-      return d3.max(p.values, function (v) {
+    var yMax = d3.max(points, function(p) {
+      return d3.max(p, function(v) {
         return v.yVar;
       });
     });
@@ -132,10 +110,10 @@ define(['jquery', 'd3', 'src/bamcheck/divSelections'], function (jQuery, d3, che
 
     xScale.domain([xMin, xMax]);
 
-    //set yScale domain
+    //Set yScale domain
     yScale.domain([yMin, yMax]);
 
-    //append title
+    //Append title
     if (title) {
       svg.append('text')
         .attr('x', padding.left)
@@ -170,7 +148,7 @@ define(['jquery', 'd3', 'src/bamcheck/divSelections'], function (jQuery, d3, che
       .attr("text-anchor", "middle")
       .text(yLabel);
 
-    //make x grid
+    //Make x grid
     svg.append("g")
       .attr("class", "grid")
       .attr("id", "xGrid")
@@ -180,7 +158,7 @@ define(['jquery', 'd3', 'src/bamcheck/divSelections'], function (jQuery, d3, che
         .tickFormat("")
       );
 
-    //make y grid
+    //Make y grid
     svg.append("g")
       .attr("class", "grid")
       .attr("id", "yGrid")
@@ -190,55 +168,53 @@ define(['jquery', 'd3', 'src/bamcheck/divSelections'], function (jQuery, d3, che
         .tickFormat("")
       );
 
-    //create graphs for the different data
+    //Create graphs for the different data
     var aValue = svg.selectAll(".points")
       .data(points)
-      .enter().append("g").attr("title", function (d) {
-        return d.name;
+      .enter().append("g").attr("title", function(d, i) {
+        return graphKeys[i];
       })
-      .attr("id", "graphs")
-      .attr("clip-path", "url(#chart-area" + chartIndex + ")");
+      .attr("id", "graphs");
 
-    //draw lines in graphs
+    //Draw lines in graphs
     aValue.append("path")
       .attr("class", "line1")
-      .attr("d", function (d) {
-        return line(d.values);
+      .attr("d", function(d) {
+        return line(d);
       })
-      .style("stroke", function (d) {
-        return color(d.name);
+      .style("stroke", function(d, i, j) {
+        return color(graphKeys[j]);
       });
 
-    //draw lines in graphs
+    //Draw data points on graphs
     aValue.selectAll("circle")
-      .data(function (d) {
-        return d.values;
+      .data(function(d) {
+        return d;
       }).enter()
       .append("circle")
       .attr("class", "circles")
-      .attr("cx", function (d) {
+      .attr("cx", function(d) {
         return xScale(d.xVar);
       })
-      .attr("cy", function (d) {
+      .attr("cy", function(d) {
         return yScale(d.yVar);
       })
       .attr("r", 2)
-      .attr("fill", function (d) {
-        return color(d.name);
+      .attr("fill", function(d, i, j) {
+        return color(graphKeys[j]);
       });
 
-    function cx(d) {
-      return xScale(d);
-    }
-
-    function cy(d) {
-      return yScale(d);
-    }
-
+    var svg_legend = null;
     if (legend) {
-      dotPlotLegend(h, padding, graphKeys, divID, color, direction);
+      svg_legend = dotPlotLegend(h, padding, graphKeys, color, direction);
     }
 
+    return {
+      svg: svg,
+      legend: svg_legend,
+    };
+
+/**
     //create a new zoom behavior
     var zoomer = d3.behavior.zoom().x(xScale).y(yScale).scaleExtent([1, 50]).on("zoom", zoom);
 
@@ -280,45 +256,49 @@ define(['jquery', 'd3', 'src/bamcheck/divSelections'], function (jQuery, d3, che
     this.draw = function () {
       zoom();
     };
+*/
+
   };
 
-  function dotPlotLegend(h, padding, graphKeys, divID, color, direction) {
+  function dotPlotLegend(h, padding, graphKeys, color, direction) {
 
     if (!direction) {
       direction = "";
     }
 
     //Create SVG element
-    var svg = d3.select(divID).append('svg')
-      .attr("width", h * 0.4)
-      .attr("height", h);
+    var bare_svg = document.createElementNS(d3.ns.prefix.svg, 'svg');
+    var svg = d3.select(bare_svg).attr("width", h * 0.4).attr("height", h);
 
-    //create the legend
+    //Create the legend
     var legend = svg.selectAll('g')
       .data(graphKeys).enter()
       .append('g')
       .attr('class', 'legend');
 
-    //draw colours in legend    
+    //Draw colours in legend
     legend.append('rect')
       .attr('x', 1)
-      .attr('y', function (d, i) {
+      .attr('y', function(d, i) {
         return padding.top + i * 20;
       })
       .attr('width', 10)
       .attr('height', 10)
-      .style('fill', function (d) {
+      .style('fill', function(d) {
         return color(d);
       });
 
-    //draw text in legend
+    //Draw text in legend
     legend.append('text')
       .attr('x', 15)
-      .attr('y', function (d, i) {
+      .attr('y', function(d, i) {
         return padding.top + (i * 20) + 9;
       })
-      .text(function (d) {
+      .text(function(d) {
         return d.substring(0, d.lastIndexOf(direction));
       });
+
+    return svg;
   }
+
 });

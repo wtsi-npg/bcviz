@@ -1,51 +1,41 @@
-var chartIndex = 0;
-define(['jquery', 'd3', 'src/bamcheck/divSelections'], function (jQuery, d3, checkDivSelection) {
-  return function (data, divID, title, width, height) {
-    if (title && data[9]) {
-      title = data[9].title;
-    }
-    if (data && data[6] && data[6][1] && data[6][1].values && data[6][1].values.length !== 0) {
-      if (width && height) {
-        return new indelDistGraph(data[6], divID, title, width, height);
-      } else {
-        return new indelDistGraph(data[6], divID, title);
-      }
+/* globals document:false, define: false */
+/* jshint latedef: nofunc */
+
+'use strict';
+
+define(['jquery', 'd3'], function(jQuery, d3) {
+  var drawChart = function(config) {
+    var results;
+    var data = config.data;
+    var width = config.width || 350;
+    var height = config.height || 250;
+    var title = config.title || 'Indels';
+
+    if (data && data.len && data.len.length !== 0) {
+        results = indelDistGraph(data, title, width, height);
     } else {
-      window.console.log('data does not exist; chart not created.');
-      return null;
+      results = { svg: null, legend: null };
     }
+    return results;
   };
 
-  function indelDistGraph(data, divID, title, width, height) {
-    var w = 350;
-    var h = 250;
+  function indelDistGraph(data, title, w, h) {
     var padding = {
       top: 50,
       right: 25,
       bottom: 50,
       left: 65
     };
-    var xLabel = data[0].xLabel;
-    var yLabelLeft = data[0].yLabelLeft;
-    var yLabelRight = data[0].yLabelRight;
-
-    if (width && height) {
-      w = width;
-      h = height;
-    }
+    var xLabel = 'Indel Length';
+    var yLabelLeft = 'Indel Count';
 
     var graphKeys = ["insertions", "deletions"];
 
-    chartIndex++;
+    // Create SVG element
+    var bare_svg = document.createElementNS(d3.ns.prefix.svg, 'svg');
+    var svg = d3.select(bare_svg).attr("width", w).attr("height", h);
 
-    divID = checkDivSelection(divID);
-
-    //Create SVG element
-    var svg = d3.select(divID).append('svg')
-      .attr("width", w)
-      .attr("height", h);
-
-    //create scale functions
+    // Create scale functions
     var xScale = d3.scale.linear()
       .nice()
       .range([padding.left, w - (padding.right)]);
@@ -54,11 +44,6 @@ define(['jquery', 'd3', 'src/bamcheck/divSelections'], function (jQuery, d3, che
       .clamp(true)
       .nice()
       .range([h - padding.bottom, padding.top]);
-
-    /*var yScaleRight = d3.scale.log()
-                 .clamp(true)
-                 .nice()
-                 .range([h - padding.bottom, padding.top]);*/
 
     var color = d3.scale.category10()
       .domain(graphKeys);
@@ -69,22 +54,15 @@ define(['jquery', 'd3', 'src/bamcheck/divSelections'], function (jQuery, d3, che
       .orient("bottom")
       .ticks(10);
 
-    //define Y axis
+    //Define Y axis
     var yAxisLeft = d3.svg.axis()
       .scale(yScaleLeft)
       .orient("left")
-      .ticks(10, function (d) {
+      .ticks(10, function(d) {
         if (d < 1) {} else {
           return d;
         }
       });
-
-    /*var yAxisRight = d3.svg.axis()
-              .scale(yScaleRight)
-              .orient("right")
-              .ticks(10, function (d) {
-                return (d).toFixed(1);
-              });*/
 
     function make_x_grid() {
       return d3.svg.axis()
@@ -101,7 +79,6 @@ define(['jquery', 'd3', 'src/bamcheck/divSelections'], function (jQuery, d3, che
     }
 
     svg.append("clipPath")
-      .attr("id", "chart-area" + chartIndex)
       .append("rect")
       .attr("x", padding.left)
       .attr("y", padding.top)
@@ -109,45 +86,29 @@ define(['jquery', 'd3', 'src/bamcheck/divSelections'], function (jQuery, d3, che
       .attr("height", h - (padding.top + padding.bottom));
 
     var points = [];
-
-    for (var i in data) {
-      if (jQuery.inArray(data[i].name, graphKeys) !== -1) {
-        points.push(data[i]);
-      }
-    }
-    /*
-        var ratioData = [{name: "ratio", values: []}];
-
-        for (var i = 0; i < data[1].values.length; i++) {
-            ratioData[0].values.push({xVar: data[1].values[i].xVar, yVar: (data[1].values[i].yVar / data[2].values[i].yVar)})
-        };
-
-        var rMin = .1;
-        var rMax = 10;
-        */
+    points.push(makePoints(data.len, data.ins));
+    points.push(makePoints(data.len, data.del));
 
     var xMin = 1;
-    var xMax = d3.max(points, function (d) {
-      return d3.max(d.values, function (v) {
+    var xMax = d3.max(points, function(d) {
+      return d3.max(d, function(v) {
         return v.xVar;
       });
     });
 
     var yMin = 0.1;
-    var yMax = d3.max(points, function (d) {
-      return d3.max(d.values, function (v) {
+    var yMax = d3.max(points, function(d) {
+      return d3.max(d, function(v) {
         return v.yVar;
       });
     });
 
     xScale.domain([xMin, xMax]);
 
-    //set yScale domain
+    //Set yScale domain
     yScaleLeft.domain([yMin, yMax]);
 
-    //yScaleRight.domain([rMin, rMax]);
-
-    //append title
+    //Append title
     svg.append('text')
       .attr('x', padding.left)
       .attr('y', padding.top / 2)
@@ -159,16 +120,16 @@ define(['jquery', 'd3', 'src/bamcheck/divSelections'], function (jQuery, d3, che
       .append('g')
       .attr('class', 'legend');
 
-    //draw colours in legend    
+    //Draw colours in legend
     legend.append('rect')
-      .attr('x', function (d, i) {
+      .attr('x', function(d, i) {
         if (i <= 1) {
           return w - (padding.right * 3 + 15);
         } else {
           return w - (padding.right * 3 * 3 + 15);
         }
       })
-      .attr('y', function (d, i) {
+      .attr('y', function(d, i) {
         if (i <= 1) {
           return i * 20;
         } else {
@@ -177,27 +138,27 @@ define(['jquery', 'd3', 'src/bamcheck/divSelections'], function (jQuery, d3, che
       })
       .attr('width', 10)
       .attr('height', 10)
-      .style('fill', function (d) {
+      .style('fill', function(d) {
         return color(d);
       });
 
-    //draw text in legend
+    //Draw text in legend
     legend.append('text')
-      .attr('x', function (d, i) {
+      .attr('x', function(d, i) {
         if (i <= 1) {
           return w - padding.right * 3;
         } else {
           return w - (padding.right * 3) * 3;
         }
       })
-      .attr('y', function (d, i) {
+      .attr('y', function(d, i) {
         if (i <= 1) {
           return (i * 20) + 9;
         } else {
           return ((i - 2) * 20) + 9;
         }
       })
-      .text(function (d) {
+      .text(function(d) {
         return d;
       });
 
@@ -227,22 +188,7 @@ define(['jquery', 'd3', 'src/bamcheck/divSelections'], function (jQuery, d3, che
       .attr("text-anchor", "middle")
       .text(yLabelLeft);
 
-    /*
-        //Create Y axis
-        svg.append("g")
-           .attr("class", "axis")
-           .attr("id", "yAxis")
-           .attr("transform", "translate(" + (w - padding.right) + ", 0)")
-           .call(yAxisRight)
-          .append("text")
-           .attr("dy", -padding.left/1.5)
-           .attr("transform", "translate(" + padding.right * 1.5 + "," + h/2 + ")rotate(-90)")
-           .attr("style", "font-size: 12; font-family: Helvetica, sans-serif")
-           .style("text-anchor", "end")
-           .text(yLabelRight);
-        */
-
-    //make x grid
+    //Make x grid
     svg.append("g")
       .attr("class", "grid")
       .attr("id", "xGrid")
@@ -252,7 +198,7 @@ define(['jquery', 'd3', 'src/bamcheck/divSelections'], function (jQuery, d3, che
         .tickFormat("")
       );
 
-    //make y grid
+    //Make y grid
     svg.append("g")
       .attr("class", "grid")
       .attr("id", "yGrid")
@@ -264,77 +210,59 @@ define(['jquery', 'd3', 'src/bamcheck/divSelections'], function (jQuery, d3, che
 
     var line = d3.svg.line()
       .interpolate("linear")
-      .x(function (d) {
+      .x(function(d) {
         return xScale(d.xVar);
       })
-      .y(function (d) {
+      .y(function(d) {
         return yScaleLeft(d.yVar);
       });
 
-    /*
-        var ratioLine = d3.svg.line()
-            .interpolate("basis")
-            .x(function (d) {return xScale(d.xVar);})
-            .y(function (d) {return yScaleRight(d.yVar);});
-            */
-
-    //create graphs for the different data
+    //Create graphs for the different data
     var aValue = svg.selectAll(".points")
       .data(points)
       .enter().append("g")
-      .attr("id", "graphs")
-      .attr("clip-path", "url(#chart-area" + chartIndex + ")");
+      .attr("id", "graphs");
 
-    //draw lines in graphs
+    //Draw lines in graphs
     aValue.append("path")
       .attr("class", "line1")
-      .attr("d", function (d) {
-        return line(d.values);
+      .attr("d", function(d) {
+        return line(d);
       })
-      .style("stroke", function (d) {
-        return color(d.name);
+      .style("stroke", function(d, i, j) {
+        return color(graphKeys[j]);
       });
 
-    //draw lines in graphs
+    //Draw lines in graphs
     aValue.selectAll("circle")
-      .data(function (d) {
-        return d.values;
+      .data(function(d) {
+        return d;
       }).enter()
       .append("circle")
       .attr("class", "circles")
-      .attr("cx", function (d) {
+      .attr("cx", function(d) {
         return xScale(d.xVar);
       })
-      .attr("cy", function (d) {
+      .attr("cy", function(d) {
         return yScaleLeft(d.yVar);
       })
       .attr("r", 2)
-      .attr("fill", function (d) {
-        return color(d.name);
+      .attr("fill", function(d, i, j) {
+        return color(graphKeys[j]);
       });
 
-    function cx(d) {
-      return xScale(d);
-    }
-
-    function cy(d) {
-      return yScaleLeft(d);
-    }
-
-    /****
-        //create graphs for the different data
-        var ratio = svg.selectAll("g.ratioData")
-            .data(ratioData)
-            .enter().append("g")
-            .attr("id", "graphs")
-            .attr("clip-path", "url(#chart-area)");
-    
-        //draw lines in graphs
-        ratio.append("path")
-              .attr("class", "line2")
-              .attr("d", function(d) { return ratioLine(d.values); })
-              .style("stroke", function(d) { return color(d.name); });
-    
-        */
+    return { svg: svg };
   }
+
+  function makePoints(a1, a2) {
+    var points = [];
+    for (var n = 0; n < a1.length; n++) {
+      points.push({ xVar: a1[n], yVar: a2[n] });
+    }
+    return points;
+  }
+
+  return {
+    drawChart: drawChart,
+  };
 });
