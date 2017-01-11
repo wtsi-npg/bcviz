@@ -13,8 +13,8 @@ requirejs.config({
   }
 });
 
-requirejs(['test/qcjson/insertSizeHistogram','test/qcjson/adapter', 'test/qcjson/mismatch', 'test/bcviz'],  
-	  function(insertSizeHistogram, adapter, mismatch, bcviz) {
+requirejs(['test/qcjson/insertSizeHistogram','test/qcjson/adapter', 'test/qcjson/mismatch', 'test/bcviz'],
+  function(insertSizeHistogram, adapter, mismatch, bcviz) {
     // start QUnit because it was told to wait in the html.
     QUnit.config.autostart = false;
     // load the tests.
