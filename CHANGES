@@ -1,6 +1,10 @@
 CHANGES
 
  - Implement 'all the samtools stats charts' bcviz function
+ - upgrade jquery to 2.2.4 from 2.2.3
+ - upgrade d3 to 3.5.17 from 3.5.16
+ - upgrade requirejs to 2.3.2 from 2.2.0
+ - upgrade grunt-contrib-jshint to 1.1.0 from 1.0.0
  - upgrade grunt-bump to 0.8.0 from 0.7.0 
  - upgrade grunt-contrib-uglify to 2.0.0 from 1.0.1
  - upgrade grunt-jscs to 3.0.1 from 2.8.0
