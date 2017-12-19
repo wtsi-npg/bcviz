@@ -1,5 +1,6 @@
 CHANGES
 
+ - switch to node 6.12.2 in travis
  - Implement 'all the samtools stats charts' bcviz function
  - Updating test configuration so it is compatible with
    grunt-contrib-qunit@1.2.0 and node-qunit-phantomjs@1.4.0
