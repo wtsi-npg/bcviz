@@ -24,7 +24,6 @@ jobs:
     - name: Initialize Miniconda
       run: |
           echo 'source $CONDA/etc/profile.d/conda.sh' >> "$HOME/.bash_profile"
-    # Caching conda
     - name: Cache conda
       id: minicondaCache
       uses: actions/cache@v2
@@ -48,9 +47,10 @@ jobs:
     - name: Run install scripts
       run: |
           mkdir -p "$NPM_CONFIG_PREFIX"
-          ${GITHUB_WORKSPACE}/scripts/before_install.sh
+          npm install -g bower grunt-cli node-qunit-phantomjs
+          npm install
           export PATH="$NPM_CONFIG_PREFIX/bin:$PATH"
-          ${GITHUB_WORKSPACE}/scripts/install.sh
+          bower install
 
     - name: run script
       run: |
