@@ -54,7 +54,6 @@ jobs:
 
     - name: run script
       run: |
-          export PATH="$HOME/miniconda/bin:$PATH"
           export PATH="$NPM_CONFIG_PREFIX/bin:$PATH"
           conda activate "$CONDA_TEST_ENV"
           conda info --envs
