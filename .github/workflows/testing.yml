@@ -1,0 +1,60 @@
+name: testing
+on: [push, pull_request]
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: ['ubuntu-18.04']
+        node: ['14.8.0']
+
+    runs-on: ${{ matrix.os }}
+
+    defaults:
+      run:
+        shell: bash -l -e -o pipefail {0}
+
+    env:
+      NPM_CONFIG_PREFIX: "$HOME/.npm-global"
+
+    name: Node ${{ matrix.node }} on ${{ matrix.os }}
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Initialize Miniconda
+      run: |
+          echo 'source $CONDA/etc/profile.d/conda.sh' >> "$HOME/.bash_profile"
+    - name: Cache conda
+      id: minicondaCache
+      uses: actions/cache@v2
+      with:
+        path: |
+          ~/conda/pkgs
+          ~/conda/envs
+        key: ${{ matrix.os }}-build-miniconda
+
+    - name: install conda client and set up conda environment
+      run: |
+          conda config --prepend pkgs_dirs ~/conda/pkgs
+          conda config --prepend envs_dirs ~/conda/envs
+          conda config --set auto_update_conda False
+          conda info
+          conda create -y -n "$CONDA_TEST_ENV"
+          conda install -y -n "$CONDA_TEST_ENV" nodejs=="${{ matrix.node }}"
+      env:
+        CONDA_TEST_ENV: test-environment
+
+    - name: Run install scripts
+      run: |
+          mkdir -p "$NPM_CONFIG_PREFIX"
+          npm install -g bower grunt-cli node-qunit-phantomjs
+          npm install
+          export PATH="$NPM_CONFIG_PREFIX/bin:$PATH"
+          bower install
+
+    - name: run script
+      run: |
+          export PATH="$NPM_CONFIG_PREFIX/bin:$PATH"
+          conda activate "$CONDA_TEST_ENV"
+          conda info --envs
+          ${GITHUB_WORKSPACE}/scripts/script.sh
