@@ -24,8 +24,7 @@
  *
  */
 
-/* globals document:false, define: false */
-/* jshint latedef: nofunc */
+/* global define */
 
 'use strict';
 
@@ -39,10 +38,8 @@ define(['jquery', 'd3'], function(jQuery, d3) {
 
     if (data && data.gcpercent && data.gcpercent.length) {
 
-      // jshint -W055
       results = new gcDepthGraph(data, title, width, height);
 
-      // jshint +W055
     } else {
       results = { 'svg': null, 'legend': null };
     }

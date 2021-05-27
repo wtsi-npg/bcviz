@@ -1,5 +1,4 @@
-/* globals document:false, define: false */
-/* jshint latedef: nofunc */
+/* globals define */
 
 'use strict';
 

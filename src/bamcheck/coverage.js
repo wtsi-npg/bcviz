@@ -18,8 +18,7 @@
  *
  */
 
-/* globals document:false, define: false */
-/* jshint latedef: nofunc */
+/* globals define */
 
 'use strict';
 
@@ -33,10 +32,8 @@ define(['jquery', 'd3'], function(jQuery, d3) {
 
     if (data && data.bases && data.bases.length) {
 
-      // jshint -W055
       results = new coverageGraph(data, title, width, height);
 
-      // jshint +W055
     } else {
       results = { svg: null };
     }

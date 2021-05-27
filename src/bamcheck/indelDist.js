@@ -1,5 +1,4 @@
-/* globals document:false, define: false */
-/* jshint latedef: nofunc */
+/* globals define */
 
 'use strict';
 
@@ -59,7 +58,7 @@ define(['jquery', 'd3'], function(jQuery, d3) {
       .scale(yScaleLeft)
       .orient("left")
       .ticks(10, function(d) {
-        if (d < 1) {} else {
+        if (d < 1) {} else { // eslint-disable-line no-empty
           return d;
         }
       });

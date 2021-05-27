@@ -27,8 +27,7 @@
  * jQuery("#graph").append( function() { return chart.svg.node(); } );
  *
  */
-/* globals document: false, define: false */
-/* jshint latedef: nofunc */
+/* globals define */
 define(['jquery', 'd3'], function(jQuery, d3) {
   "use strict";
   var xScale;

@@ -62,27 +62,18 @@ module.exports = function(grunt) {
     },
     jsonlint: {
       pkg: {
-        src: ['package.json', '.jscsrc', '.jshintrc']
+        src: ['package.json', '.eslintrc.json']
       }
     },
-    jshint: {
-      all: [
+    eslint: {
+      options: {
+        configFile: '.eslintrc.json',
+      },
+      target: [
         'Gruntfile.js',
         'src/qcjson/**/*.js',
         'src/bamcheck/**/*.js'
-      ],
-      options: {
-        jshintrc: '.jshintrc'
-      }
-    },
-    jscs: {
-      main: [ 'Gruntfile.js',
-              'src/qcjson/**/*.js',
-              'src/bamcheck/**/*.js'
-      ],
-      options: {
-        config: '.jscsrc'
-      }
+      ]
     },
     qunit: {
       options: {
@@ -91,28 +82,9 @@ module.exports = function(grunt) {
       },
       all: ['test/*.html']
     },
-    watch: {
-      js: {
-        files:[
-          'package.json',
-          'Gruntfile.js',
-          '.jshintrc',
-          '.jscsrc',
-          'src/qcjson/**/*.js',
-          'src/bamcheck/**/*.js',
-          'test/*.js',
-          'test/qcjson/*.js',
-          'test/bamcheck/*.js',
-          'test/test.html'
-        ],
-        tasks: [
-          'test'
-        ]
-      }
-    }
   });
 
-  grunt.registerTask('lint', ['jsonlint', 'jshint', 'jscs']);
+  grunt.registerTask('lint', ['jsonlint', 'eslint']);
   grunt.registerTask('build', ['clean:build', 'copy:build', 'uglify:build']);
   grunt.registerTask('test', ['lint', 'build', 'qunit']);
   grunt.registerTask('prepdist', ['clean:dist', 'test', 'copy:dist']);
