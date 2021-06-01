@@ -11,7 +11,7 @@ define(['jquery', 'd3'], function(jQuery, d3) {
     var title = config.title || 'Indels';
 
     if (data && data.len && data.len.length !== 0) {
-        results = indelDistGraph(data, title, width, height);
+      results = indelDistGraph(data, title, width, height);
     } else {
       results = { svg: null, legend: null };
     }

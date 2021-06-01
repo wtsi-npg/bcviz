@@ -164,8 +164,8 @@ define(['jquery', 'd3'], function(jQuery, d3) {
       .attr("transform", "translate(" + padding.left + ",0)")
       .call(
         make_y_grid()
-        .tickSize(-width + (padding.left + padding.right), 0, 0)
-        .tickFormat("")
+          .tickSize(-width + (padding.left + padding.right), 0, 0)
+          .tickFormat("")
       );
 
     //Group for the bars
