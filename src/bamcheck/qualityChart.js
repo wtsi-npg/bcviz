@@ -1,16 +1,15 @@
-/* globals document:false, define: false */
-/* jshint latedef: nofunc */
+/* globals define */
 
 'use strict';
 
 define(['d3'], function(d3) {
-    var padding = {
-      top: 5,
-      right: 10,
-      bottom: 50,
-      left: 50
-    };
-    var dir = 1;
+  var padding = {
+    top: 5,
+    right: 10,
+    bottom: 50,
+    left: 50
+  };
+  var dir = 1;
 
   var drawChart = function(config) {
     var data = config.data;
@@ -294,7 +293,7 @@ define(['d3'], function(d3) {
         return "cycle " + d.xVar;
       });
 
-  /*  Resize
+    /*  Resize
     this.resize = function (height, width) {
       h = 350;
       w = (window.innerWidth - 100) / 2;

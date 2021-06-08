@@ -1,5 +1,4 @@
-/* globals document:false, define: false */
-/* jshint latedef: nofunc */
+/* globals define */
 
 'use strict';
 
@@ -214,7 +213,7 @@ define(['jquery', 'd3'], function(jQuery, d3) {
       legend: svg_legend,
     };
 
-/**
+    /**
     //create a new zoom behavior
     var zoomer = d3.behavior.zoom().x(xScale).y(yScale).scaleExtent([1, 50]).on("zoom", zoom);
 
@@ -256,7 +255,7 @@ define(['jquery', 'd3'], function(jQuery, d3) {
     this.draw = function () {
       zoom();
     };
-*/
+    */
 
   };
 

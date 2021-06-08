@@ -32,8 +32,7 @@
  * jQuery("#graph_leg").append( function() { return chart.svg_legend.node(); } );
  *
  */
-/* globals document: false, define: false */
-/* jshint latedef: nofunc */
+/* globals define */
 define(['jquery', 'd3'], function(jQuery, d3) {
   'use strict';
 
