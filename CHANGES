@@ -1,5 +1,7 @@
 CHANGES
 
+ upgrading grunt to 1.5.2 from 1.3.0
+
 release 1.3.3
  - switch to github actions from travis ci
  - switch to node 14.8.0 in github actions
