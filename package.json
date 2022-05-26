@@ -17,15 +17,15 @@
     "sequencing"
   ],
   "devDependencies": {
-    "grunt": "1.3.0",
-    "grunt-cli": "1.2.0",
+    "grunt": "1.5.3",
     "load-grunt-tasks": "3.5.0",
     "grunt-bump": "0.7.0",
+    "grunt-cli": "1.2.0",
+    "grunt-contrib-clean": "2.0.1",
     "grunt-contrib-copy": "1.0.0",
-    "grunt-contrib-clean": "1.0.0",
-    "grunt-contrib-uglify": "5.0.1",
     "grunt-contrib-qunit": "1.2.0",
-    "grunt-jsonlint": "2.1.3",
-    "grunt-eslint": "23.0.0"
+    "grunt-contrib-uglify": "5.0.1",
+    "grunt-eslint": "23.0.0",
+    "grunt-jsonlint": "2.1.3"
   }
 }
