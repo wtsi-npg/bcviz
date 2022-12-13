@@ -5,7 +5,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: ['ubuntu-18.04']
+        os: [ubuntu-latest]
         node: ['14.8.0']
 
     runs-on: ${{ matrix.os }}
