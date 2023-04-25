@@ -26,6 +26,6 @@
     "grunt-contrib-qunit": "1.2.0",
     "grunt-contrib-uglify": "5.0.1",
     "grunt-eslint": "23.0.0",
-    "@prantlf/grunt-jsonlint": "2.2.1"
+    "@prantlf/grunt-jsonlint": "3.0.0"
   }
 }
